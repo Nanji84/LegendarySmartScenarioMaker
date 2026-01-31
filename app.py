@@ -1431,39 +1431,26 @@ def main():
 
     # 2. Set Selection
     # List all your sets here. You can also load this dynamically from your JSON if you want.
-    all_sets = [
-        "Core Set", 
-        "Dark City", 
-        "Secret Wars, Volume 1", 
-        "Secret Wars, Volume 2", 
-        "Captain America 75th Anniversary",
-        "Civil War", 
-        "Deadpool", 
-        "Marvel Noir", 
-        "World War Hulk", 
-        "Marvel Studios' The Infinity Saga",
-        "Marvel Studios' What If...?",
-        "Ant-Man", 
-        "Venom", 
-        "Dimensions", 
-        "Revelations",
-        "Realm of Kings", 
-        "Champions",
-        "Messiah Complex",
-        "Heroes of Asgard",
-        "New Mutants", 
-        "Guardians of the Galaxy",
-        "Annihilation",
-        "S.H.I.E.L.D.",
-        "WWHulk",
-        "Into the Cosmos",
-        "Midnight Sons",
-        "Black Widow"
-        # ... Add all other sets ...
-    ]
+    all_sets = []
+    try:
+        # Load unique sets directly from the heroes file
+        with open("enriched_heroes.json", "r", encoding="utf-8") as f:
+            heroes_data = json.load(f)
+            # Create a sorted list of unique set names
+            all_sets = sorted(list({h.get("set") for h in heroes_data if h.get("set")}))
+            
+    except Exception as e:
+        st.error(f"⚠️ Error loading sets from enriched_heroes.json: {e}")
+        all_sets = ["Core Set"] # Fallback if file is missing/broken
+
+    # Smart Defaults: Only select defaults if they actually exist in the loaded list
+    desired_defaults = ["Core Set", "Marvel Studios' What If...?"]
+    default_sets = [s for s in desired_defaults if s in all_sets]
     
-    # Default selection
-    default_sets = ["Core Set", "Marvel Studios' What If...?"]
+    # If defaults are missing, just pick the first available set to avoid empty selection errors
+    if not default_sets and all_sets:
+        default_sets = [all_sets[0]]
+
     selected_sets = st.sidebar.multiselect("Select Expansions", all_sets, default=default_sets)
 
     # --- Main Area ---
