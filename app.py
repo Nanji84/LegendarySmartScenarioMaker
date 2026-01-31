@@ -1383,7 +1383,9 @@ class LegendaryRandomizer:
             vd_heroes_formatted.append(h_str)
 
         result = {
-            "Mastermind": mm_display,
+            "Mastermind": f"{self.setup['mastermind']['name']} ({self.setup['mastermind']['set']})",
+            # We now pass the raw list for better UI handling
+            "Lurking_Masterminds": [f"{m['name']} ({m['set']})" for m in self.setup.get('lurking_masterminds', [])],
             "Scheme": f"{self.setup['scheme']['name']} ({self.setup['scheme']['set']})",
             "Scheme_Description": self.setup['special_rules'],
             "Villains": [f"{v['group_name']} ({v['set']})" for v in self.setup['villains']],
@@ -1399,17 +1401,17 @@ class LegendaryRandomizer:
             "Wedding_Heroes": [f"{h['hero']} ({h['set']})" for h in self.scheme_mods.get('wedding_heroes', [])],
             "Custom_Deck": self.scheme_mods.get('custom_deck'),
             "Tyrant_Masterminds": [f"{m['name']} ({m['set']})" for m in self.setup.get('tyrant_masterminds', [])],
-            "Drained_Mastermind": self.setup.get('drained_mastermind'), # <--- NEW KEY
+            "Drained_Mastermind": self.setup.get('drained_mastermind'),
             "Villain_Deck_Setup": {
                 "Master_Strikes": self.scheme_mods['master_strikes'],
                 "Scheme_Twists": f"{self.scheme_mods['twists']} {self.scheme_mods['twist_note']}",
                 "Bystanders": final_bystanders,
-                "Heroes_from_Hero_Deck": self.scheme_mods['heroes_from_hero_deck'], # <--- NEW KEY
-                "Sidekicks": self.scheme_mods['sidekicks_in_villain_deck'], # <--- NEW KEY
-                "Ambitions": self.scheme_mods['ambitions_in_villain_deck'], # <--- NEW KEY
+                "Heroes_from_Hero_Deck": self.scheme_mods['heroes_from_hero_deck'],
+                "Sidekicks": self.scheme_mods['sidekicks_in_villain_deck'],
+                "Ambitions": self.scheme_mods['ambitions_in_villain_deck'],
                 "Officers": self.scheme_mods['officers_in_villain_deck'],
-                "Tactics": self.scheme_mods['tactics_in_villain_deck'], # <--- NEW KEY
-                "Quantum_Ambush": self.scheme_mods['quantum_ambush_scheme'] # <--- NEW KEY
+                "Tactics": self.scheme_mods['tactics_in_villain_deck'],
+                "Quantum_Ambush": self.scheme_mods['quantum_ambush_scheme']
             }
         }
         return result
@@ -1490,23 +1492,40 @@ def run_randomizer(selected_sets, players):
             st.code(traceback.format_exc())
 
 def display_results(setup):
-    # --- 1. Mastermind & Scheme (The Big Header) ---
+    # --- 1. Mastermind & Scheme ---
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("🦹 Mastermind")
         st.info(f"**{setup['Mastermind']}**")
         
-        # Drained / Tyrant / Lurking logic
+        # Lurking Masterminds (Now separate!)
+        if setup.get('Lurking_Masterminds'):
+            st.markdown("**👥 Lurking Masterminds:**")
+            for lm in setup['Lurking_Masterminds']:
+                st.caption(f"- {lm}")
+
+        # Drained Mastermind
         if setup.get('Drained_Mastermind'):
             dm = setup['Drained_Mastermind']
-            st.caption(f"🔻 **Drained:** {dm['name']} ({dm['set']})")
+            st.markdown(f"**🔻 Drained Mastermind:**")
+            st.caption(f"{dm['name']} ({dm['set']}) *(Set aside, out of play)*")
         
+        # Tyrant Masterminds
         if setup.get('Tyrant_Masterminds'):
-            st.caption(f"👑 **Tyrants:** {', '.join(setup['Tyrant_Masterminds'])}")
+            st.markdown("**👑 Tyrant Masterminds:**")
+            for tm in setup['Tyrant_Masterminds']:
+                st.caption(f"- {tm}")
 
     with col2:
         st.subheader("📜 Scheme")
         st.warning(f"**{setup['Scheme']}**")
+        
+        # Custom Decks (Moved here for visibility)
+        if setup.get('Custom_Deck'):
+            cd = setup['Custom_Deck']
+            st.markdown(f"**📦 {cd['name']} Content:**")
+            for line in cd['lines']:
+                st.error(f"- {line}")
 
     st.divider()
 
@@ -1526,60 +1545,57 @@ def display_results(setup):
 
     # --- 3. Heroes ---
     st.write("### 🦸 Heroes")
-    
-    # Create nice looking cards or columns for heroes
-    hero_cols = st.columns(3) # Grid layout
+    hero_cols = st.columns(3)
     for i, h in enumerate(setup['Heroes']):
         with hero_cols[i % 3]:
             st.success(h)
-    
-    # Extra Hero / Wedding / etc.
+            
+    # Wedding Heroes
     if setup.get('Wedding_Heroes'):
-        st.write("**💍 Wedding Heroes (Set Aside):**")
+        st.write("#### 💍 Wedding Heroes (Set Aside)")
         for wh in setup['Wedding_Heroes']:
-             st.caption(f"- {wh}")
+             st.info(f"- {wh}")
 
     st.divider()
 
     # --- 4. Villain Deck Composition ---
     st.write("### 🃏 Villain Deck Composition")
     
-    # Use Metrics for numbers
     vd = setup['Villain_Deck_Setup']
     
+    # Standard Counts
     m1, m2, m3 = st.columns(3)
     m1.metric("Scheme Twists", vd['Scheme_Twists'])
     m2.metric("Master Strikes", vd['Master_Strikes'])
     m3.metric("Bystanders", vd['Bystanders'])
 
-    # Extra List for Sidekicks, Ambitions, etc.
-    extras = []
-    if vd.get('Sidekicks'): extras.append(f"Sidekicks: {vd['Sidekicks']}")
-    if vd.get('Ambitions'): extras.append(f"Ambitions: {vd['Ambitions']}")
-    if vd.get('Officers'): extras.append(f"Officers: {vd['Officers']}")
-    if vd.get('Tactics'): extras.append(f"Mastermind Tactics: {vd['Tactics']}")
-    if vd.get('Quantum_Ambush'): extras.append("Ambush Scheme: Yes")
+    st.markdown("#### ➕ Required Extras")
     
-    if extras:
-        st.markdown("**Extras:** " + ", ".join(extras))
+    # 1. Extra Cards (Sidekicks, Officers, etc.)
+    extras_cols = st.columns(2)
+    with extras_cols[0]:
+        if vd.get('Sidekicks'): st.write(f"**Sidekicks:** {vd['Sidekicks']}")
+        if vd.get('Ambitions'): st.write(f"**Ambitions:** {vd['Ambitions']}")
+        if vd.get('Officers'): st.write(f"**S.H.I.E.L.D. Officers:** {vd['Officers']}")
+        if vd.get('Heroes_from_Hero_Deck'): st.write(f"**Cards from Hero Deck:** {vd['Heroes_from_Hero_Deck']} (Random)")
         
+    with extras_cols[1]:
+        if vd.get('Tactics'): st.write(f"**Mastermind Tactics:** {vd['Tactics']}")
+        if vd.get('Quantum_Ambush'): st.write("**Ambush Scheme:** Yes")
+
+    # 2. Specific Extra Heroes
     if setup['Villain_Deck_Heroes']:
-        st.markdown("**Extra Heroes in Villain Deck:**")
+        st.markdown("**🦸 Extra Heroes in Villain Deck:**")
         for h in setup['Villain_Deck_Heroes']:
-            st.caption(f"- {h}")
+            st.markdown(f"- {h}")
+
+    st.divider()
 
     # --- 5. Special Rules ---
-    with st.expander("📝 Setup Notes & Special Rules", expanded=True):
+    with st.expander("📝 Setup Notes & Special Rules", expanded=False):
         for line in setup['Scheme_Description']:
             if "Setup" in line or "Special Rules" in line:
                 st.markdown(f"* {line}")
-                
-    # --- 6. Custom Deck (if any) ---
-    if setup.get('Custom_Deck'):
-        d_name = setup['Custom_Deck']['name']
-        with st.expander(f"📦 {d_name} Composition", expanded=True):
-            for line in setup['Custom_Deck']['lines']:
-                st.write(f"- {line}")
 
 if __name__ == "__main__":
     main()
