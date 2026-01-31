@@ -229,6 +229,9 @@ class LegendaryRandomizer:
             
             # E. Simple Base: "8 Twists"
             base_twist = re.search(r'(\d+)\s+Twists', text, re.IGNORECASE)
+            
+            # F. X + Players (Phrasing 2 - NEW): "Twists equal to 5 plus the number of players"
+            base_plus_players_match = re.search(r'Twists equal to (\d+) plus (?:the )?number of players', text, re.IGNORECASE)
 
             # LOGIC CHAIN
             if base_mod_match:
@@ -247,6 +250,11 @@ class LegendaryRandomizer:
                 add = int(players_plus_match.group(1))
                 self.scheme_mods['twists'] = self.player_count + add
                 self.scheme_mods['twist_note'] = f"({self.player_count} players + {add})"
+                
+            elif base_plus_players_match:  # <--- NEW LOGIC
+                base = int(base_plus_players_match.group(1))
+                self.scheme_mods['twists'] = base + self.player_count
+                self.scheme_mods['twist_note'] = f"({base} + {self.player_count} players)"
                 
             elif mixed_match:
                 base = int(mixed_match.group(1))
