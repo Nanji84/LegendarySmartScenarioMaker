@@ -1,0 +1,582 @@
+[
+  {
+    "name": "Asgardian Warriors",
+    "set": "Villains",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : Draw a card."
+    ],
+    "tags": {
+      "Economy": [
+        "Gen_Draw"
+      ]
+    }
+  },
+  {
+    "name": "Brood, The",
+    "set": "X-Men",
+    "vp": "1",
+    "attack": "1+",
+    "abilities": [
+      "This Villain gets +1 [attack] for each Bystander in the KO pile.",
+      "Fight : KO one of your Heroes. Then KO a Bystander from the Bystander Stack."
+    ],
+    "tags": {
+      "Combat": [
+        "Gen_Attack"
+      ]
+    }
+  },
+  {
+    "name": "Cape-Killers",
+    "set": "Civil War",
+    "vp": "1",
+    "attack": "3*",
+    "abilities": [
+      "S.H.I.E.L.D. Clearance",
+      "Fight : KO a card from your discard pile."
+    ],
+    "tags": {
+      "Economy": [
+        "Gen_KO"
+      ]
+    }
+  },
+  {
+    "name": "Circus of Crime",
+    "set": "Playable Marvel 3D Trading Cards / Dimensions",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : Reveal the top card of your deck. If it costs 0 [cost] , KO it. Otherwise, draw it."
+    ],
+    "tags": {
+      "Utility": [
+        "Mechanic_Scout"
+      ]
+    }
+  },
+  {
+    "name": "Cops",
+    "set": "Villains",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : Gain a New Recruit."
+    ],
+    "tags": {
+      "Economy": [
+        "Gen_Recruit"
+      ]
+    }
+  },
+  {
+    "name": "Cytoplasm Spikes",
+    "set": "World War Hulk",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : Feast . If Cytoplasm Spikes feasts on a non-grey Hero, you get +2 [recruit] ."
+    ],
+    "tags": {
+      "Economy": [
+        "Gen_Recruit"
+      ]
+    }
+  },
+  {
+    "name": "Death's Heads",
+    "set": "World War Hulk",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : If you Outwit these Death's Heads, KO one of your cards that costs 0."
+    ],
+    "tags": {
+      "Economy": [
+        "Gen_KO"
+      ]
+    }
+  },
+  {
+    "name": "Doombot Legion",
+    "set": "Core Set",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : Look at the top two cards of your deck. KO one of them and put the other back."
+    ],
+    "tags": {}
+  },
+  {
+    "name": "Ghost Racers",
+    "set": "Secret Wars, Volume 1",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Ambush : Rise of The Living Dead",
+      "Fight : Reveal a [covert] Hero or KO one of your Heroes with an [attack] icon."
+    ],
+    "tags": {
+      "Mechanic": [
+        "Mechanic_Rise_Dead",
+        "Mechanic_Ambush"
+      ]
+    }
+  },
+  {
+    "name": "Giants of Jotunheim",
+    "set": "Marvel Studios' What If...?",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Ambush : Each player discards the top three cards of their deck.",
+      "Fight : You may KO a grey Hero from your discard pile."
+    ],
+    "tags": {
+      "Mechanic": [
+        "Mechanic_Ambush"
+      ]
+    }
+  },
+  {
+    "name": "Hammer Drone Army",
+    "set": "Marvel Studios, Phase 1",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : Look at the top two cards of your deck. KO one of them and put the other back."
+    ],
+    "tags": {}
+  },
+  {
+    "name": "Hand Ninjas",
+    "set": "Core Set",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : You get +1 [recruit] ."
+    ],
+    "tags": {
+      "Economy": [
+        "Gen_Recruit"
+      ]
+    }
+  },
+  {
+    "name": "Hellfire Cult",
+    "set": "X-Men",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : Reveal the top card of your deck. If it costs 0, KO it. Otherwise, you get +1 [recruit] ."
+    ],
+    "tags": {
+      "Economy": [
+        "Gen_Recruit"
+      ],
+      "Utility": [
+        "Mechanic_Scout"
+      ]
+    }
+  },
+  {
+    "name": "HYDRA Pilots",
+    "set": "Marvel Studios, Phase 1",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : You get +1 [recruit] ."
+    ],
+    "tags": {
+      "Economy": [
+        "Gen_Recruit"
+      ]
+    }
+  },
+  {
+    "name": "HYDRA Spies",
+    "set": "Marvel Studios, Phase 1",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : When you draw a new hand of cards at the end of this turn, draw an extra card."
+    ],
+    "tags": {
+      "Economy": [
+        "Gen_Draw"
+      ]
+    }
+  },
+  {
+    "name": "Khonshu Guardians",
+    "set": "Secret Wars, Volume 2",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "While in the Sewers, Rooftops or Bridge, this is in \u201cwolf form\u201c and gets +2 [attack] .",
+      "Fight : KO one of your Heroes."
+    ],
+    "tags": {
+      "Combat": [
+        "Gen_Attack"
+      ]
+    }
+  },
+  {
+    "name": "M.O.D.O.K.s",
+    "set": "Secret Wars, Volume 1",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : KO a Hero from your discard pile or the HQ. If that Hero has a [recruit] icon, you get +1 [recruit] ."
+    ],
+    "tags": {
+      "Economy": [
+        "Gen_Recruit"
+      ]
+    }
+  },
+  {
+    "name": "Maggia Goons",
+    "set": "Dark City",
+    "vp": "1",
+    "attack": "4*",
+    "abilities": [
+      "Bribe",
+      "Fight : KO one of your Heroes."
+    ],
+    "tags": {}
+  },
+    {
+    "name": "HYDRA Base",
+    "set": "Revelations",
+    "vp": "1",
+    "attack": "2+",
+    "abilities": [
+	  "HYDRA Base gets +2 [attack] while there's a Villain here.",
+      "Fight : KO one of your Heroes."
+    ],
+    "tags": {}
+  },
+  {
+    "name": "Magma Men",
+    "set": "Secret Wars, Volume 2",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : KO one of your Heroes.",
+      "Fateful Resurrection"
+    ],
+    "tags": {}
+  },
+  {
+    "name": "Mandarin's Rings",
+    "set": "Revelations",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : Draw a card."
+    ],
+    "tags": {
+      "Economy": [
+        "Gen_Draw"
+      ]
+    }
+  },
+  {
+    "name": "Mandroid",
+    "set": "Civil War",
+    "vp": "1",
+    "attack": "2+",
+    "abilities": [
+      "This gets +1 [attack] for each other Mandroid in your Victory Pile.",
+      "Fight : KO one of your Heroes."
+    ],
+    "tags": {
+      "Combat": [
+        "Gen_Attack"
+      ]
+    }
+  },
+  {
+    "name": "Mr. Sinister Clones",
+    "set": "Messiah Complex",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Ambush : Clone . When the cloned copy enters the city, shuffle a Bystander into the Villain Deck.",
+      "Fight : Clone the next Hero you recruit this turn that has printed cost 4 or less."
+    ],
+    "tags": {
+      "Economy": [
+        "Gen_Recruit"
+      ],
+      "Mechanic": [
+        "Mechanic_Ambush"
+      ]
+    }
+  },
+  {
+    "name": "Multiple Man",
+    "set": "Villains",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : KO one of your Allies for each other Multiple Man in your Victory Pile."
+    ],
+    "tags": {}
+  },
+  {
+    "name": "Phalanx",
+    "set": "Dark City",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : Reveal a [tech] Hero or KO one of your Heroes with a [attack] icon."
+    ],
+    "tags": {}
+  },
+  {
+    "name": "Quantum Hound",
+    "set": "Marvel Studios' Ant-Man and the Wasp",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : Choose [recruit] or [attack] . Then Explore . If the Found Hero has the icon you chose, KO one of your Heroes."
+    ],
+    "tags": {
+      "Economy": [
+        "Gen_Recruit"
+      ]
+    }
+  },
+  {
+    "name": "Quantumnauts",
+    "set": "Marvel Studios' Ant-Man and the Wasp",
+    "vp": "1",
+    "attack": "2+",
+    "abilities": [
+      "Rooftops Conqueror 1",
+      "Streets Conqueror 1",
+      "Fight : KO one of your Heroes."
+    ],
+    "tags": {}
+  },
+  {
+    "name": "S.H.I.E.L.D. Assault Squad",
+    "set": "Villains",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : Discard the top card of your deck. Then KO an Ally from your discard pile."
+    ],
+    "tags": {
+      "Mechanic": [
+        "Mechanic_Discard"
+      ]
+    }
+  },
+  {
+    "name": "Sakaaran Hivelings",
+    "set": "World War Hulk",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : Look at the top card of your deck. Put it back on the top or bottom. Then Feast ."
+    ],
+    "tags": {}
+  },
+  {
+    "name": "Sapien League",
+    "set": "X-Men",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : KO one of your Heroes. Then, reveal the top card of the Villain Deck. If it's a Henchman Villain, play it."
+    ],
+    "tags": {
+      "Economy": [
+        "Gen_KO"
+      ],
+      "Utility": [
+        "Mechanic_Scout"
+      ]
+    }
+  },
+  {
+    "name": "Savage Land Mutates",
+    "set": "Core Set",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : When you draw a new hand of cards at the end of this turn, draw an extra card."
+    ],
+    "tags": {
+      "Economy": [
+        "Gen_Draw"
+      ]
+    }
+  },
+  {
+    "name": "Sentinel",
+    "set": "Core Set",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : KO one of your Heroes."
+    ],
+    "tags": {}
+  },
+  {
+    "name": "Sentinel Squad O\u2217N\u2217E\u2217",
+    "set": "Messiah Complex",
+    "vp": "1",
+    "attack": "2",
+    "abilities": [
+      "Ambush : If there are no other Sentinel Squad O\u2217N\u2217E\u2217s in the city, Clone .",
+      "Fight : If there are no other Sentinel Squad O\u2217N\u2217E\u2217s in the city, KO one of your Heroes and put this Villain on the bottom of the Villain Deck."
+    ],
+    "tags": {
+      "Mechanic": [
+        "Mechanic_Ambush"
+      ]
+    }
+  },
+  {
+    "name": "Shi'ar Death Commandos",
+    "set": "X-Men",
+    "vp": "1",
+    "attack": "2*",
+    "abilities": [
+      "Ambush : This Villain captures a Human Shield .",
+      "Fight : KO one of your Heroes."
+    ],
+    "tags": {
+      "Mechanic": [
+        "Mechanic_Ambush"
+      ]
+    }
+  },
+  {
+    "name": "Shi'ar Patrol Craft",
+    "set": "X-Men",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : The next Hero you recruit this turn has Soaring Flight ."
+    ],
+    "tags": {
+      "Economy": [
+        "Gen_Recruit"
+      ]
+    }
+  },
+  {
+    "name": "Sidera Maris, Bridge Builders",
+    "set": "Into the Cosmos",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Ambush : (After this enters the city) If there's a Villain on the Bridge, that Villain and this Henchman each gain a Shard . Otherwise, move this to the Bridge.",
+      "Fight : KO one of your Heroes."
+    ],
+    "tags": {
+      "Mechanic": [
+        "Mechanic_Ambush"
+      ]
+    }
+  },
+  {
+    "name": "Spider-Infected",
+    "set": "Secret Wars, Volume 2",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Ambush : This captures a Bystander.",
+      "Fight : The next Hero you gain this turn has Wall-Crawl ."
+    ],
+    "tags": {
+      "Mechanic": [
+        "Mechanic_Ambush"
+      ],
+      "Keyword": [
+        "Keyword_WallCrawl"
+      ]
+    }
+  },
+  {
+    "name": "Spider-Slayer",
+    "set": "Playable Marvel 3D Trading Cards / Dimensions",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : Reveal the top two cards of your deck. Put any that cost 2 [cost] or less into your hand. Put the rest back in any order."
+    ],
+    "tags": {}
+  },
+  {
+    "name": "Tardigrade (Covert)",
+    "set": "Marvel Studios' Ant-Man and the Wasp",
+    "vp": "1",
+    "attack": "4*",
+    "abilities": [
+      "Microscopic Size-Changing [covert] [covert] [covert]",
+      "Fight : KO one of your Heroes."
+    ],
+    "tags": {}
+  },
+  {
+    "name": "Ten Rings Fanatics",
+    "set": "Marvel Studios, Phase 1",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Fight : KO one of your Heroes."
+    ],
+    "tags": {}
+  },
+  {
+    "name": "Ultron Sentries",
+    "set": "Marvel Studios' What If...?",
+    "vp": "1",
+    "attack": "2+",
+    "abilities": [
+      "Empowered by [covert]",
+      "Fight : KO one of your Heroes."
+    ],
+    "tags": {}
+  },
+  {
+    "name": "Universal Church of Truth",
+    "set": "Into the Cosmos",
+    "vp": "1",
+    "attack": "2",
+    "abilities": [
+      "Ambush : Each Henchman Villain in the city gains a Shard . If Magus is the Mastermind, one Cosmic Wraith also gains a Shard .",
+      "Fight : Burn 2 Shards : KO one of your Heroes."
+    ],
+    "tags": {
+      "Mechanic": [
+        "Mechanic_Ambush"
+      ]
+    }
+  },
+  {
+    "name": "Vibranium Liberator Drones",
+    "set": "Marvel Studios' What If...?",
+    "vp": "1",
+    "attack": "3",
+    "abilities": [
+      "Ambush : Another Villain captures a Bystander.",
+      "Fight : Liberate 3 . The next time you rescue a Bystander this turn (Including from this Henchmen) , KO one of your Heroes."
+    ],
+    "tags": {
+      "Mechanic": [
+        "Mechanic_Rescue_Bystander",
+        "Mechanic_Ambush"
+      ]
+    }
+  }
+]
