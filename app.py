@@ -6,11 +6,11 @@ import os
 import traceback
 
 SETUP_RULES = {
-    1: {"villains": 1, "henchmen": 1, "bystanders": 1},
-    2: {"villains": 2, "henchmen": 1, "bystanders": 2},
-    3: {"villains": 3, "henchmen": 1, "bystanders": 8},
-    4: {"villains": 3, "henchmen": 2, "bystanders": 8},
-    5: {"villains": 4, "henchmen": 2, "bystanders": 12}
+    1: {"villains": 1, "henchmen": 1, "bystanders": 1, "heroes": 5},
+    2: {"villains": 2, "henchmen": 1, "bystanders": 2, "heroes": 5},
+    3: {"villains": 3, "henchmen": 1, "bystanders": 8, "heroes": 5},
+    4: {"villains": 3, "henchmen": 2, "bystanders": 8, "heroes": 5},
+    5: {"villains": 4, "henchmen": 2, "bystanders": 12, "heroes": 6}
 }
 
 
@@ -31,7 +31,7 @@ class LegendaryRandomizer:
             "extra_henchmen": 0,
             "required_villains": [],
             "required_henchmen": [],
-            "hero_deck_count": 5,
+            "hero_deck_count": SETUP_RULES[player_count]["heroes"],
             "villain_deck_heroes": 0,
             "required_villain_deck_heroes": [],
             "heroes_from_hero_deck": 0, # <--- NEW FIELD
@@ -304,20 +304,55 @@ class LegendaryRandomizer:
         if ms_match:
             self.scheme_mods['master_strikes'] = int(ms_match.group(1))
 
-        # --- 3. BYSTANDERS ---
+        # --- 3. BYSTANDERS (FIXED) ---
         if re.search(r'no Bystanders', text, re.IGNORECASE):
             self.scheme_mods['bystanders_override'] = 0
         else:
+            # 1. Total Override ("8 total Bystanders")
             total_bys = re.search(r'(\d+)\s+total\s+Bystanders', text, re.IGNORECASE)
             if total_bys:
                 self.scheme_mods['bystanders_override'] = int(total_bys.group(1))
             
-            add_bys = re.search(r'Add\s+(\d+)\s+(?:extra\s+)?Bystanders', text, re.IGNORECASE)
-            if add_bys:
-                self.scheme_mods['bystanders_add'] = int(add_bys.group(1))
+            # 2. Additive Logic (Sentence-by-sentence check)
+            # We split by sentences to ensure we catch conditions like "1-2 players: Add 3."
+            sentences = re.split(r'[.()\n]', text)
+            for s in sentences:
+                s = s.strip()
+                if not s: continue
+                
+                # Check if this sentence adds Bystanders
+                add_match = re.search(r'Add\s+(\d+)\s+(?:extra\s+)?Bystanders', s, re.IGNORECASE)
+                if add_match:
+                    val = int(add_match.group(1))
+                    
+                    # Check for Player Constraint at the start of the sentence
+                    # Matches: "1-2 Players:", "For 3 players:", "If 5 players"
+                    p_match = re.search(r'^(?:(?:For|If)\s+)?(?:only\s+)?([0-9\s\-or]+)\s+players?', s, re.IGNORECASE)
+                    
+                    if p_match:
+                        condition_str = p_match.group(1).strip()
+                        is_match = False
+                        
+                        # Range Check (e.g. "1-2")
+                        if '-' in condition_str:
+                            parts = condition_str.split('-')
+                            if len(parts) == 2 and parts[0].strip().isdigit() and parts[1].strip().isdigit():
+                                low, high = int(parts[0]), int(parts[1])
+                                if low <= self.player_count <= high: is_match = True
+                        # List Check (e.g. "2", "2 or 3")
+                        else:
+                            nums = [int(n) for n in re.findall(r'\d+', condition_str)]
+                            if self.player_count in nums: is_match = True
+                            
+                        # If constraint exists and is NOT met, skip this addition
+                        if not is_match:
+                            continue 
+                            
+                    # If no constraint found, OR constraint met, add the value
+                    self.scheme_mods['bystanders_add'] += val
 
-        # --- 4. HERO DECK SIZE (FIXED REGEX) ---
-        # Split on '.', '(', ')', or newlines to separate rules
+        # --- 4. HERO DECK SIZE (FIXED v4) ---
+        # Split on '.', '(', ')', or newlines to separate rules so we process them individually
         sentences = re.split(r'[.()\n]', text)
         explicit_found = False
         
@@ -326,21 +361,37 @@ class LegendaryRandomizer:
             if not s: continue
 
             # 1. PLAYER CONSTRAINT CHECK
-            # Checks for "X-Y Players" or "X Players" at start of sentence
-            # Regex now handles "For X-Y Players" or just "X-Y Players:" and various dash types
-            p_match = re.search(r'^(?:For\s+)?(\d+)(?:[-\u2013\u2014](\d+))?\s+players?', s, re.IGNORECASE)
+            # If a sentence starts with "For X players" or "If X players", we verify the count.
+            # If the player count DOES NOT match, we SKIP this sentence entirely.
+            # This prevents "If 2 players: Use 4 Heroes" from triggering on 3 players.
+            p_match = re.search(r'^(?:For|If) (?:only )?([0-9\s\-or]+) players?', s, re.IGNORECASE)
             if p_match:
-                low = int(p_match.group(1))
-                high = int(p_match.group(2)) if p_match.group(2) else low
-                if not (low <= self.player_count <= high):
-                    continue # Constraint found but doesn't apply to this player count
+                condition_str = p_match.group(1)
+                is_match = False
+                # Parse Range (e.g. "2-3")
+                if '-' in condition_str:
+                    parts = condition_str.split('-')
+                    if len(parts) == 2 and parts[0].strip().isdigit() and parts[1].strip().isdigit():
+                        low, high = int(parts[0]), int(parts[1])
+                        if low <= self.player_count <= high: is_match = True
+                # Parse List (e.g. "2", "2 or 3")
+                else:
+                    nums = [int(n) for n in re.findall(r'\d+', condition_str)]
+                    if self.player_count in nums: is_match = True
+                
+                if not is_match:
+                    continue # Skip this sentence
 
             # 2. CHECK FOR ADDITIVE RULES ("Add another Hero", "Add 1 extra Hero")
-            # FIX: Changed 'Heroes?' (matches Heroe/Heroes) to 'Hero(?:es)?' (matches Hero/Heroes)
+            # We explicitly exclude "to/into the Villain Deck" to avoid "Add 8 random cards... to the Villain Deck"
             add_match = re.search(r'Add\s+(?:an|another|(\d+)|(one|two|three))\s+(?:extra\s+)?Hero(?:es)?(?!\s+(?:to|into|in)\s+(?:the\s+)?Villain Deck)', s, re.IGNORECASE)
             
-            # 3. CHECK FOR BASE COUNT RULES ("Use 5 Heroes", "Hero Deck is 4 Heroes")
-            base_match = re.search(r'(\d+)\s+Heroes', s, re.IGNORECASE)
+            # 3. CHECK FOR BASE COUNT RULES ("Use 5 Heroes", "6 Heroes", "Hero Deck is 4 Heroes")
+            # We look for "N Heroes" but use Lookbehind/Lookahead to ensure it's not a shuffle/move rule.
+            # (?<!Shuffle\s) -> Not preceded by "Shuffle "
+            # (?!\s+(?:from|to|into)) -> Not followed by " from", " to", " into"
+            # This correctly matches "6 Heroes" but ignores "Shuffle 12 Heroes from..."
+            base_match = re.search(r'(?<!Shuffle\s)(?<!Reveal\s)(?<!Look\s)(?<!Add\s)(?<!\d-)(?<!\d\s)(\d+)\s+Heroes(?!\s+(?:from|to|into))', s, re.IGNORECASE)
             
             if add_match:
                 to_add = 1
@@ -350,22 +401,23 @@ class LegendaryRandomizer:
                     word_map = {"one": 1, "two": 2, "three": 3}
                     to_add = word_map.get(add_match.group(2).lower(), 1)
                 
-                # Ensure base is set to 5 if currently 0/default before adding
-                if self.scheme_mods['hero_deck_count'] == 0:
-                     self.scheme_mods['hero_deck_count'] = 5
+                # If we haven't found a base count yet, start at standard 5 before adding
+                if self.scheme_mods['hero_deck_count'] == 5 and not explicit_found:
+                     pass 
                 
                 self.scheme_mods['hero_deck_count'] += to_add
 
             elif base_match:
                 val = int(base_match.group(1))
+                
+                # Safety: Ignore values >= 10 unless explicitly saying "Hero Deck" 
+                # (Prevents accidents with "Shuffle 14 cards")
                 is_explicit = "hero deck" in s.lower()
-
-                if explicit_found and not is_explicit: continue
-                if val >= 10 and not is_explicit: continue 
+                if val >= 10 and not is_explicit: 
+                    continue 
 
                 self.scheme_mods['hero_deck_count'] = val
-                if is_explicit: explicit_found = True
-
+                explicit_found = True
         # --- 5. VILLAIN DECK HEROES (FIXED v2) ---
         # Pattern A: "includes 14 extra Jean Grey cards"
         match_a = re.search(r'includes \d+ extra (.*?) cards', text, re.IGNORECASE)
