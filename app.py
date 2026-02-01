@@ -1130,16 +1130,14 @@ class LegendaryRandomizer:
         hero_slots = 5
         deck = []
         
-        # --- PRE-FILL PLAYER CHOICES (NEW) ---
-        # Insert placeholders for player choices. 
-        # The main loop (while len(deck) < hero_slots) will naturally fill only the remaining slots.
+        # --- PRE-FILL PLAYER CHOICES ---
         if self.scheme_mods.get('player_picked_heroes', 0) > 0:
             for i in range(self.scheme_mods['player_picked_heroes']):
                 deck.append({
                     "hero": f"CHOSEN BY PLAYER {i+1}",
                     "set": "Player Choice",
                     "team": "Any",
-                    "is_placeholder": True  # Flag for formatting later
+                    "is_placeholder": True
                 })
        
         if not self.data.get('heroes'): raise Exception("No Heroes found.")
@@ -1148,13 +1146,11 @@ class LegendaryRandomizer:
             if h['hero'] not in self.scheme_mods['banned_heroes']
         ]
         
-        # --- HANDLE SPECIFIC HERO INCLUSIONS (FIXED) ---
+        # --- HANDLE SPECIFIC HERO INCLUSIONS ---
         for req in self.scheme_mods['required_hero_deck_includes']:
             req_name = req['name'].lower()
-            # Handle "Wolverine or Logan" logic
             search_terms = [t.strip() for t in req_name.split(' or ')]
             
-            # Find all candidates matching ANY of the search terms
             candidates = []
             for h in available_heroes:
                 h_name = h['hero'].lower()
@@ -1162,53 +1158,36 @@ class LegendaryRandomizer:
                     candidates.append(h)
             
             needed = req['count']
-            
-            # If we found enough candidates, pick them
             if len(candidates) >= needed:
                 chosen = random.sample(candidates, needed)
                 deck.extend(chosen)
-                
-                # FIX: Remove ALL candidates from pool to enforce "Exactly" exclusivity
-                # This ensures we don't randomly pick a 2nd Wolverine later.
                 for h in candidates:
                     if h in available_heroes: available_heroes.remove(h)
             else:
-                print(f"   [!] Warning: Not enough heroes matching '{req['name']}'. Found {len(candidates)}, needed {needed}.")
+                print(f"   [!] Warning: Not enough heroes matching '{req['name']}'.")
                 deck.extend(candidates)
                 for h in candidates:
                     if h in available_heroes: available_heroes.remove(h)
 
-        # --- HANDLE REQUIRED TEAMS (FIXED) ---
+        # --- HANDLE REQUIRED TEAMS ---
         for req in self.scheme_mods.get('required_teams', []):
             target_team = req['team']
-            
-            # Find candidates belonging to the required team
-            # FIX: Use self._get_hero_team(h) instead of h.get('team') because the team info is nested.
-            candidates = [
-                h for h in available_heroes 
-                if target_team in self._get_hero_team(h).lower()
-            ]
-            
+            candidates = [h for h in available_heroes if target_team in self._get_hero_team(h).lower()]
             needed = req['count']
             
             if len(candidates) >= needed:
                 chosen = random.sample(candidates, needed)
                 deck.extend(chosen)
-                # Remove from pool
                 for h in chosen:
                     if h in available_heroes: available_heroes.remove(h)
             else:
-                # Fallback if not enough heroes of that team exist in user's collection
-                print(f"   [!] Warning: Not enough heroes for team '{target_team}'. Needed {needed}, found {len(candidates)}.")
                 deck.extend(candidates)
                 for h in candidates:
                     if h in available_heroes: available_heroes.remove(h)
 
-        # --- A. HANDLE TEAM VERSUS SETUP (NEW) ---
+        # --- TEAM VERSUS SETUP ---
         if self.scheme_mods['team_versus_counts']:
             count_a, count_b = self.scheme_mods['team_versus_counts']
-            
-            # Group all available heroes by Team
             teams = {}
             for h in available_heroes:
                 t = self._get_hero_team(h)
@@ -1216,94 +1195,142 @@ class LegendaryRandomizer:
                 if t not in teams: teams[t] = []
                 teams[t].append(h)
             
-            # Find teams with enough heroes to satisfy the requirement
             valid_teams_a = [t for t, heroes in teams.items() if len(heroes) >= count_a]
-            
             if len(valid_teams_a) >= 2:
-                # Pick Team 1
                 team_a_name = random.choice(valid_teams_a)
                 heroes_a = random.sample(teams[team_a_name], count_a)
-                
-                # Pick Team 2 (Must be different)
                 valid_teams_b = [t for t in valid_teams_a if t != team_a_name and len(teams[t]) >= count_b]
                 if valid_teams_b:
                     team_b_name = random.choice(valid_teams_b)
                     heroes_b = random.sample(teams[team_b_name], count_b)
-                    
-                    # Commit to Deck
                     deck = heroes_a + heroes_b
-                    # Remove chosen heroes from pool to prevent duplicates later
                     for h in deck: 
                         if h in available_heroes: available_heroes.remove(h)
                         
-        # --- C. FILTER BANNED TEAMS FROM OPEN SELECTION (NEW) ---
-        # This ensures that for "House of M", the remaining slots generally CANNOT be X-Men
+        # --- FILTER BANNED TEAMS ---
         if self.scheme_mods.get('banned_teams_from_open_selection'):
             available_heroes = [
                 h for h in available_heroes 
                 if self._get_hero_team(h).lower() not in self.scheme_mods['banned_teams_from_open_selection']
             ]
         
-        # --- B. STANDARD SELECTION LOOP (Only runs if deck isn't full yet) ---
-        # Use the target count from scheme (defaults to 5, but Versus might set it to 6)
+        # --- SMART MATCHING LOGIC ---
         target_count = self.scheme_mods['hero_deck_count']
         
+        # 1. Analyze Mastermind Difficulty
+        mm_attack_raw = self.setup['mastermind'].get('attack', '0')
+        mm_attack_val = int(re.search(r'\d+', str(mm_attack_raw)).group(0)) if re.search(r'\d+', str(mm_attack_raw)) else 0
+        is_hard_mm = mm_attack_val >= 11
+
         def score_hero(hero):
-            # ... (Paste your existing score_hero function here) ...
             score = 0
-            hero_tags = self._get_hero_tags(hero)
-            for tag in self.synergy_tags:
-                if "Problem_" in tag:
-                    keyword = tag.split('_')[-1]
-                    if any(keyword in t for t in hero_tags if "Solution" in t or "Mechanic" in t):
-                        score += 5
-            current_teams = [self._get_hero_team(h) for h in deck]
-            my_team = self._get_hero_team(hero)
-            if my_team in current_teams and my_team != 'Unknown': score += 3
-            for h_existing in deck:
-                if h_existing.get('is_placeholder'):
-                    continue
-                existing_tags = self._get_hero_tags(h_existing)
-                my_classes = [t for t in hero_tags if "Class_" in t and "Need" not in t]
-                their_needs = [t for t in existing_tags if "Need_Class_" in t]
-                my_needs = [t for t in hero_tags if "Need_Class_" in t]
-                their_classes = [t for t in existing_tags if "Class_" in t and "Need" not in t]
-                for need in their_needs:
-                    if need.replace("Need_", "") in my_classes: score += 2
-                for need in my_needs:
-                    if need.replace("Need_", "") in their_classes: score += 2
+            
+            # Combine all text from hero's cards for scanning
+            hero_text_blob = ""
+            hero_costs = []
+            for c in hero['cards']:
+                abilities = " ".join(c.get('abilities', []))
+                hero_text_blob += abilities.lower() + " "
+                if c.get('cost'): 
+                    val = int(re.search(r'\d+', str(c['cost'])).group(0)) if re.search(r'\d+', str(c['cost'])) else 0
+                    hero_costs.append(val)
+            
+            # A. MECHANIC SYNERGY (Priority 1)
+            
+            if "Mechanic_Wound" in self.synergy_tags:
+                if "wound" in hero_text_blob or "heal" in hero_text_blob:
+                    score += 5
+            
+            bystander_val = self.scheme_mods.get('bystanders_override') or 0
+            if bystander_val > 5 or "Mechanic_Rescue" in self.synergy_tags:
+                if "bystander" in hero_text_blob or "rescue" in hero_text_blob:
+                    score += 4
+            
+            if "Mechanic_Artifact" in self.synergy_tags:
+                if "artifact" in hero_text_blob:
+                    score += 5
+                    
+            if "Gen_KO" in self.synergy_tags:
+                if "ko " in hero_text_blob: 
+                    score += 2
+                    
+            if "Mechanic_Rise_Dead" in self.synergy_tags:
+                if "ko pile" in hero_text_blob or "discard pile" in hero_text_blob:
+                    score += 3
+
+            # B. STAT CURVE MATCHING (Priority 2)
+            if is_hard_mm:
+                avg_cost = sum(hero_costs) / len(hero_costs) if hero_costs else 0
+                if avg_cost >= 4.5:
+                    score += 2
+
+            # C. CONDITIONAL TEAM SYNERGY (The Fix)
+            # Only reward Team Matching heavily IF the hero explicitly asks for it in text.
+            
+            current_teams = [self._get_hero_team(h) for h in deck if not h.get('is_placeholder')]
+            my_team = self._get_hero_team(hero).lower()
+            
+            if my_team != 'unknown':
+                # Check if hero text contains "[team_name]" implies they trigger off it
+                # Example: If I am avengers, do I have "[avengers]" in my text?
+                team_trigger_pattern = f"[{my_team}]"
+                requires_team_synergy = team_trigger_pattern in hero_text_blob
+                
+                if my_team in current_teams:
+                    if requires_team_synergy:
+                        # I NEED this team to function -> High Bonus
+                        score += 4
+                    else:
+                        # I match the team, but don't strictly need it -> Tiny Flavor Bonus
+                        score += 0.5
+
+            # D. CLASS SYNERGY (Keeping this moderate)
+            current_classes = []
+            for h in deck:
+                if h.get('is_placeholder'): continue
+                for c in h.get('cards', []):
+                    current_classes.extend(c.get('classes', []))
+            
+            my_classes = set()
+            for c in hero['cards']:
+                for cls in c.get('classes', []):
+                    my_classes.add(cls)
+            
+            for cls in my_classes:
+                if cls in current_classes:
+                    score += 1.5 # Reduced slightly to prioritize Mechanics over colors
+                    break 
+
+            score += random.uniform(0, 1.5)
             return score
 
-        # Only run loop if we didn't already fill the deck with Versus logic
+        # --- SELECTION LOOP ---
         while len(deck) < target_count and available_heroes:
-            sample_size = min(3, len(available_heroes))
+            sample_size = min(10, len(available_heroes))
             candidates = random.sample(available_heroes, sample_size)
             best_candidate = max(candidates, key=score_hero)
+            
             deck.append(best_candidate)
             available_heroes.remove(best_candidate)
             
         self.setup['heroes'] = deck
         
-        # --- Pick separate heroes for the Villain Deck (UPDATED) ---
+        # --- Pick separate heroes for the Villain Deck ---
         self.setup['villain_deck_heroes'] = []
         
-        # 1. Process Specific Requirements (e.g. Jean Grey)
+        # 1. Specific
         for req_name in self.scheme_mods['required_villain_deck_heroes']:
             found = self._find_hero_by_name(req_name)
             if found:
                 self.setup['villain_deck_heroes'].append(found)
-                # Remove from available so we don't pick it again for the Hero Deck
-                if found in available_heroes:
-                    available_heroes.remove(found)
+                if found in available_heroes: available_heroes.remove(found)
             else:
-                print(f"   [!] Warning: Could not find required hero '{req_name}' in your sets.")
-                # Fallback to random if specific one is missing
                 if available_heroes:
                     fallback = random.choice(available_heroes)
                     self.setup['villain_deck_heroes'].append(fallback)
                     available_heroes.remove(fallback)
 
-        # 2. Fill remaining generic slots
+        # 2. Generic Extras
         filled_count = len(self.setup['villain_deck_heroes'])
         needed_count = self.scheme_mods['villain_deck_heroes']
         remaining = needed_count - filled_count
@@ -1312,8 +1339,6 @@ class LegendaryRandomizer:
             if len(available_heroes) >= remaining:
                 extras = random.sample(available_heroes, remaining)
                 self.setup['villain_deck_heroes'].extend(extras)
-            else:
-                print("[!] Warning: Not enough heroes left for Villain Deck!")
 
     def generate_setup(self):
         print("4. Generating...")
