@@ -15,9 +15,10 @@ SETUP_RULES = {
 
 
 class LegendaryRandomizer:
-    def __init__(self, user_sets, player_count):
+    def __init__(self, user_sets, player_count, user_selections=None):
         self.user_sets = [s.lower().strip() for s in user_sets]
         self.player_count = player_count
+        self.user_selections = user_selections or {}  # <--- NEW: Store selections
         self.data = {}
         self.setup = {}
         self.synergy_tags = []
@@ -31,13 +32,14 @@ class LegendaryRandomizer:
             "extra_henchmen": 0,
             "required_villains": [],
             "required_henchmen": [],
+            # Dynamically set base hero count (5 for 1-4p, 6 for 5p)
             "hero_deck_count": SETUP_RULES[player_count]["heroes"],
             "villain_deck_heroes": 0,
             "required_villain_deck_heroes": [],
-            "heroes_from_hero_deck": 0, # <--- NEW FIELD
+            "heroes_from_hero_deck": 0, 
             "team_versus_counts": None,
-            "custom_deck": None,    # <--- NEW FIELD
-            "banned_heroes": [],     # <--- NEW FIELD
+            "custom_deck": None,    
+            "banned_heroes": [],     
             "required_hero_deck_includes": [],
             "bystanders_in_hero_deck": 0,
             "tyrant_masterminds_count": 0,
@@ -46,8 +48,8 @@ class LegendaryRandomizer:
             "officers_in_villain_deck": 0,
             "player_picked_heroes": 0,
             "required_teams": [],
-            "henchmen_in_hero_deck_count": 0, # <--- NEW FIELD
-            "henchmen_in_hero_deck_obj": None, # <--- NEW FIELD
+            "henchmen_in_hero_deck_count": 0, 
+            "henchmen_in_hero_deck_obj": None, 
             "banned_villains": [],
             "banned_henchmen": [],
             "tactics_in_villain_deck": 0,
@@ -56,7 +58,9 @@ class LegendaryRandomizer:
             "wedding_heroes": [],
             "banned_teams_from_open_selection": [],
             "drained_mastermind_required": False,
-            "extra_hero_card_count": None
+            "extra_hero_card_count": None,
+            "double_group_count": False,
+            "half_deck_mechanic": False
         }
         print(f"2. Randomizer ready for {player_count} players using sets: {self.user_sets}")
     
@@ -897,14 +901,22 @@ class LegendaryRandomizer:
         if re.search(r'Each player chooses a Hero to be part of the Hero Deck', text, re.IGNORECASE):
             self.scheme_mods['player_picked_heroes'] = self.player_count
             
-        # --- 18. HERO TEAM REQUIREMENTS (NEW) ---
-        # Matches: "Use at least 1 [spider-friends] Hero"
-        # Handles brackets [ ] often used for icons in text
+        # --- 18. HERO TEAM REQUIREMENTS (FIXED) ---
+        # Pattern A: "Use at least 1 [spider-friends] Hero"
         team_req_match = re.search(r'Use at least (\d+) \[?([a-zA-Z0-9\-\s]+)\]? Hero', text, re.IGNORECASE)
+        
+        # Pattern B: "...including at least one [guardians-of-the-galaxy] Hero" (NEW)
+        include_team_match = re.search(r'including at least (one|\d+) \[?([a-zA-Z0-9\-\s]+)\]? Hero', text, re.IGNORECASE)
+
         if team_req_match:
             count = int(team_req_match.group(1))
-            # Clean up the team name (remove brackets if captured, lowercase)
             team_name = team_req_match.group(2).strip().lower()
+            self.scheme_mods['required_teams'].append({'team': team_name, 'count': count})
+            
+        elif include_team_match:
+            count_str = include_team_match.group(1).lower()
+            count = 1 if count_str == 'one' else int(count_str)
+            team_name = include_team_match.group(2).strip().lower()
             self.scheme_mods['required_teams'].append({'team': team_name, 'count': count})
         # --- 18b. SPECIFIC TEAM COMPOSITION (House of M style) (FIXED) ---
         # Matches: "Hero Deck is 4 [x-men] Heroes and 2 non- [x-men] Heroes"
@@ -963,10 +975,28 @@ class LegendaryRandomizer:
             # We must manually increment the count because the generic parser might miss this specific phrasing
             if re.search(r'Add its [\"“\']Always Leads[\"“\”\'] Villains as an extra Villain Group', text, re.IGNORECASE):
                 self.scheme_mods['extra_villains'] += 1
+        # --- 25. DOUBLE GROUPS / HALF CARDS (NEW) ---
+        # Matches: "Use double the normal number of Villain and Henchman Groups"
+        if re.search(r'Use double the normal number of Villain and Henchman Groups', text, re.IGNORECASE):
+            self.scheme_mods['double_group_count'] = True
+            self.scheme_mods['half_deck_mechanic'] = True
 
     def pick_scheme(self):
         if not self.data.get('schemes'): raise Exception("No Schemes found.")
-        scheme = random.choice(self.data['schemes'])
+        
+        # Check Manual Selection
+        forced_name = self.user_selections.get('scheme')
+        if forced_name and forced_name != "Random":
+            # Find the scheme object
+            candidates = [s for s in self.data['schemes'] if s['name'] == forced_name]
+            if candidates:
+                scheme = candidates[0]
+            else:
+                # Fallback if specific set not loaded but user selected it (edge case)
+                scheme = random.choice(self.data['schemes'])
+        else:
+            scheme = random.choice(self.data['schemes'])
+            
         self.setup['scheme'] = scheme
         self.synergy_tags.extend(self._get_tags(scheme))
         self.setup['special_rules'] = scheme.get('description', [])
@@ -976,7 +1006,16 @@ class LegendaryRandomizer:
         if not self.data.get('masterminds'): raise Exception("No Masterminds found.")
         
         # 1. Pick Main Mastermind
-        mm = random.choice(self.data['masterminds'])
+        forced_name = self.user_selections.get('mastermind')
+        mm = None
+        
+        if forced_name and forced_name != "Random":
+             candidates = [m for m in self.data['masterminds'] if m['name'] == forced_name]
+             if candidates: mm = candidates[0]
+        
+        if not mm:
+            mm = random.choice(self.data['masterminds'])
+            
         self.setup['mastermind'] = mm
         self.synergy_tags.extend(self._get_tags(mm))
         
@@ -1058,67 +1097,60 @@ class LegendaryRandomizer:
         
         # --- VILLAINS ---
         total_villains_needed = base['villains'] + self.scheme_mods['extra_villains']
+        
+        # APPLY DOUBLE MODIFIER
+        if self.scheme_mods['double_group_count']:
+            total_villains_needed *= 2
+        
         selected_villains = []
         
-        # A. SCHEME REQUIREMENTS (PRIORITY 1)
+        # 1. SCHEME REQUIREMENTS (Highest Priority)
         for req_name in self.scheme_mods['required_villains']:
             found = self._find_group_by_name(req_name, 'villains')
             if found and found not in selected_villains:
                 selected_villains.append(found)
 
-        # B. MASTERMIND LEAD (PRIORITY 2 - Only if slots available)
+        # 2. MASTERMIND LEAD (Priority 2)
+        # Cannot be overridden by user
         always_leads = self.setup['mastermind'].get('always_leads', 'Unknown')
         if always_leads != 'Unknown':
-            # Check if we have space left for the Mastermind's preference
-            if len(selected_villains) < total_villains_needed:
-                # 1. Search Villains (Standard + Text Scanning)
-                sorted_villains = sorted(self.data['villains'], key=lambda x: len(x.get('name') or x.get('group_name') or ''), reverse=True)
-                for v in sorted_villains:
-                    v_name = v.get('name') or v.get('group_name')
-                    if v_name and v_name.lower() in always_leads.lower():
-                        if v not in selected_villains:
-                            selected_villains.append(v)
-                        if "and" not in always_leads.lower(): break
-            
-            # Check Henchmen (We handle this here to capture the requirement, actual add happens below)
-            # Note: Schemes usually dictate Henchmen strictly (1 group). 
-            # If Scheme didn't force one, we let Mastermind lead.
-            # 2. Search Henchmen (Standard + Text Scanning)
-            sorted_hench = sorted(self.data['henchmen'], key=lambda x: len(x.get('name') or x.get('group_name') or ''), reverse=True)
-            for h in sorted_hench:
-                h_name = h.get('name') or h.get('group_name')
-                if h_name and h_name.lower() in always_leads.lower():
-                    if h_name not in self.scheme_mods['required_henchmen']:
-                        self.scheme_mods['required_henchmen'].append(h_name)
-            
-            # 3. Search Henchmen (Generic "A Shi'ar Henchman")
-            generic_match = re.search(r'(?:a|an|the) ([a-zA-Z0-9\-\']+) Henchm[ae]n', always_leads, re.IGNORECASE)
-            if generic_match:
-                descriptor = generic_match.group(1)
-                candidates = [h for h in self.data['henchmen'] 
-                              if descriptor.lower() in (h.get('name') or h.get('group_name') or '').lower()]
-                if candidates:
-                    chosen = random.choice(candidates)
-                    c_name = chosen.get('name') or chosen.get('group_name')
-                    if c_name not in self.scheme_mods['required_henchmen']:
-                         self.scheme_mods['required_henchmen'].append(c_name)
+             if len(selected_villains) < total_villains_needed:
+                # Search Villains
+                v_obj = self._find_group_by_name(always_leads, 'villains')
+                if v_obj and v_obj not in selected_villains:
+                     selected_villains.append(v_obj)
+                
+                # Check Henchmen (add to requirements list if found)
+                h_obj = self._find_group_by_name(always_leads, 'henchmen')
+                if h_obj and h_obj['name'] not in self.scheme_mods['required_henchmen']:
+                     self.scheme_mods['required_henchmen'].append(h_obj['name'])
 
-        # C. FILL RANDOM VILLAINS
+        # 3. USER SELECTIONS (Priority 3)
+        # Only if slots are still available
+        user_picks = self.user_selections.get('villains', [])
+        for pick_name in user_picks:
+            if len(selected_villains) < total_villains_needed:
+                # Find the object
+                found = self._find_group_by_name(pick_name, 'villains')
+                if found and found not in selected_villains:
+                    # Check if banned (e.g. by Set Aside rules)
+                    is_banned = any(b.lower() in (found.get('group_name') or '').lower() for b in self.scheme_mods['banned_villains'])
+                    if not is_banned:
+                        selected_villains.append(found)
+
+        # 4. FILL RANDOM (Priority 4)
         target_count = max(total_villains_needed, len(selected_villains))
         remaining = target_count - len(selected_villains)
         
         if remaining > 0:
-            # Filter available villains to exclude those already selected AND those banned
             available = [
                 v for v in self.data['villains'] 
                 if v not in selected_villains
                 and not any(b.lower() in (v.get('group_name') or v.get('name') or '').lower() for b in self.scheme_mods['banned_villains'])
             ]
-            
             if len(available) >= remaining:
                 selected_villains.extend(random.sample(available, remaining))
             else:
-                print(f"   [!] Warning: Not enough Villains left to fill deck (Need {remaining}, Found {len(available)}).")
                 selected_villains.extend(available)
             
         self.setup['villains'] = selected_villains
@@ -1126,44 +1158,45 @@ class LegendaryRandomizer:
 
         # --- HENCHMEN ---
         total_hench_needed = base['henchmen'] + self.scheme_mods['extra_henchmen']
+        
+        # APPLY DOUBLE MODIFIER
+        if self.scheme_mods['double_group_count']:
+            total_hench_needed *= 2
+        
         selected_hench = []
 
-        # A. SCHEME REQUIREMENTS (PRIORITY 1)
+        # 1. SCHEME REQUIREMENTS
         for req_name in self.scheme_mods['required_henchmen']:
             found = self._find_group_by_name(req_name, 'henchmen')
             if found and found not in selected_hench:
                 selected_hench.append(found)
-        
-        # B. MASTERMIND LEAD (PRIORITY 2 - Implied by list population above)
-        # Note: In the block above, we added MM leads to 'required_henchmen' list. 
-        # However, if Scheme ALREADY filled the list (e.g. 1 slot needed, Scheme took 1),
-        # we must ensure we don't go over limit unless "Extra" was triggered.
-        
-        # We enforce the limit here simply by respecting 'total_hench_needed'.
-        # If 'required_henchmen' has 2 items (1 Scheme, 1 MM) but we only need 1,
-        # we slice the list or rely on the loop order. 
-        # Since we append Scheme items first in the loop above, they naturally win if we truncate.
-        
-        # C. FILL RANDOM HENCHMEN
-        # Only fill if we haven't hit the cap
+
+        # 2. USER SELECTIONS
+        user_h_picks = self.user_selections.get('henchmen', [])
+        for pick_name in user_h_picks:
+            # Check Mastermind Lead limit? usually MM leads is handled in step 1 if it was a henchman
+            # We treat User Pick as filling open slots
+            if len(selected_hench) < total_hench_needed:
+                found = self._find_group_by_name(pick_name, 'henchmen')
+                if found and found not in selected_hench:
+                     selected_hench.append(found)
+
+        # 3. FILL RANDOM
         if len(selected_hench) > total_hench_needed:
-            selected_hench = selected_hench[:total_hench_needed]
+             selected_hench = selected_hench[:total_hench_needed]
 
         target_count_h = max(total_hench_needed, len(selected_hench))
         remaining_h = target_count_h - len(selected_hench)
         
         if remaining_h > 0:
-            # Filter available henchmen to exclude selected AND banned
             available = [
                 h for h in self.data['henchmen'] 
                 if h not in selected_hench
                 and not any(b.lower() in (h.get('name') or h.get('group_name') or '').lower() for b in self.scheme_mods['banned_henchmen'])
             ]
-            
             if len(available) >= remaining_h:
                 selected_hench.extend(random.sample(available, remaining_h))
             else:
-                print(f"   [!] Warning: Not enough Henchmen left (Need {remaining_h}, Found {len(available)}).")
                 selected_hench.extend(available)
             
         self.setup['henchmen'] = selected_hench
@@ -1197,6 +1230,16 @@ class LegendaryRandomizer:
             h for h in self.data['heroes'] 
             if h['hero'] not in self.scheme_mods['banned_heroes']
         ]
+        
+        # --- 0. MANUAL USER SELECTIONS (NEW) ---
+        user_hero_picks = self.user_selections.get('heroes', [])
+        for pick_name in user_hero_picks:
+            # Find hero
+            candidates = [h for h in available_heroes if h['hero'] == pick_name]
+            if candidates:
+                chosen = candidates[0]
+                deck.append(chosen)
+                available_heroes.remove(chosen)
         
         # --- HANDLE SPECIFIC HERO INCLUSIONS ---
         for req in self.scheme_mods['required_hero_deck_includes']:
@@ -1472,26 +1515,32 @@ class LegendaryRandomizer:
             else:
                 print("   [!] Warning: No unique Henchmen groups left for Hero Deck.")
                 
-       # Helper to format Henchmen list with Alias
+       # Determine suffixes for Half-Deck mechanic
+        v_suffix = ""
+        h_suffix = ""
+        if self.scheme_mods['half_deck_mechanic']:
+            v_suffix = " (Use 4 random cards)"
+            # Handle 1-player specific rule (2 Henchmen) vs standard half (5 Henchmen)
+            if self.player_count == 1:
+                h_suffix = " (Use 2 random cards)" 
+            else:
+                h_suffix = " (Use 5 random cards)"
+
+        # Helper to format Henchmen list with Alias AND Suffix
         final_henchmen_list = []
         for i, h in enumerate(self.setup['henchmen']):
             display_name = f"{h['name']} ({h['set']})"
-            # Apply alias to the LAST group if an alias is defined (Standard for 'Extra' groups)
+            
+            # Apply alias to the LAST group if defined
             if self.scheme_mods['henchman_alias'] and i == len(self.setup['henchmen']) - 1:
-                # CHANGED: Now displays "Real Name (Set) (as Alias)"
                 display_name = f"{display_name} (as {self.scheme_mods['henchman_alias']})"
+            
+            # Apply Half-Deck Suffix
+            display_name += h_suffix
+            
             final_henchmen_list.append(display_name)
             
         vd_heroes_formatted = []
-        for h in self.setup.get('villain_deck_heroes', []):
-            h_str = f"{h['hero']} ({self._get_hero_team(h)} - {h['set']})"
-            
-            # If a specific quantity rule (like "8 random cards") was found, append it
-            # We assume this applies to the random/extra heroes
-            if self.scheme_mods.get('extra_hero_card_count'):
-                h_str += f" ({self.scheme_mods['extra_hero_card_count']} random cards)"
-            
-            vd_heroes_formatted.append(h_str)
 
         result = {
             "Mastermind": f"{self.setup['mastermind']['name']} ({self.setup['mastermind']['set']})",
@@ -1499,7 +1548,7 @@ class LegendaryRandomizer:
             "Lurking_Masterminds": [f"{m['name']} ({m['set']})" for m in self.setup.get('lurking_masterminds', [])],
             "Scheme": f"{self.setup['scheme']['name']} ({self.setup['scheme']['set']})",
             "Scheme_Description": self.setup['special_rules'],
-            "Villains": [f"{v['group_name']} ({v['set']})" for v in self.setup['villains']],
+            "Villains": [f"{v['group_name']} ({v['set']}){v_suffix}" for v in self.setup['villains']],
             "Henchmen": final_henchmen_list,
             "Heroes": [
                 h['hero'] if h.get('is_placeholder') 
@@ -1539,46 +1588,186 @@ def main():
     
     # 1. Player Count
     players = st.sidebar.slider("Number of Players", min_value=1, max_value=5, value=3)
+    
+    # --- LOAD RAW DATA & SETS ---
+    raw_data = {}
+    all_sets = set()
+    
+    try:
+        files = {
+            "schemes": "enriched_schemes.json",
+            "masterminds": "enriched_masterminds.json",
+            "villains": "enriched_villains.json",
+            "henchmen": "enriched_henchmen.json",
+            "heroes": "enriched_heroes.json"
+        }
+        for key, filename in files.items():
+            if os.path.exists(filename):
+                with open(filename, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    raw_data[key] = data
+                    
+                    # Collect unique sets from all files
+                    for item in data:
+                        if item.get("set"):
+                            # Handle combined sets "Set A/Set B"
+                            for s in item["set"].split('/'):
+                                all_sets.add(s.strip())
+                                
+    except Exception as e:
+        st.error(f"Error loading data: {e}")
+
+    sorted_sets = sorted(list(all_sets))
 
     # 2. Set Selection
-    # List all your sets here. You can also load this dynamically from your JSON if you want.
-    all_sets = []
-    try:
-        # Load unique sets directly from the heroes file
-        with open("enriched_heroes.json", "r", encoding="utf-8") as f:
-            heroes_data = json.load(f)
-            # Create a sorted list of unique set names
-            all_sets = sorted(list({h.get("set") for h in heroes_data if h.get("set")}))
-            
-    except Exception as e:
-        st.error(f"⚠️ Error loading sets from enriched_heroes.json: {e}")
-        all_sets = ["Core Set"] # Fallback if file is missing/broken
-
-    # Smart Defaults: Only select defaults if they actually exist in the loaded list
-    desired_defaults = ["Core Set", "Marvel Studios' What If...?"]
-    default_sets = [s for s in desired_defaults if s in all_sets]
+    st.sidebar.subheader("📚 Expansions")
+    select_all = st.sidebar.checkbox("Select All Expansions", value=False)
     
-    # If defaults are missing, just pick the first available set to avoid empty selection errors
-    if not default_sets and all_sets:
-        default_sets = [all_sets[0]]
+    if select_all:
+        selected_sets = sorted_sets
+        st.sidebar.success(f"All {len(sorted_sets)} expansions selected.")
+    else:
+        # Smart Defaults
+        desired_defaults = ["Core Set", "Marvel Studios' What If...?"]
+        defaults = [s for s in desired_defaults if s in sorted_sets]
+        if not defaults and sorted_sets: defaults = [sorted_sets[0]]
+        
+        selected_sets = st.sidebar.multiselect("Select Expansions", sorted_sets, default=defaults)
 
-    selected_sets = st.sidebar.multiselect("Select Expansions", all_sets, default=default_sets)
+    if not selected_sets:
+        st.warning("Please select at least one expansion.")
+        return
+
+    # --- FILTER DROPDOWNS BASED ON SELECTION ---
+    selected_sets_lower = {s.lower() for s in selected_sets}
+    
+    def is_in_selection(item):
+        item_set = item.get('set', '')
+        if not item_set: return False
+        parts = [p.strip().lower() for p in item_set.split('/')]
+        return any(p in selected_sets_lower for p in parts)
+
+    filtered_options = {}
+    for key, items in raw_data.items():
+        # 1. Filter items belonging to selected sets
+        valid_items = [i for i in items if is_in_selection(i)]
+        
+        # 2. Extract names for the dropdowns
+        if key == "heroes":
+            names = sorted(list({x['hero'] for x in valid_items}))
+        elif key == "villains":
+            names = sorted(list({x.get('group_name') or x.get('name') for x in valid_items}))
+        else:
+            names = sorted(list({x.get('name') for x in valid_items}))
+            
+        filtered_options[key] = ["Random"] + names
+
+    st.sidebar.divider()
+    st.sidebar.subheader("🔒 Manual Overrides")
+
+    # 3. Manual Selections (Using Filtered Options)
+    user_selections = {}
+    
+    # Helper: Find the best matching option in the dropdown list
+    def find_option_match(target, options):
+        if not target or target == "Unknown": return None
+        # 1. Exact match
+        if target in options: return target
+        # 2. Case-insensitive
+        target_lower = target.lower()
+        for opt in options:
+            if opt.lower() == target_lower: return opt
+        # 3. Partial match (e.g. "Skrulls" matches "The Skrulls")
+        for opt in options:
+            if opt == "Random": continue
+            if target_lower in opt.lower() or opt.lower() in target_lower:
+                return opt
+        return None
+
+    # Scheme & Mastermind
+    user_selections['scheme'] = st.sidebar.selectbox("Scheme", filtered_options.get('schemes', ["Random"]))
+    user_selections['mastermind'] = st.sidebar.selectbox("Mastermind", filtered_options.get('masterminds', ["Random"]))
+    
+    # --- LOGIC: AUTO-SELECT & LOCK "ALWAYS LEADS" ---
+    locked_villain = None
+    locked_henchman = None
+    
+    if user_selections['mastermind'] != "Random":
+        mm_obj = next((m for m in raw_data.get('masterminds', []) if m['name'] == user_selections['mastermind']), None)
+        
+        if mm_obj:
+            lead = mm_obj.get('always_leads')
+            if lead:
+                v_opts = filtered_options.get('villains', ["Random"])
+                match_v = find_option_match(lead, v_opts)
+                if match_v: locked_villain = match_v
+                
+                h_opts = filtered_options.get('henchmen', ["Random"])
+                match_h = find_option_match(lead, h_opts)
+                if match_h: locked_henchman = match_h
+
+    # Base Counts from Rules
+    base_rules = SETUP_RULES[players]
+    
+    # Villains
+    st.sidebar.markdown(f"**Villains ({base_rules['villains']} Groups)**")
+    user_selections['villains'] = []
+    for i in range(base_rules['villains']):
+        v_opts = filtered_options.get('villains', ["Random"])
+        key = f"v_{i}"
+        
+        slot_index = 0
+        slot_disabled = False
+        
+        if i == 0 and locked_villain:
+            if locked_villain in v_opts:
+                slot_index = v_opts.index(locked_villain)
+                slot_disabled = True
+                # FIX: Force the session state to update to the locked value
+                st.session_state[key] = locked_villain
+        
+        v_pick = st.sidebar.selectbox(f"Villain Group {i+1}", v_opts, index=slot_index, disabled=slot_disabled, key=key)
+        if v_pick != "Random": user_selections['villains'].append(v_pick)
+
+    # Henchmen
+    st.sidebar.markdown(f"**Henchmen ({base_rules['henchmen']} Groups)**")
+    user_selections['henchmen'] = []
+    for i in range(base_rules['henchmen']):
+        h_opts = filtered_options.get('henchmen', ["Random"])
+        key = f"h_{i}"
+        
+        slot_index = 0
+        slot_disabled = False
+        
+        if i == 0 and locked_henchman:
+            if locked_henchman in h_opts:
+                slot_index = h_opts.index(locked_henchman)
+                slot_disabled = True
+                # FIX: Force the session state to update to the locked value
+                st.session_state[key] = locked_henchman
+
+        h_pick = st.sidebar.selectbox(f"Henchman Group {i+1}", h_opts, index=slot_index, disabled=slot_disabled, key=key)
+        if h_pick != "Random": user_selections['henchmen'].append(h_pick)
+
+    # Heroes
+    st.sidebar.markdown(f"**Heroes ({base_rules['heroes']} Heroes)**")
+    user_selections['heroes'] = []
+    for i in range(base_rules['heroes']):
+        hero_opts = filtered_options.get('heroes', ["Random"])
+        hero_pick = st.sidebar.selectbox(f"Hero {i+1}", hero_opts, key=f"hero_{i}")
+        if hero_pick != "Random": user_selections['heroes'].append(hero_pick)
 
     # --- Main Area ---
     st.title("🦸 Legendary Setup Randomizer")
     
     if st.button("🎲 Generate New Setup", type="primary", use_container_width=True):
-        if not selected_sets:
-            st.error("Please select at least one expansion set.")
-        else:
-            run_randomizer(selected_sets, players)
+        run_randomizer(selected_sets, players, user_selections)
 
-def run_randomizer(selected_sets, players):
-    # Initialize your class
-    # We use st.spinner to show loading state
+def run_randomizer(selected_sets, players, user_selections):
     with st.spinner('Consulting the Multiverse...'):
         try:
-            randomizer = LegendaryRandomizer(selected_sets, players)
+            # Pass user_selections to the class
+            randomizer = LegendaryRandomizer(selected_sets, players, user_selections)
             setup = randomizer.generate_setup()
             
             if setup:
