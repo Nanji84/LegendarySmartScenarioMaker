@@ -1217,10 +1217,6 @@ class LegendaryRandomizer:
         # --- SMART MATCHING LOGIC ---
         target_count = self.scheme_mods['hero_deck_count']
         
-        # 1. Analyze Mastermind Difficulty
-        mm_attack_raw = self.setup['mastermind'].get('attack', '0')
-        mm_attack_val = int(re.search(r'\d+', str(mm_attack_raw)).group(0)) if re.search(r'\d+', str(mm_attack_raw)) else 0
-        is_hard_mm = mm_attack_val >= 11
 
         def score_hero(hero):
             score = 0
@@ -1258,11 +1254,41 @@ class LegendaryRandomizer:
                 if "ko pile" in hero_text_blob or "discard pile" in hero_text_blob:
                     score += 3
 
-            # B. STAT CURVE MATCHING (Priority 2)
-            if is_hard_mm:
-                avg_cost = sum(hero_costs) / len(hero_costs) if hero_costs else 0
-                if avg_cost >= 4.5:
+            # B. CURVE BALANCING (Priority 2)
+            # Ensures the HQ doesn't get cluttered with too many high-cost heroes.
+            
+            # 1. Calculate Average Cost of the Deck SO FAR
+            current_deck_costs = []
+            for h in deck:
+                if h.get('is_placeholder'): continue
+                for c in h.get('cards', []):
+                     if c.get('cost'):
+                        val = int(re.search(r'\d+', str(c['cost'])).group(0)) if re.search(r'\d+', str(c['cost'])) else 0
+                        current_deck_costs.append(val)
+            
+            deck_avg = sum(current_deck_costs) / len(current_deck_costs) if current_deck_costs else 0
+            
+            # 2. Calculate Candidate Average
+            cand_avg = sum(hero_costs) / len(hero_costs) if hero_costs else 0
+
+            # 3. Apply Balancing Logic
+            if not current_deck_costs:
+                # First pick: Prefer a standard flexible hero (Avg Cost 3.5 - 4.5)
+                if 3.5 <= cand_avg <= 4.5:
                     score += 2
+            else:
+                # If deck is getting expensive (>4.2 avg), demand cheaper heroes
+                if deck_avg > 4.2:
+                    if cand_avg < 3.5: score += 4  # High priority fix
+                    elif cand_avg > 4.5: score -= 2 # Penalize making it worse
+                
+                # If deck is very cheap (<3.0 avg), allow heavier heroes
+                elif deck_avg < 3.0:
+                    if cand_avg > 4.0: score += 3
+                
+                # Maintenance: Slight bonus for staying in the "Sweet Spot" (3.0 - 4.0)
+                elif 3.0 <= cand_avg <= 4.0:
+                    score += 1
 
             # C. CONDITIONAL TEAM SYNERGY (The Fix)
             # Only reward Team Matching heavily IF the hero explicitly asks for it in text.
