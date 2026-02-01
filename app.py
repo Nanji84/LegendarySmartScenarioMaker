@@ -1606,14 +1606,10 @@ def main():
                 with open(filename, 'r', encoding='utf-8') as f:
                     data = json.load(f)
                     raw_data[key] = data
-                    
-                    # Collect unique sets from all files
                     for item in data:
                         if item.get("set"):
-                            # Handle combined sets "Set A/Set B"
                             for s in item["set"].split('/'):
                                 all_sets.add(s.strip())
-                                
     except Exception as e:
         st.error(f"Error loading data: {e}")
 
@@ -1627,133 +1623,178 @@ def main():
         selected_sets = sorted_sets
         st.sidebar.success(f"All {len(sorted_sets)} expansions selected.")
     else:
-        # Smart Defaults
         desired_defaults = ["Core Set", "Marvel Studios' What If...?"]
         defaults = [s for s in desired_defaults if s in sorted_sets]
         if not defaults and sorted_sets: defaults = [sorted_sets[0]]
-        
         selected_sets = st.sidebar.multiselect("Select Expansions", sorted_sets, default=defaults)
 
     if not selected_sets:
         st.warning("Please select at least one expansion.")
         return
 
-    # --- FILTER DROPDOWNS BASED ON SELECTION ---
+    # --- FILTER DATA BASED ON SELECTION ---
     selected_sets_lower = {s.lower() for s in selected_sets}
-    
     def is_in_selection(item):
         item_set = item.get('set', '')
         if not item_set: return False
         parts = [p.strip().lower() for p in item_set.split('/')]
         return any(p in selected_sets_lower for p in parts)
 
+    filtered_data = {}
     filtered_options = {}
+    
     for key, items in raw_data.items():
-        # 1. Filter items belonging to selected sets
         valid_items = [i for i in items if is_in_selection(i)]
+        filtered_data[key] = valid_items # Store full objects for logic
         
-        # 2. Extract names for the dropdowns
+        # Extract names for dropdowns
         if key == "heroes":
             names = sorted(list({x['hero'] for x in valid_items}))
         elif key == "villains":
             names = sorted(list({x.get('group_name') or x.get('name') for x in valid_items}))
         else:
             names = sorted(list({x.get('name') for x in valid_items}))
-            
         filtered_options[key] = ["Random"] + names
 
     st.sidebar.divider()
     st.sidebar.subheader("🔒 Manual Overrides")
 
-    # 3. Manual Selections (Using Filtered Options)
+    # 3. Manual Selections
     user_selections = {}
     
-    # Helper: Find the best matching option in the dropdown list
+    # Helper: Find option match
     def find_option_match(target, options):
         if not target or target == "Unknown": return None
-        # 1. Exact match
         if target in options: return target
-        # 2. Case-insensitive
         target_lower = target.lower()
         for opt in options:
             if opt.lower() == target_lower: return opt
-        # 3. Partial match (e.g. "Skrulls" matches "The Skrulls")
         for opt in options:
             if opt == "Random": continue
             if target_lower in opt.lower() or opt.lower() in target_lower:
                 return opt
         return None
 
-    # Scheme & Mastermind
+    # UI: Scheme & Mastermind
     user_selections['scheme'] = st.sidebar.selectbox("Scheme", filtered_options.get('schemes', ["Random"]))
     user_selections['mastermind'] = st.sidebar.selectbox("Mastermind", filtered_options.get('masterminds', ["Random"]))
     
-    # --- LOGIC: AUTO-SELECT & LOCK "ALWAYS LEADS" ---
-    locked_villain = None
-    locked_henchman = None
+    # --- PRE-ANALYSIS: CALCULATE DYNAMIC COUNTS & REQUIREMENTS ---
+    # We create a temporary Randomizer to parse the rules of the selected Scheme
     
-    if user_selections['mastermind'] != "Random":
-        mm_obj = next((m for m in raw_data.get('masterminds', []) if m['name'] == user_selections['mastermind']), None)
+    # Defaults
+    base_rules = SETUP_RULES[players]
+    num_villains = base_rules['villains']
+    num_henchmen = base_rules['henchmen']
+    num_heroes = base_rules['heroes']
+    
+    locked_villains = []
+    locked_henchmen = []
+
+    if user_selections['scheme'] != "Random":
+        # 1. Find Scheme Object
+        scheme_obj = next((s for s in filtered_data['schemes'] if s['name'] == user_selections['scheme']), None)
         
+        if scheme_obj:
+            # 2. Run Parser (Dry Run)
+            temp_r = LegendaryRandomizer(selected_sets, players)
+            temp_r.data = filtered_data # Inject filtered data directly
+            temp_r.parse_scheme_rules(scheme_obj)
+            
+            # 3. Apply Villain/Henchmen Counts
+            # (Logic copied from pick_villains_and_henchmen)
+            v_needed = base_rules['villains'] + temp_r.scheme_mods['extra_villains']
+            h_needed = base_rules['henchmen'] + temp_r.scheme_mods['extra_henchmen']
+            
+            if temp_r.scheme_mods['double_group_count']:
+                v_needed *= 2
+                h_needed *= 2
+                
+            num_villains = v_needed
+            num_henchmen = h_needed
+            
+            # 4. Apply Hero Count
+            num_heroes = temp_r.scheme_mods['hero_deck_count']
+            
+            # 5. Extract Required Groups (Scheme)
+            # Match them to dropdown options immediately
+            v_opts = filtered_options.get('villains', [])
+            h_opts = filtered_options.get('henchmen', [])
+            
+            for req in temp_r.scheme_mods['required_villains']:
+                m = find_option_match(req, v_opts)
+                if m: locked_villains.append(m)
+                
+            for req in temp_r.scheme_mods['required_henchmen']:
+                m = find_option_match(req, h_opts)
+                if m: locked_henchmen.append(m)
+
+    # --- MASTERMIND LEAD LOCKING ---
+    if user_selections['mastermind'] != "Random":
+        mm_obj = next((m for m in filtered_data['masterminds'] if m['name'] == user_selections['mastermind']), None)
         if mm_obj:
             lead = mm_obj.get('always_leads')
             if lead:
-                v_opts = filtered_options.get('villains', ["Random"])
+                v_opts = filtered_options.get('villains', [])
                 match_v = find_option_match(lead, v_opts)
-                if match_v: locked_villain = match_v
+                if match_v and match_v not in locked_villains:
+                    locked_villains.append(match_v)
                 
-                h_opts = filtered_options.get('henchmen', ["Random"])
+                h_opts = filtered_options.get('henchmen', [])
                 match_h = find_option_match(lead, h_opts)
-                if match_h: locked_henchman = match_h
+                if match_h and match_h not in locked_henchmen:
+                    locked_henchmen.append(match_h)
 
-    # Base Counts from Rules
-    base_rules = SETUP_RULES[players]
-    
+    # --- RENDER DYNAMIC SIDEBAR ---
+
     # Villains
-    st.sidebar.markdown(f"**Villains ({base_rules['villains']} Groups)**")
+    st.sidebar.markdown(f"**Villains ({num_villains} Groups)**")
     user_selections['villains'] = []
-    for i in range(base_rules['villains']):
+    for i in range(num_villains):
         v_opts = filtered_options.get('villains', ["Random"])
         key = f"v_{i}"
         
+        # Determine Lock
         slot_index = 0
         slot_disabled = False
         
-        if i == 0 and locked_villain:
-            if locked_villain in v_opts:
-                slot_index = v_opts.index(locked_villain)
+        # Check if this slot index is covered by locked_villains list
+        if i < len(locked_villains):
+            target = locked_villains[i]
+            if target in v_opts:
+                slot_index = v_opts.index(target)
                 slot_disabled = True
-                # FIX: Force the session state to update to the locked value
-                st.session_state[key] = locked_villain
+                st.session_state[key] = target # Force update
         
         v_pick = st.sidebar.selectbox(f"Villain Group {i+1}", v_opts, index=slot_index, disabled=slot_disabled, key=key)
         if v_pick != "Random": user_selections['villains'].append(v_pick)
 
     # Henchmen
-    st.sidebar.markdown(f"**Henchmen ({base_rules['henchmen']} Groups)**")
+    st.sidebar.markdown(f"**Henchmen ({num_henchmen} Groups)**")
     user_selections['henchmen'] = []
-    for i in range(base_rules['henchmen']):
+    for i in range(num_henchmen):
         h_opts = filtered_options.get('henchmen', ["Random"])
         key = f"h_{i}"
         
         slot_index = 0
         slot_disabled = False
         
-        if i == 0 and locked_henchman:
-            if locked_henchman in h_opts:
-                slot_index = h_opts.index(locked_henchman)
+        if i < len(locked_henchmen):
+            target = locked_henchmen[i]
+            if target in h_opts:
+                slot_index = h_opts.index(target)
                 slot_disabled = True
-                # FIX: Force the session state to update to the locked value
-                st.session_state[key] = locked_henchman
-
+                st.session_state[key] = target
+                
         h_pick = st.sidebar.selectbox(f"Henchman Group {i+1}", h_opts, index=slot_index, disabled=slot_disabled, key=key)
         if h_pick != "Random": user_selections['henchmen'].append(h_pick)
 
     # Heroes
-    st.sidebar.markdown(f"**Heroes ({base_rules['heroes']} Heroes)**")
+    st.sidebar.markdown(f"**Heroes ({num_heroes} Heroes)**")
     user_selections['heroes'] = []
-    for i in range(base_rules['heroes']):
+    for i in range(num_heroes):
         hero_opts = filtered_options.get('heroes', ["Random"])
+        # (Heroes usually don't have hard locks in the same way, but logic could be added here if needed)
         hero_pick = st.sidebar.selectbox(f"Hero {i+1}", hero_opts, key=f"hero_{i}")
         if hero_pick != "Random": user_selections['heroes'].append(hero_pick)
 
