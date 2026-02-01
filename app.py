@@ -980,6 +980,32 @@ class LegendaryRandomizer:
         if re.search(r'Use double the normal number of Villain and Henchman Groups', text, re.IGNORECASE):
             self.scheme_mods['double_group_count'] = True
             self.scheme_mods['half_deck_mechanic'] = True
+            
+    def _find_by_ui_name(self, ui_name, item_list, type_key='hero'):
+        """Resolves a UI selection string (Name or Name (Set)) to a data object."""
+        # Check for Set suffix: "Name (Set)"
+        match = re.match(r"(.*?) \((.*?)\)$", ui_name)
+        if match:
+            target_name = match.group(1)
+            target_set = match.group(2)
+            for item in item_list:
+                # Get item name based on type
+                if type_key == 'hero': i_name = item['hero']
+                elif type_key == 'villain': i_name = item.get('group_name') or item.get('name')
+                else: i_name = item.get('name')
+                
+                if i_name == target_name and item.get('set') == target_set:
+                    return item
+        else:
+            # Fallback to exact name match (for unique names)
+            for item in item_list:
+                if type_key == 'hero': i_name = item['hero']
+                elif type_key == 'villain': i_name = item.get('group_name') or item.get('name')
+                else: i_name = item.get('name')
+                
+                if i_name == ui_name:
+                    return item
+        return None
 
     def pick_scheme(self):
         if not self.data.get('schemes'): raise Exception("No Schemes found.")
@@ -987,13 +1013,9 @@ class LegendaryRandomizer:
         # Check Manual Selection
         forced_name = self.user_selections.get('scheme')
         if forced_name and forced_name != "Random":
-            # Find the scheme object
-            candidates = [s for s in self.data['schemes'] if s['name'] == forced_name]
-            if candidates:
-                scheme = candidates[0]
-            else:
-                # Fallback if specific set not loaded but user selected it (edge case)
-                scheme = random.choice(self.data['schemes'])
+            # Use helper
+            scheme = self._find_by_ui_name(forced_name, self.data['schemes'], 'scheme')
+            if not scheme: scheme = random.choice(self.data['schemes'])
         else:
             scheme = random.choice(self.data['schemes'])
             
@@ -1010,8 +1032,8 @@ class LegendaryRandomizer:
         mm = None
         
         if forced_name and forced_name != "Random":
-             candidates = [m for m in self.data['masterminds'] if m['name'] == forced_name]
-             if candidates: mm = candidates[0]
+             # Use helper
+             mm = self._find_by_ui_name(forced_name, self.data['masterminds'], 'mastermind')
         
         if not mm:
             mm = random.choice(self.data['masterminds'])
@@ -1130,8 +1152,8 @@ class LegendaryRandomizer:
         user_picks = self.user_selections.get('villains', [])
         for pick_name in user_picks:
             if len(selected_villains) < total_villains_needed:
-                # Find the object
-                found = self._find_group_by_name(pick_name, 'villains')
+                # Use helper
+                found = self._find_by_ui_name(pick_name, self.data['villains'], 'villain')
                 if found and found not in selected_villains:
                     # Check if banned (e.g. by Set Aside rules)
                     is_banned = any(b.lower() in (found.get('group_name') or '').lower() for b in self.scheme_mods['banned_villains'])
@@ -1174,10 +1196,9 @@ class LegendaryRandomizer:
         # 2. USER SELECTIONS
         user_h_picks = self.user_selections.get('henchmen', [])
         for pick_name in user_h_picks:
-            # Check Mastermind Lead limit? usually MM leads is handled in step 1 if it was a henchman
-            # We treat User Pick as filling open slots
             if len(selected_hench) < total_hench_needed:
-                found = self._find_group_by_name(pick_name, 'henchmen')
+                # Use helper
+                found = self._find_by_ui_name(pick_name, self.data['henchmen'], 'henchman')
                 if found and found not in selected_hench:
                      selected_hench.append(found)
 
@@ -1234,10 +1255,9 @@ class LegendaryRandomizer:
         # --- 0. MANUAL USER SELECTIONS (NEW) ---
         user_hero_picks = self.user_selections.get('heroes', [])
         for pick_name in user_hero_picks:
-            # Find hero
-            candidates = [h for h in available_heroes if h['hero'] == pick_name]
-            if candidates:
-                chosen = candidates[0]
+            # Use helper
+            chosen = self._find_by_ui_name(pick_name, available_heroes, 'hero')
+            if chosen:
                 deck.append(chosen)
                 available_heroes.remove(chosen)
         
@@ -1644,17 +1664,32 @@ def main():
     filtered_options = {}
     
     for key, items in raw_data.items():
+        # 1. Filter items belonging to selected sets
         valid_items = [i for i in items if is_in_selection(i)]
-        filtered_data[key] = valid_items # Store full objects for logic
+        filtered_data[key] = valid_items
         
-        # Extract names for dropdowns
-        if key == "heroes":
-            names = sorted(list({x['hero'] for x in valid_items}))
-        elif key == "villains":
-            names = sorted(list({x.get('group_name') or x.get('name') for x in valid_items}))
-        else:
-            names = sorted(list({x.get('name') for x in valid_items}))
-        filtered_options[key] = ["Random"] + names
+        # 2. Extract names with Set Disambiguation logic
+        # Count occurrences of each name
+        name_counts = {}
+        for item in valid_items:
+            if key == "heroes": n = item['hero']
+            elif key == "villains": n = item.get('group_name') or item.get('name')
+            else: n = item.get('name')
+            name_counts[n] = name_counts.get(n, 0) + 1
+            
+        final_names = []
+        for item in valid_items:
+            if key == "heroes": n = item['hero']
+            elif key == "villains": n = item.get('group_name') or item.get('name')
+            else: n = item.get('name')
+            
+            # If duplicates exist across sets, append (Set Name)
+            if name_counts[n] > 1:
+                final_names.append(f"{n} ({item.get('set', 'Unknown')})")
+            else:
+                final_names.append(n)
+        
+        filtered_options[key] = ["Random"] + sorted(list(set(final_names)))
 
     st.sidebar.divider()
     st.sidebar.subheader("🔒 Manual Overrides")
@@ -1717,7 +1752,6 @@ def main():
             num_heroes = temp_r.scheme_mods['hero_deck_count']
             
             # 5. Extract Required Groups (Scheme)
-            # Match them to dropdown options immediately
             v_opts = filtered_options.get('villains', [])
             h_opts = filtered_options.get('henchmen', [])
             
@@ -1745,58 +1779,158 @@ def main():
                 if match_h and match_h not in locked_henchmen:
                     locked_henchmen.append(match_h)
 
+    # --- GATHER HERO CONSTRAINTS ---
+    # We map abstract requirements (Team/Name) to specific slots
+    hero_constraints = []
+    
+    # 1. Specific Includes (e.g. "Name contains Hulk")
+    # We retrieve these from the temp_randomizer if it ran
+    if user_selections['scheme'] != "Random" and 'temp_r' in locals():
+        for req in temp_r.scheme_mods['required_hero_deck_includes']:
+            count = req.get('count', 1)
+            for _ in range(count):
+                hero_constraints.append({'type': 'name', 'val': req['name']})
+                
+        for req in temp_r.scheme_mods['required_teams']:
+            count = req.get('count', 1)
+            for _ in range(count):
+                hero_constraints.append({'type': 'team', 'val': req['team']})
     # --- RENDER DYNAMIC SIDEBAR ---
 
     # Villains
     st.sidebar.markdown(f"**Villains ({num_villains} Groups)**")
     user_selections['villains'] = []
+    
+    # Track used names to remove from subsequent dropdowns
+    # Initialize with locked items to ensure they aren't manually picked in earlier open slots if order varies
+    used_villains = {v for v in locked_villains if v}
+
     for i in range(num_villains):
-        v_opts = filtered_options.get('villains', ["Random"])
-        key = f"v_{i}"
+        v_base_opts = filtered_options.get('villains', ["Random"])
         
-        # Determine Lock
+        # Identify if this specific slot is locked
+        current_lock = locked_villains[i] if i < len(locked_villains) else None
+        
+        # Filter Options: Allow "Random", the specific lock for THIS slot, or anything not yet used
+        v_opts = [
+            opt for opt in v_base_opts 
+            if opt == "Random" or opt == current_lock or opt not in used_villains
+        ]
+        
+        key = f"v_{i}"
         slot_index = 0
         slot_disabled = False
         
-        # Check if this slot index is covered by locked_villains list
-        if i < len(locked_villains):
-            target = locked_villains[i]
-            if target in v_opts:
-                slot_index = v_opts.index(target)
+        if current_lock:
+            if current_lock in v_opts:
+                slot_index = v_opts.index(current_lock)
                 slot_disabled = True
-                st.session_state[key] = target # Force update
+                st.session_state[key] = current_lock # Force update
         
         v_pick = st.sidebar.selectbox(f"Villain Group {i+1}", v_opts, index=slot_index, disabled=slot_disabled, key=key)
-        if v_pick != "Random": user_selections['villains'].append(v_pick)
+        
+        if v_pick != "Random": 
+            user_selections['villains'].append(v_pick)
+            # Add to used list so next dropdowns don't show it
+            used_villains.add(v_pick)
 
     # Henchmen
     st.sidebar.markdown(f"**Henchmen ({num_henchmen} Groups)**")
     user_selections['henchmen'] = []
+    used_henchmen = {h for h in locked_henchmen if h}
+
     for i in range(num_henchmen):
-        h_opts = filtered_options.get('henchmen', ["Random"])
-        key = f"h_{i}"
+        h_base_opts = filtered_options.get('henchmen', ["Random"])
+        current_lock = locked_henchmen[i] if i < len(locked_henchmen) else None
         
+        h_opts = [
+            opt for opt in h_base_opts 
+            if opt == "Random" or opt == current_lock or opt not in used_henchmen
+        ]
+        
+        key = f"h_{i}"
         slot_index = 0
         slot_disabled = False
         
-        if i < len(locked_henchmen):
-            target = locked_henchmen[i]
-            if target in h_opts:
-                slot_index = h_opts.index(target)
+        if current_lock:
+            if current_lock in h_opts:
+                slot_index = h_opts.index(current_lock)
                 slot_disabled = True
-                st.session_state[key] = target
+                st.session_state[key] = current_lock
                 
         h_pick = st.sidebar.selectbox(f"Henchman Group {i+1}", h_opts, index=slot_index, disabled=slot_disabled, key=key)
-        if h_pick != "Random": user_selections['henchmen'].append(h_pick)
+        
+        if h_pick != "Random": 
+            user_selections['henchmen'].append(h_pick)
+            used_henchmen.add(h_pick)
 
     # Heroes
     st.sidebar.markdown(f"**Heroes ({num_heroes} Heroes)**")
     user_selections['heroes'] = []
+    used_heroes = set()
+
+    # Create a lookup for hero data to check teams/names efficiently
+    hero_lookup = {h['hero']: h for h in filtered_data['heroes']}
+
     for i in range(num_heroes):
-        hero_opts = filtered_options.get('heroes', ["Random"])
-        # (Heroes usually don't have hard locks in the same way, but logic could be added here if needed)
-        hero_pick = st.sidebar.selectbox(f"Hero {i+1}", hero_opts, key=f"hero_{i}")
-        if hero_pick != "Random": user_selections['heroes'].append(hero_pick)
+        hero_base_opts = filtered_options.get('heroes', ["Random"])
+        
+        # Check for constraints on this slot
+        constraint = hero_constraints[i] if i < len(hero_constraints) else None
+        
+        label = f"Hero {i+1}"
+        filtered_opts = []
+        
+        if constraint:
+            if constraint['type'] == 'team':
+                req_team = constraint['val'].lower()
+                label += f" ({req_team.title()} Required)"
+                # Filter: Include Random + Heroes with matching team
+                for opt in hero_base_opts:
+                    if opt == "Random":
+                        filtered_opts.append(opt)
+                        continue
+                    
+                    h_obj = hero_lookup.get(opt)
+                    if h_obj:
+                        # Helper to find team (using same logic as class)
+                        h_team = "Unknown"
+                        if h_obj.get('cards'): h_team = h_obj['cards'][0].get('team', 'Unknown')
+                        
+                        if req_team in h_team.lower():
+                            filtered_opts.append(opt)
+                            
+            elif constraint['type'] == 'name':
+                req_name_frag = constraint['val'].lower()
+                label += f" (Name: '{constraint['val']}')"
+                # Filter: Include Random + Heroes matching name fragment
+                for opt in hero_base_opts:
+                    if opt == "Random":
+                        filtered_opts.append(opt)
+                        continue
+                    
+                    # Split fragment by " or " logic if present
+                    fragments = [f.strip() for f in req_name_frag.split(' or ')]
+                    if any(f in opt.lower() for f in fragments):
+                        filtered_opts.append(opt)
+        else:
+            # No constraint -> All options
+            filtered_opts = hero_base_opts
+
+        # Final Filter: Remove used heroes (unless it's the constraint satisfied by Random)
+        final_opts = [
+            opt for opt in filtered_opts 
+            if opt == "Random" or opt not in used_heroes
+        ]
+        
+        # If filtering left us with nothing (e.g. no Avengers in selected sets), fallback
+        if not final_opts: final_opts = ["Random"]
+
+        hero_pick = st.sidebar.selectbox(label, final_opts, key=f"hero_{i}")
+        
+        if hero_pick != "Random": 
+            user_selections['heroes'].append(hero_pick)
+            used_heroes.add(hero_pick)
 
     # --- Main Area ---
     st.title("🦸 Legendary Setup Randomizer")
