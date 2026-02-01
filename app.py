@@ -1119,48 +1119,58 @@ class LegendaryRandomizer:
         
         # --- VILLAINS ---
         total_villains_needed = base['villains'] + self.scheme_mods['extra_villains']
-        
-        # APPLY DOUBLE MODIFIER
-        if self.scheme_mods['double_group_count']:
-            total_villains_needed *= 2
-        
+        if self.scheme_mods['double_group_count']: total_villains_needed *= 2
+            
         selected_villains = []
+        user_v_picks = self.user_selections.get('villains', [])
         
-        # 1. SCHEME REQUIREMENTS (Highest Priority)
+        # Helper: Check if a requirement is already met by a user selection
+        def is_req_satisfied_by_user(req_name, user_picks):
+            # Resolve user strings to check for name matches
+            req_clean = req_name.lower().strip()
+            for pick in user_picks:
+                # Remove "(Set Name)" suffix for comparison
+                pick_base = re.sub(r' \((.*?)\)$', '', pick).lower().strip()
+                # Check for match (e.g. "Deadpool" in "Deadpool (Mercs)")
+                if req_clean == pick_base or req_clean in pick_base or pick_base in req_clean:
+                    return True
+            return False
+
+        # 1. SCHEME REQUIREMENTS (Updated)
         for req_name in self.scheme_mods['required_villains']:
+            # If user already picked a version of this group, skip adding the default one
+            if is_req_satisfied_by_user(req_name, user_v_picks):
+                continue
+                
             found = self._find_group_by_name(req_name, 'villains')
             if found and found not in selected_villains:
                 selected_villains.append(found)
 
-        # 2. MASTERMIND LEAD (Priority 2)
-        # Cannot be overridden by user
+        # 2. MASTERMIND LEAD (Updated)
         always_leads = self.setup['mastermind'].get('always_leads', 'Unknown')
         if always_leads != 'Unknown':
-             if len(selected_villains) < total_villains_needed:
-                # Search Villains
-                v_obj = self._find_group_by_name(always_leads, 'villains')
-                if v_obj and v_obj not in selected_villains:
-                     selected_villains.append(v_obj)
-                
-                # Check Henchmen (add to requirements list if found)
-                h_obj = self._find_group_by_name(always_leads, 'henchmen')
-                if h_obj and h_obj['name'] not in self.scheme_mods['required_henchmen']:
-                     self.scheme_mods['required_henchmen'].append(h_obj['name'])
+             # Check if user satisfied this lead manually
+             if not is_req_satisfied_by_user(always_leads, user_v_picks):
+                 if len(selected_villains) < total_villains_needed:
+                    v_obj = self._find_group_by_name(always_leads, 'villains')
+                    if v_obj and v_obj not in selected_villains:
+                         selected_villains.append(v_obj)
+                    
+                    # Check Henchmen (add to requirements list if found)
+                    h_obj = self._find_group_by_name(always_leads, 'henchmen')
+                    if h_obj and h_obj['name'] not in self.scheme_mods['required_henchmen']:
+                         self.scheme_mods['required_henchmen'].append(h_obj['name'])
 
         # 3. USER SELECTIONS (Priority 3)
-        # Only if slots are still available
-        user_picks = self.user_selections.get('villains', [])
-        for pick_name in user_picks:
+        for pick_name in user_v_picks:
             if len(selected_villains) < total_villains_needed:
-                # Use helper
                 found = self._find_by_ui_name(pick_name, self.data['villains'], 'villain')
                 if found and found not in selected_villains:
-                    # Check if banned (e.g. by Set Aside rules)
                     is_banned = any(b.lower() in (found.get('group_name') or '').lower() for b in self.scheme_mods['banned_villains'])
                     if not is_banned:
                         selected_villains.append(found)
 
-        # 4. FILL RANDOM (Priority 4)
+        # 4. FILL RANDOM
         target_count = max(total_villains_needed, len(selected_villains))
         remaining = target_count - len(selected_villains)
         
@@ -1180,24 +1190,23 @@ class LegendaryRandomizer:
 
         # --- HENCHMEN ---
         total_hench_needed = base['henchmen'] + self.scheme_mods['extra_henchmen']
-        
-        # APPLY DOUBLE MODIFIER
-        if self.scheme_mods['double_group_count']:
-            total_hench_needed *= 2
+        if self.scheme_mods['double_group_count']: total_hench_needed *= 2
         
         selected_hench = []
+        user_h_picks = self.user_selections.get('henchmen', [])
 
-        # 1. SCHEME REQUIREMENTS
+        # 1. SCHEME REQUIREMENTS (Updated)
         for req_name in self.scheme_mods['required_henchmen']:
+            if is_req_satisfied_by_user(req_name, user_h_picks):
+                continue
+            
             found = self._find_group_by_name(req_name, 'henchmen')
             if found and found not in selected_hench:
                 selected_hench.append(found)
 
         # 2. USER SELECTIONS
-        user_h_picks = self.user_selections.get('henchmen', [])
         for pick_name in user_h_picks:
             if len(selected_hench) < total_hench_needed:
-                # Use helper
                 found = self._find_by_ui_name(pick_name, self.data['henchmen'], 'henchman')
                 if found and found not in selected_hench:
                      selected_hench.append(found)
@@ -1261,44 +1270,65 @@ class LegendaryRandomizer:
                 deck.append(chosen)
                 available_heroes.remove(chosen)
         
-        # --- HANDLE SPECIFIC HERO INCLUSIONS ---
+        # --- HANDLE SPECIFIC HERO INCLUSIONS (Updated) ---
         for req in self.scheme_mods['required_hero_deck_includes']:
             req_name = req['name'].lower()
             search_terms = [t.strip() for t in req_name.split(' or ')]
             
-            candidates = []
-            for h in available_heroes:
+            # Check if User Selections (already in deck) satisfy this
+            already_have = 0
+            for h in deck:
+                if h.get('is_placeholder'): continue
                 h_name = h['hero'].lower()
                 if any(term in h_name for term in search_terms):
-                    candidates.append(h)
+                    already_have += 1
             
-            needed = req['count']
-            if len(candidates) >= needed:
-                chosen = random.sample(candidates, needed)
-                deck.extend(chosen)
-                for h in candidates:
-                    if h in available_heroes: available_heroes.remove(h)
-            else:
-                print(f"   [!] Warning: Not enough heroes matching '{req['name']}'.")
-                deck.extend(candidates)
-                for h in candidates:
-                    if h in available_heroes: available_heroes.remove(h)
+            needed = max(0, req['count'] - already_have)
+            
+            if needed > 0:
+                candidates = []
+                for h in available_heroes:
+                    h_name = h['hero'].lower()
+                    if any(term in h_name for term in search_terms):
+                        candidates.append(h)
+                
+                if len(candidates) >= needed:
+                    chosen = random.sample(candidates, needed)
+                    deck.extend(chosen)
+                    for h in candidates:
+                        if h in available_heroes: available_heroes.remove(h)
+                else:
+                    print(f"   [!] Warning: Not enough heroes matching '{req['name']}'.")
+                    deck.extend(candidates)
+                    for h in candidates:
+                        if h in available_heroes: available_heroes.remove(h)
 
-        # --- HANDLE REQUIRED TEAMS ---
+        # --- HANDLE REQUIRED TEAMS (Updated) ---
         for req in self.scheme_mods.get('required_teams', []):
-            target_team = req['team']
-            candidates = [h for h in available_heroes if target_team in self._get_hero_team(h).lower()]
-            needed = req['count']
+            target_team = req['team'].lower()
             
-            if len(candidates) >= needed:
-                chosen = random.sample(candidates, needed)
-                deck.extend(chosen)
-                for h in chosen:
-                    if h in available_heroes: available_heroes.remove(h)
-            else:
-                deck.extend(candidates)
-                for h in candidates:
-                    if h in available_heroes: available_heroes.remove(h)
+            # Check User Selections
+            already_have = 0
+            for h in deck:
+                if h.get('is_placeholder'): continue
+                t = self._get_hero_team(h).lower()
+                if target_team in t:
+                    already_have += 1
+            
+            needed = max(0, req['count'] - already_have)
+            
+            if needed > 0:
+                candidates = [h for h in available_heroes if target_team in self._get_hero_team(h).lower()]
+                
+                if len(candidates) >= needed:
+                    chosen = random.sample(candidates, needed)
+                    deck.extend(chosen)
+                    for h in chosen:
+                        if h in available_heroes: available_heroes.remove(h)
+                else:
+                    deck.extend(candidates)
+                    for h in candidates:
+                        if h in available_heroes: available_heroes.remove(h)
 
         # --- TEAM VERSUS SETUP ---
         if self.scheme_mods['team_versus_counts']:
