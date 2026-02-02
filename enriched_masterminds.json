@@ -938,7 +938,7 @@
   },
   {
     "name": "Loki",
-    "set": "Marvel Studios, Phase 1",
+    "set": "Marvel Studios, Phase 1/Core Set",
     "vp": "5",
     "attack": "10",
     "always_leads": "Enemies of Asgard",
@@ -1406,7 +1406,7 @@
   },
   {
     "name": "Red Skull",
-    "set": "Marvel Studios, Phase 1",
+    "set": "Marvel Studios, Phase 1/Core Set",
     "vp": "5",
     "attack": "7",
     "always_leads": "HYDRA",
