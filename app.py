@@ -1386,12 +1386,30 @@ class LegendaryRandomizer:
         # --- SMART MATCHING LOGIC ---
         target_count = self.scheme_mods['hero_deck_count']
         
-
-        # --- SMART MATCHING LOGIC ---
-        target_count = self.scheme_mods['hero_deck_count']
+        # --- NEW: Build Tag Context Report ---
+        active_mechanics = []
+        possible_mechanics = ["Mechanic_Wound", "Mechanic_Rescue", "Mechanic_Artifact", "Gen_KO", "Mechanic_Rise_Dead"]
+        for m in possible_mechanics:
+            if m in self.synergy_tags:
+                active_mechanics.append(m)
         
+        # Check Bystander override for Rescue logic
+        if (self.scheme_mods.get('bystanders_override') or 0) > 5 and "Mechanic_Rescue" not in active_mechanics:
+             active_mechanics.append("High Bystander Count (Rescue)")
+
+        tag_report = {
+            "Scheme": self._get_tags(self.setup['scheme']),
+            "Mastermind": self._get_tags(self.setup['mastermind']),
+            "Villains": {v.get('group_name') or v.get('name'): self._get_tags(v) for v in self.setup['villains']},
+            "Henchmen": {h['name']: self._get_tags(h) for h in self.setup['henchmen']},
+            "Active_Triggers": active_mechanics
+        }
+        self.setup['synergy_overview'] = tag_report
+        # -------------------------------------
+
         # Initialize log storage
         self.setup['synergy_logs'] = []
+        
 
         def score_hero(hero):
             score = 0
@@ -1410,8 +1428,8 @@ class LegendaryRandomizer:
             # A. MECHANIC SYNERGY
             if "Mechanic_Wound" in self.synergy_tags:
                 if "wound" in hero_text_blob or "heal" in hero_text_blob:
-                    score += 5
-                    reasons.append("Wound Management (+5)")
+                    score += 2
+                    reasons.append("Wound Management (+2)")
             
             bystander_val = self.scheme_mods.get('bystanders_override') or 0
             if bystander_val > 5 or "Mechanic_Rescue" in self.synergy_tags:
@@ -1482,24 +1500,57 @@ class LegendaryRandomizer:
                         score += 0.5
                         reasons.append(f"Team Match: {my_team.title()} (+0.5)")
 
-            # D. CLASS SYNERGY
-            current_classes = []
+            # D. CLASS SYNERGY (SMART BIDIRECTIONAL)
+            # 1. Analyze Deck State
+            deck_classes = set()
+            deck_needs = set()
+            standard_classes = ["strength", "instinct", "covert", "tech", "ranged"]
+            
             for h in deck:
                 if h.get('is_placeholder'): continue
                 for c in h.get('cards', []):
-                    current_classes.extend(c.get('classes', []))
+                    # Gather provided classes
+                    for cls in c.get('classes', []):
+                        deck_classes.add(cls.lower())
+                    # Gather required classes (Scan text for [class])
+                    ab_text = " ".join(c.get('abilities', [])).lower()
+                    for s_cls in standard_classes:
+                        if f"[{s_cls}]" in ab_text:
+                            deck_needs.add(s_cls)
             
-            my_classes = set()
+            # 2. Analyze Candidate
+            cand_classes = set()
+            cand_needs = set()
+            
             for c in hero['cards']:
                 for cls in c.get('classes', []):
-                    my_classes.add(cls)
+                    cand_classes.add(cls.lower())
             
-            for cls in my_classes:
-                if cls in current_classes:
-                    score += 1.5
-                    reasons.append(f"Class Match: {cls} (+1.5)")
-                    break 
+            # Check Candidate Requirements (using the pre-generated blob)
+            for s_cls in standard_classes:
+                if f"[{s_cls}]" in hero_text_blob:
+                    cand_needs.add(s_cls)
+            
+            # 3. Score
+            # Case A: Candidate triggers Deck (Deck needs X, Candidate has X)
+            triggers_deck = cand_classes.intersection(deck_needs)
+            if triggers_deck:
+                score += 3
+                reasons.append(f"Satisfies Deck Requirement: {', '.join(triggers_deck).title()} (+3)")
 
+            # Case B: Deck triggers Candidate (Candidate needs Y, Deck has Y)
+            triggered_by_deck = cand_needs.intersection(deck_classes)
+            if triggered_by_deck:
+                score += 3
+                reasons.append(f"Triggered by Deck: {', '.join(triggered_by_deck).title()} (+3)")
+
+            # Case C: Simple Class Match (Stacking)
+            # Only applied if no specific triggers are active, to maintain consistency
+            if not triggers_deck and not triggered_by_deck:
+                if not cand_classes.isdisjoint(deck_classes):
+                    score += 1
+                    reasons.append("Class Match (+1)")
+                    
             # Random Noise
             rng = random.uniform(0, 1.5)
             score += rng
@@ -1659,6 +1710,7 @@ class LegendaryRandomizer:
             "Wedding_Heroes": [f"{h['hero']} ({h['set']})" for h in self.scheme_mods.get('wedding_heroes', [])],
             "Custom_Deck": self.scheme_mods.get('custom_deck'),
             "synergy_logs": self.setup.get('synergy_logs', []),
+            "synergy_overview": self.setup.get('synergy_overview', {}),
             "Tyrant_Masterminds": [f"{m['name']} ({m['set']})" for m in self.setup.get('tyrant_masterminds', [])],
             "Drained_Mastermind": self.setup.get('drained_mastermind'),
             "Villain_Deck_Setup": {
@@ -2072,6 +2124,26 @@ def display_results(setup):
     if SHOW_SYNERGY_DEBUG and setup.get('synergy_logs'):
         st.divider()
         with st.expander("🔍 Synergy Debug Report", expanded=False):
+        
+        # --- NEW TAG OVERVIEW RENDERING ---
+            ov = setup.get('synergy_overview', {})
+            if ov:
+                st.markdown("### 🏷️ Active Tags & Triggers")
+                st.write("**Looking for Mechanics:**", ", ".join(ov['Active_Triggers']) if ov['Active_Triggers'] else "None (Pure Stat Balancing)")
+                
+                c1, c2 = st.columns(2)
+                with c1:
+                    st.caption(f"**Scheme Tags:** {ov['Scheme']}")
+                    st.caption(f"**Mastermind Tags:** {ov['Mastermind']}")
+                with c2:
+                    st.caption("**Villain Tags:**")
+                    for k,v in ov['Villains'].items():
+                        if v: st.caption(f"- {k}: {v}")
+                    st.caption("**Henchmen Tags:**")
+                    for k,v in ov['Henchmen'].items():
+                        if v: st.caption(f"- {k}: {v}")
+                st.divider()
+        
             st.info("This section shows why specific heroes were selected.")
             
             for log in setup['synergy_logs']:
