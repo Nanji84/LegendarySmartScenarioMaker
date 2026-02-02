@@ -5,6 +5,9 @@ import re
 import os
 import traceback
 
+# TOGGLE THIS TO TRUE/FALSE TO SHOW/HIDE SYNERGY LOGS
+SHOW_SYNERGY_DEBUG = True
+
 SETUP_RULES = {
     1: {"villains": 1, "henchmen": 1, "bystanders": 1, "heroes": 5},
     2: {"villains": 2, "henchmen": 1, "bystanders": 2, "heroes": 5},
@@ -819,6 +822,22 @@ class LegendaryRandomizer:
                 }
             else:
                 print(f"   [!] Warning: Could not find Villain Group '{v_group_name}' for {deck_name}.")
+                
+        # --- H. ORDERED HERO STACK (NEW) ---
+        # Matches: "Put 14 Adam Warlock Hero cards in a face up stack"
+        ordered_stack_match = re.search(r'Put (\d+) (.*?) Hero cards in a face up stack', text, re.IGNORECASE)
+        if ordered_stack_match:
+            count = int(ordered_stack_match.group(1))
+            hero_name = ordered_stack_match.group(2).strip()
+            
+            # 1. Ban this hero from the main Hero Deck so they don't appear twice
+            self.scheme_mods['banned_heroes'].append(hero_name)
+            
+            # 2. Add to Custom Deck display (appears under Scheme description)
+            self.scheme_mods['custom_deck'] = {
+                "name": f"{hero_name} Stack",
+                "lines": [f"{count} cards of {hero_name} (Ordered by cost)"]
+            }
         
         # --- 12. HERO DECK NAME REQUIREMENTS (FIXED) ---
         # Pattern A: Quotes (e.g. "Use exactly two Heroes with 'Hulk' in their Hero Names")
@@ -1154,11 +1173,16 @@ class LegendaryRandomizer:
                  if len(selected_villains) < total_villains_needed:
                     v_obj = self._find_group_by_name(always_leads, 'villains')
                     if v_obj and v_obj not in selected_villains:
-                         selected_villains.append(v_obj)
+                         # NEW: Check if this group is banned (e.g. set aside for a Custom Deck like Monster Pit)
+                         is_banned = any(b.lower() in (v_obj.get('group_name') or v_obj.get('name') or '').lower() for b in self.scheme_mods['banned_villains'])
+                         
+                         if not is_banned:
+                             selected_villains.append(v_obj)
                     
                     # Check Henchmen (add to requirements list if found)
                     h_obj = self._find_group_by_name(always_leads, 'henchmen')
                     if h_obj and h_obj['name'] not in self.scheme_mods['required_henchmen']:
+                         # Note: Henchmen bans are checked later in the Henchmen section loop
                          self.scheme_mods['required_henchmen'].append(h_obj['name'])
 
         # 3. USER SELECTIONS (Priority 3)
@@ -1363,10 +1387,17 @@ class LegendaryRandomizer:
         target_count = self.scheme_mods['hero_deck_count']
         
 
+        # --- SMART MATCHING LOGIC ---
+        target_count = self.scheme_mods['hero_deck_count']
+        
+        # Initialize log storage
+        self.setup['synergy_logs'] = []
+
         def score_hero(hero):
             score = 0
+            reasons = [] # Log reasons for debug
             
-            # Combine all text from hero's cards for scanning
+            # Combine text for scanning
             hero_text_blob = ""
             hero_costs = []
             for c in hero['cards']:
@@ -1376,33 +1407,34 @@ class LegendaryRandomizer:
                     val = int(re.search(r'\d+', str(c['cost'])).group(0)) if re.search(r'\d+', str(c['cost'])) else 0
                     hero_costs.append(val)
             
-            # A. MECHANIC SYNERGY (Priority 1)
-            
+            # A. MECHANIC SYNERGY
             if "Mechanic_Wound" in self.synergy_tags:
                 if "wound" in hero_text_blob or "heal" in hero_text_blob:
                     score += 5
+                    reasons.append("Wound Management (+5)")
             
             bystander_val = self.scheme_mods.get('bystanders_override') or 0
             if bystander_val > 5 or "Mechanic_Rescue" in self.synergy_tags:
                 if "bystander" in hero_text_blob or "rescue" in hero_text_blob:
                     score += 4
+                    reasons.append("Bystander Rescue (+4)")
             
             if "Mechanic_Artifact" in self.synergy_tags:
                 if "artifact" in hero_text_blob:
                     score += 5
+                    reasons.append("Artifact Synergy (+5)")
                     
             if "Gen_KO" in self.synergy_tags:
                 if "ko " in hero_text_blob: 
                     score += 2
+                    reasons.append("KO/Thinning (+2)")
                     
             if "Mechanic_Rise_Dead" in self.synergy_tags:
                 if "ko pile" in hero_text_blob or "discard pile" in hero_text_blob:
                     score += 3
+                    reasons.append("Graveyard Interaction (+3)")
 
-            # B. CURVE BALANCING (Priority 2)
-            # Ensures the HQ doesn't get cluttered with too many high-cost heroes.
-            
-            # 1. Calculate Average Cost of the Deck SO FAR
+            # B. CURVE BALANCING
             current_deck_costs = []
             for h in deck:
                 if h.get('is_placeholder'): continue
@@ -1412,50 +1444,45 @@ class LegendaryRandomizer:
                         current_deck_costs.append(val)
             
             deck_avg = sum(current_deck_costs) / len(current_deck_costs) if current_deck_costs else 0
-            
-            # 2. Calculate Candidate Average
             cand_avg = sum(hero_costs) / len(hero_costs) if hero_costs else 0
 
-            # 3. Apply Balancing Logic
             if not current_deck_costs:
-                # First pick: Prefer a standard flexible hero (Avg Cost 3.5 - 4.5)
                 if 3.5 <= cand_avg <= 4.5:
                     score += 2
+                    reasons.append("Balanced Starter (+2)")
             else:
-                # If deck is getting expensive (>4.2 avg), demand cheaper heroes
                 if deck_avg > 4.2:
-                    if cand_avg < 3.5: score += 4  # High priority fix
-                    elif cand_avg > 4.5: score -= 2 # Penalize making it worse
-                
-                # If deck is very cheap (<3.0 avg), allow heavier heroes
+                    if cand_avg < 3.5: 
+                        score += 4
+                        reasons.append("Curve Fixer (Cheap) (+4)")
+                    elif cand_avg > 4.5: 
+                        score -= 2
+                        reasons.append("Curve Penalty (Too Expensive) (-2)")
                 elif deck_avg < 3.0:
-                    if cand_avg > 4.0: score += 3
-                
-                # Maintenance: Slight bonus for staying in the "Sweet Spot" (3.0 - 4.0)
+                    if cand_avg > 4.0: 
+                        score += 3
+                        reasons.append("Curve Fixer (Heavy) (+3)")
                 elif 3.0 <= cand_avg <= 4.0:
                     score += 1
+                    reasons.append("Curve Maintainer (+1)")
 
-            # C. CONDITIONAL TEAM SYNERGY (The Fix)
-            # Only reward Team Matching heavily IF the hero explicitly asks for it in text.
-            
+            # C. CONDITIONAL TEAM SYNERGY
             current_teams = [self._get_hero_team(h) for h in deck if not h.get('is_placeholder')]
             my_team = self._get_hero_team(hero).lower()
             
             if my_team != 'unknown':
-                # Check if hero text contains "[team_name]" implies they trigger off it
-                # Example: If I am avengers, do I have "[avengers]" in my text?
                 team_trigger_pattern = f"[{my_team}]"
                 requires_team_synergy = team_trigger_pattern in hero_text_blob
                 
                 if my_team in current_teams:
                     if requires_team_synergy:
-                        # I NEED this team to function -> High Bonus
                         score += 4
+                        reasons.append(f"Team Requirement: {my_team.title()} (+4)")
                     else:
-                        # I match the team, but don't strictly need it -> Tiny Flavor Bonus
                         score += 0.5
+                        reasons.append(f"Team Match: {my_team.title()} (+0.5)")
 
-            # D. CLASS SYNERGY (Keeping this moderate)
+            # D. CLASS SYNERGY
             current_classes = []
             for h in deck:
                 if h.get('is_placeholder'): continue
@@ -1469,20 +1496,41 @@ class LegendaryRandomizer:
             
             for cls in my_classes:
                 if cls in current_classes:
-                    score += 1.5 # Reduced slightly to prioritize Mechanics over colors
+                    score += 1.5
+                    reasons.append(f"Class Match: {cls} (+1.5)")
                     break 
 
-            score += random.uniform(0, 1.5)
-            return score
+            # Random Noise
+            rng = random.uniform(0, 1.5)
+            score += rng
+            # Rounding for cleaner logs
+            return score, reasons
 
         # --- SELECTION LOOP ---
         while len(deck) < target_count and available_heroes:
             sample_size = min(10, len(available_heroes))
             candidates = random.sample(available_heroes, sample_size)
-            best_candidate = max(candidates, key=score_hero)
+            
+            best_candidate = None
+            best_score = -999
+            best_reasons = []
+            
+            for h in candidates:
+                s, r = score_hero(h)
+                if s > best_score:
+                    best_score = s
+                    best_candidate = h
+                    best_reasons = r
             
             deck.append(best_candidate)
             available_heroes.remove(best_candidate)
+            
+            # Save Log
+            self.setup['synergy_logs'].append({
+                "hero": best_candidate['hero'],
+                "score": round(best_score, 2),
+                "reasons": best_reasons
+            })
             
         self.setup['heroes'] = deck
         
@@ -1610,6 +1658,7 @@ class LegendaryRandomizer:
             "Villain_Deck_Heroes": vd_heroes_formatted,
             "Wedding_Heroes": [f"{h['hero']} ({h['set']})" for h in self.scheme_mods.get('wedding_heroes', [])],
             "Custom_Deck": self.scheme_mods.get('custom_deck'),
+            "synergy_logs": self.setup.get('synergy_logs', []),
             "Tyrant_Masterminds": [f"{m['name']} ({m['set']})" for m in self.setup.get('tyrant_masterminds', [])],
             "Drained_Mastermind": self.setup.get('drained_mastermind'),
             "Villain_Deck_Setup": {
@@ -2019,7 +2068,20 @@ def display_results(setup):
             for line in cd['lines']:
                 st.error(f"- {line}")
 
-    st.divider()
+# --- NEW DEBUG SECTION ---
+    if SHOW_SYNERGY_DEBUG and setup.get('synergy_logs'):
+        st.divider()
+        with st.expander("🔍 Synergy Debug Report", expanded=False):
+            st.info("This section shows why specific heroes were selected.")
+            
+            for log in setup['synergy_logs']:
+                st.markdown(f"**{log['hero']}** (Score: {log['score']})")
+                if log['reasons']:
+                    for r in log['reasons']:
+                        st.caption(f"• {r}")
+                else:
+                    st.caption("• Random Selection / Low Synergy")
+                st.divider()
 
     # --- 2. Villains & Henchmen ---
     col3, col4 = st.columns(2)
