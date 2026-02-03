@@ -5,7 +5,7 @@
     "vp": "6",
     "attack": "5+",
     "always_leads": "Salvagers",
-    "master_strike": "Starting from the Sewers, each Villain in the city uses its \u201cEscape\u201c ability.",
+    "master_strike": "Starting from the Sewers, each Villain in the city uses its “Escape“ ability.",
     "abilities": [
       "Double Striker"
     ],
@@ -45,7 +45,7 @@
         "title": "John Herod, Executive VP",
         "text": [
           "Cyber-Mod [covert] [covert] : John Herod gets +5 [attack] .",
-          "Master Strike : Put the two rightmost Heroes from the HQ into the Escape Pile. Then Cyber-Mod [covert] : You may pay 5 [attack] this turn to \u201cexpose Fake Captain America.\u201c If you do, KO one of your Heroes. If you don't by the end of this turn, each player gains a Wound (after you draw your new hand.) Adapt .",
+          "Master Strike : Put the two rightmost Heroes from the HQ into the Escape Pile. Then Cyber-Mod [covert] : You may pay 5 [attack] this turn to “expose Fake Captain America.“ If you do, KO one of your Heroes. If you don't by the end of this turn, each player gains a Wound (after you draw your new hand.) Adapt .",
           "Fight : KO two of your Heroes. Adapt ."
         ]
       },
@@ -67,6 +67,13 @@
       ],
       "Solution": [
         "Solution_Heal_Wound"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Instinct",
+        "Class_Ranged",
+        "Class_Strength",
+        "Class_Tech"
       ]
     }
   },
@@ -200,7 +207,7 @@
     "vp": "6",
     "attack": "4+",
     "always_leads": "Purifiers and any Sentinel Henchmen Group.",
-    "master_strike": "A card from the Bystander Stack ascends to become a 3 [attack] \u201cPrime Sentinel\u201c Mastermind with \u201c Fight : Rescue this. Master Strike : Each player reveals the top card of their deck and discards it if it costs 1 or more.\u201c",
+    "master_strike": "A card from the Bystander Stack ascends to become a 3 [attack] “Prime Sentinel“ Mastermind with “ Fight : Rescue this. Master Strike : Each player reveals the top card of their deck and discards it if it costs 1 or more.“",
     "abilities": [
       "All Sentinel Masterminds get +1 [attack] for each Master Strike in the KO pile, even after Bastion is defeated."
     ],
@@ -315,7 +322,7 @@
     "vp": "6",
     "attack": "8+",
     "always_leads": "Shi'ar Imperial Guard and a Shi'ar Henchmen Group.",
-    "master_strike": "If there are already any Shi'ar Villains in the city, each player gains a Wound. Then this strike enters the city as a \u201cShi'ar Battlecruiser\u201c [token] Villain with 7 [attack] worth 5 [vp] .",
+    "master_strike": "If there are already any Shi'ar Villains in the city, each player gains a Wound. Then this strike enters the city as a “Shi'ar Battlecruiser“ [token] Villain with 7 [attack] worth 5 [vp] .",
     "abilities": [
       "Deathbird gets +1 [attack] for each Shi'ar Villain in the city and Escape Pile."
     ],
@@ -353,7 +360,11 @@
     "master_strike": "Each player with exactly 6 cards in hand reveals a [tech] Hero or puts 2 cards from their hand on top of their deck.",
     "abilities": [],
     "tactics": [],
-    "tags": {}
+    "tags": {
+      "Trigger": [
+        "Class_Tech"
+      ]
+    }
   },
   {
     "name": "Dr. Strange",
@@ -454,6 +465,11 @@
       ],
       "Mechanic": [
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Team_Brotherhood",
+        "Team_XForce",
+        "Team_XMen"
       ]
     }
   },
@@ -468,7 +484,15 @@
       "Size-Changing : [strength] , [instinct] , [covert] , [tech] , [ranged]"
     ],
     "tactics": [],
-    "tags": {}
+    "tags": {
+      "Trigger": [
+        "Class_Covert",
+        "Class_Instinct",
+        "Class_Ranged",
+        "Class_Strength",
+        "Class_Tech"
+      ]
+    }
   },
   {
     "name": "Galactus",
@@ -482,17 +506,25 @@
       "Galactus Wins : When the city is destroyed."
     ],
     "tactics": [],
-    "tags": {}
+    "tags": {
+      "Trigger": [
+        "Class_Covert",
+        "Class_Instinct",
+        "Class_Ranged",
+        "Class_Strength",
+        "Class_Tech"
+      ]
+    }
   },
   {
-    "name": "General \u201cThunderbolt\u201d Ross",
+    "name": "General “Thunderbolt” Ross",
     "set": "World War Hulk",
     "vp": "6",
     "attack": "6*",
     "always_leads": "Code Red",
     "master_strike": "General Ross Transforms , then Cross-Dimensional Hulk Rampage .",
     "abilities": [
-      "Start of Game : Stack 8 Bystanders next to General Ross as \u201cHelicopter\u201c Villains with 2 [attack] . You can fight them to rescue them as Bystanders. You can't fight General Ross while he has any Helicopters."
+      "Start of Game : Stack 8 Bystanders next to General Ross as “Helicopter“ Villains with 2 [attack] . You can fight them to rescue them as Bystanders. You can't fight General Ross while he has any Helicopters."
     ],
     "tactics": [],
     "tags": {
@@ -509,7 +541,7 @@
     "always_leads": "Ghost Chasers",
     "master_strike": "Each player reveals a [instinct] Hero or discards two cards with [recruit] icons. Ghost Transforms .",
     "abilities": [
-      "Ghost gets +1 [attack] for each different cost among her \u201cKidnapped Victimis.\u201c While this side is face up, you may recruit cards from her Kidnapped Victims (in any order) , spending 2 [recruit] extra for each."
+      "Ghost gets +1 [attack] for each different cost among her “Kidnapped Victimis.“ While this side is face up, you may recruit cards from her Kidnapped Victims (in any order) , spending 2 [recruit] extra for each."
     ],
     "tactics": [],
     "tags": {
@@ -518,6 +550,9 @@
       ],
       "Combat": [
         "Gen_Attack"
+      ],
+      "Trigger": [
+        "Class_Instinct"
       ]
     }
   },
@@ -545,7 +580,7 @@
     "vp": "6",
     "attack": "8+",
     "always_leads": "Lethal Legion",
-    "master_strike": "This Strike enters the city as a 7 [attack] \u201cGraveyard\u201c Location that says \u201cThis gets +2 [attack] while there's a Villain here.\u201c It's Worth 5VP.",
+    "master_strike": "This Strike enters the city as a 7 [attack] “Graveyard“ Location that says “This gets +2 [attack] while there's a Villain here.“ It's Worth 5VP.",
     "abilities": [
       "Grim Reaper gets +1 [attack] for each Location card in the city."
     ],
@@ -564,7 +599,7 @@
     "always_leads": "Any Villain Group",
     "master_strike": "Each player puts three 0-cost cards from their discard pile on top of their deck.",
     "abilities": [
-      "Before each time you fight Hank Pym, you must \u201ctrack him down\u201c by discarding the top 6 cards of your deck, they paying 2 [attack] for each card you discarded that costs 0. If you don't pay this total, gain a Wound and your turn ends."
+      "Before each time you fight Hank Pym, you must “track him down“ by discarding the top 6 cards of your deck, they paying 2 [attack] for each card you discarded that costs 0. If you don't pay this total, gain a Wound and your turn ends."
     ],
     "tactics": [],
     "tags": {
@@ -582,7 +617,7 @@
     "vp": "6",
     "attack": "10+",
     "always_leads": "Omens of Ragnarok",
-    "master_strike": "This Strike enters the city as a 5 [attack] \u201cArmy of the Dead\u201c Villain worth 3VP. Then choose a Villain worth 3VP or more from your Victory Pile (including an Army of the Dead) to enter the city. If you didn't have any, each player gains a Wound.",
+    "master_strike": "This Strike enters the city as a 5 [attack] “Army of the Dead“ Villain worth 3VP. Then choose a Villain worth 3VP or more from your Victory Pile (including an Army of the Dead) to enter the city. If you didn't have any, each player gains a Wound.",
     "abilities": [
       "Bridge Conqueror 5, Streets Conqueror 5"
     ],
@@ -657,6 +692,9 @@
       "Mechanic": [
         "Mechanic_Rescue_Bystander",
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Class_Covert"
       ]
     }
   },
@@ -718,7 +756,7 @@
     "vp": "5",
     "attack": "9+",
     "always_leads": "Iron Foes",
-    "master_strike": "If there is a Villain in the Bank, each player gains a Wound. Otherwise, put this Master Strike into the Bank as a 6 [attack] \u201cStaneTech Weaponry\u201d Villain worth 4VP.",
+    "master_strike": "If there is a Villain in the Bank, each player gains a Wound. Otherwise, put this Master Strike into the Bank as a 6 [attack] “StaneTech Weaponry” Villain worth 4VP.",
     "abilities": [
       "Bank Conqueror 4"
     ],
@@ -737,7 +775,7 @@
     "always_leads": "Spider-Slayers",
     "master_strike": "Each player Investigates their deck for a card and puts it into the Angry Mobs stack.",
     "abilities": [
-      "Start of Game : Put 2 S.H.I.E.L.D. Officers per player into a face down \u201cAngry Mobs\u201c stack.",
+      "Start of Game : Put 2 S.H.I.E.L.D. Officers per player into a face down “Angry Mobs“ stack.",
       "Special Rules : You can spend 4 [attack] to reveal a random Angry Mob and put it into any player's discard pile. You can't fight J. Jonah Jameson while he has Angry Mobs."
     ],
     "tactics": [],
@@ -753,7 +791,7 @@
     "vp": "6",
     "attack": "8+",
     "always_leads": "Timelines of Kang",
-    "master_strike": "This Strike becomes a \u201cTime Incursion.\u201c Put it above the rightmost city space that doesn't yet have a Time Incursion.",
+    "master_strike": "This Strike becomes a “Time Incursion.“ Put it above the rightmost city space that doesn't yet have a Time Incursion.",
     "abilities": [
       "Kang has Conqueror 2 for each city space under a Time Incursion. (He benefits from Villains there.) Villains under a Time Incursion get +2 [attack] ."
     ],
@@ -769,8 +807,8 @@
     "set": "Marvel Studios' Ant-Man and the Wasp",
     "vp": "7",
     "attack": "11+",
-    "always_leads": "Armada of Kang. Set aside the Villains from an extra Villain Group as \u201cTimeline Variants.\u201c",
-    "master_strike": "Each player discards a [strength] Hero or gains a Wound. Put a random Timeline Variant Villain face up in the \u201cMultiverse\u201c space. Kang Transforms .",
+    "always_leads": "Armada of Kang. Set aside the Villains from an extra Villain Group as “Timeline Variants.“",
+    "master_strike": "Each player discards a [strength] Hero or gains a Wound. Put a random Timeline Variant Villain face up in the “Multiverse“ space. Kang Transforms .",
     "abilities": [
       "Rooftops Conqueror 3, Streets Conqueror 3, Bridge Conqueror 3"
     ],
@@ -778,6 +816,9 @@
     "tags": {
       "Mechanic": [
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Class_Strength"
       ]
     }
   },
@@ -811,7 +852,7 @@
     "vp": "6",
     "attack": "9",
     "always_leads": "Vibranium Liberator Drones",
-    "master_strike": "If there are any Killmonger cards in the city or HQ, each player gains a Wound. Choose a Killmonger Hero from your hand, any player's discard pile, or the HQ to enter the city as a Villain with [attack] equal to its cost +3 and \u201c Fight : KO this or choose a player to gain it.\u201c",
+    "master_strike": "If there are any Killmonger cards in the city or HQ, each player gains a Wound. Choose a Killmonger Hero from your hand, any player's discard pile, or the HQ to enter the city as a Villain with [attack] equal to its cost +3 and “ Fight : KO this or choose a player to gain it.“",
     "abilities": [
       "Always Include : Killmonger as one of the Heroes"
     ],
@@ -870,7 +911,11 @@
       "Bribe"
     ],
     "tactics": [],
-    "tags": {}
+    "tags": {
+      "Trigger": [
+        "Team_MarvelKnights"
+      ]
+    }
   },
   {
     "name": "Klaw",
@@ -878,9 +923,9 @@
     "vp": "6",
     "attack": "8+",
     "always_leads": "Enemies of Wakanda",
-    "master_strike": "Put the top card of the Hero Deck next to Klaw as a \u201cSonic Frequency,\u201c putting any previous Frequency on the bottom of the Hero Deck. Each player must reveal a card that shares a color with it or gain a Wound.",
+    "master_strike": "Put the top card of the Hero Deck next to Klaw as a “Sonic Frequency,“ putting any previous Frequency on the bottom of the Hero Deck. Each player must reveal a card that shares a color with it or gain a Wound.",
     "abilities": [
-      "Klaw is Double Empowered by the color(s) of his \u201cSonic Frequency\u201c."
+      "Klaw is Double Empowered by the color(s) of his “Sonic Frequency“."
     ],
     "tactics": [],
     "tags": {
@@ -910,6 +955,9 @@
       ],
       "Problem": [
         "Problem_Give_Wound"
+      ],
+      "Trigger": [
+        "Class_Instinct"
       ]
     }
   },
@@ -948,6 +996,9 @@
     "tags": {
       "Mechanic": [
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Class_Strength"
       ]
     }
   },
@@ -973,10 +1024,10 @@
     "set": "Deadpool",
     "vp": "6",
     "attack": "9+",
-    "always_leads": "Deadpool's \u201cFriends\u201c",
-    "master_strike": "Put this Strike in front of you as a \u201cBounty on Your Head.\u201c Then, each player gains a Wound for each Bounty on them. Any number of times during your turn, you may pay 1 [recruit] to move a Bounty from you to the player on your left.",
+    "always_leads": "Deadpool's “Friends“",
+    "master_strike": "Put this Strike in front of you as a “Bounty on Your Head.“ Then, each player gains a Wound for each Bounty on them. Any number of times during your turn, you may pay 1 [recruit] to move a Bounty from you to the player on your left.",
     "abilities": [
-      "Revenge for Deadpool's \u201cFriends\u201c"
+      "Revenge for Deadpool's “Friends“"
     ],
     "tactics": [],
     "tags": {
@@ -996,7 +1047,7 @@
     "always_leads": "Limbo",
     "master_strike": "Madelyne captures 4 Bystanders. If she already had any Bystanders before that, then each player gains a Wound.",
     "abilities": [
-      "Bystanders captured by Madelyne are \u201cDemon Goblin\u201c Villains with 2 [attack] . You can fight them to rescue them as Bystanders. You can't fight her while she has any Demon Goblins."
+      "Bystanders captured by Madelyne are “Demon Goblin“ Villains with 2 [attack] . You can fight them to rescue them as Bystanders. You can't fight her while she has any Demon Goblins."
     ],
     "tactics": [],
     "tags": {
@@ -1015,7 +1066,11 @@
     "master_strike": "Each player reveals an [x-men] Hero or discards down to four cards.",
     "abilities": [],
     "tactics": [],
-    "tags": {}
+    "tags": {
+      "Trigger": [
+        "Team_XMen"
+      ]
+    }
   },
   {
     "name": "Magus",
@@ -1023,7 +1078,7 @@
     "vp": "6",
     "attack": "9+",
     "always_leads": "Universal Church of Truth",
-    "master_strike": "If there are already any Villains with Shards in the city, each player gains a Wound. Then this Strike enters the city as a \u201cCosmic Wraith\u201c Villain with 4 [attack] worth 4VP. Then put a Shard on each Villain in the city.",
+    "master_strike": "If there are already any Villains with Shards in the city, each player gains a Wound. Then this Strike enters the city as a “Cosmic Wraith“ Villain with 4 [attack] worth 4VP. Then put a Shard on each Villain in the city.",
     "abilities": [
       "Magus gets +1 [attack] for each Villain in the city that has any Shards ."
     ],
@@ -1043,7 +1098,7 @@
     "vp": "6",
     "attack": "8",
     "always_leads": "Dark Council",
-    "master_strike": "Malekith captures a Villainous Weapon from the city or from any player's control or discard pile. Then this Master Strike enters the city as a Villainous Weapon called \u201cDarkspear\u201c that gives +2 [attack] . When you gain a Darkspear, it becomes a Thrown Artifact that gives +2 [attack] when thrown.",
+    "master_strike": "Malekith captures a Villainous Weapon from the city or from any player's control or discard pile. Then this Master Strike enters the city as a Villainous Weapon called “Darkspear“ that gives +2 [attack] . When you gain a Darkspear, it becomes a Thrown Artifact that gives +2 [attack] when thrown.",
     "abilities": [],
     "tactics": [],
     "tags": {
@@ -1116,6 +1171,9 @@
     "tags": {
       "Mechanic": [
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Team_MarvelKnights"
       ]
     }
   },
@@ -1151,7 +1209,11 @@
       "All Bystanders in Victory Piles are worth 3 [vp] ."
     ],
     "tactics": [],
-    "tags": {}
+    "tags": {
+      "Trigger": [
+        "Class_Tech"
+      ]
+    }
   },
   {
     "name": "Mole Man",
@@ -1187,6 +1249,9 @@
     "tags": {
       "Mechanic": [
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Class_Covert"
       ]
     }
   },
@@ -1204,6 +1269,9 @@
     "tags": {
       "Combat": [
         "Gen_Attack"
+      ],
+      "Trigger": [
+        "Class_Covert"
       ]
     }
   },
@@ -1264,6 +1332,9 @@
       ],
       "Mechanic": [
         "Mechanic_Discard"
+      ],
+      "Trigger": [
+        "Class_Tech"
       ]
     }
   },
@@ -1308,6 +1379,9 @@
       ],
       "Solution": [
         "Solution_Heal_Wound"
+      ],
+      "Trigger": [
+        "Class_Covert"
       ]
     }
   },
@@ -1344,9 +1418,9 @@
     "vp": "7",
     "attack": "12+",
     "always_leads": "Poisons",
-    "master_strike": "Each player reveals their hand and puts one of their non-grey Heroes next to Thanos in a \u201cPoisoned Souls\u201c pile.",
+    "master_strike": "Each player reveals their hand and puts one of their non-grey Heroes next to Thanos in a “Poisoned Souls“ pile.",
     "abilities": [
-      "Poison Thanos gets +1 [attack] for each different cost among cards in his \u201cPoisoned Souls\u201c pile."
+      "Poison Thanos gets +1 [attack] for each different cost among cards in his “Poisoned Souls“ pile."
     ],
     "tactics": [],
     "tags": {
@@ -1361,7 +1435,7 @@
     "vp": "6",
     "attack": "8+",
     "always_leads": "X-men First Class",
-    "master_strike": "(Command Strike) Choose the two highest-cost Allies in the Lair. Stack them next to Professor X as \u201cTelepathic Pawns.\u201c Professor X gets +1 [attack] for each Ally stacked next to him. Players can recrut the top Ally in the stack next to Professor X.",
+    "master_strike": "(Command Strike) Choose the two highest-cost Allies in the Lair. Stack them next to Professor X as “Telepathic Pawns.“ Professor X gets +1 [attack] for each Ally stacked next to him. Players can recrut the top Ally in the stack next to Professor X.",
     "abilities": [],
     "tactics": [],
     "tags": {
@@ -1376,7 +1450,7 @@
     "vp": "6",
     "attack": "6+",
     "always_leads": "Registration Enforcers",
-    "master_strike": "Each player says \u201czero\u201c or \u201cnot zero.\u201c Then, each player discards all their cards with that cost.",
+    "master_strike": "Each player says “zero“ or “not zero.“ Then, each player discards all their cards with that cost.",
     "abilities": [
       "Ragnarok gets +2 [attack] for each Hero Class among Heroes in the HQ."
     ],
@@ -1401,6 +1475,9 @@
     "tags": {
       "Mechanic": [
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Class_Tech"
       ]
     }
   },
@@ -1438,7 +1515,7 @@
     "vp": "6",
     "attack": "8+",
     "always_leads": "Berserkers",
-    "master_strike": "Stack this Strike next to Sabretooth as a \u201cSavagery.\u201c Each player KOs one of their Heroes that costs more than the number of Savageries. Any player that cannot do so gains a Wound instead.",
+    "master_strike": "Stack this Strike next to Sabretooth as a “Savagery.“ Each player KOs one of their Heroes that costs more than the number of Savageries. Any player that cannot do so gains a Wound instead.",
     "abilities": [
       "Sabretooth Berserks once for each Savagery stacked here.",
       "Fail : KO a non-grey Hero discarded by Sabretooth's Berserking."
@@ -1515,7 +1592,7 @@
       {
         "title": "Electro 2099",
         "text": [
-          "Always Leads : Any \u201cAlchemax\u201c or \u201cSinister\u201c Villain Group",
+          "Always Leads : Any “Alchemax“ or “Sinister“ Villain Group",
           "Setup : Adapt .",
           "Master Strike : Each player discards three cards then draws a card. Adapt .",
           "Fight : You may discard any number of cards, then draw that many cards. Adapt ."
@@ -1587,6 +1664,9 @@
     "tags": {
       "Combat": [
         "Gen_Attack"
+      ],
+      "Trigger": [
+        "Team_XForce"
       ]
     }
   },
@@ -1607,9 +1687,9 @@
     "vp": "6",
     "attack": "5+",
     "always_leads": "Taskmaster's Thunderbolts",
-    "master_strike": "Stack this Strike next to Taskmaster as \u201cHenchman Training.\u201c If there are any Henchmen in the city, each player gains a Wound.",
+    "master_strike": "Stack this Strike next to Taskmaster as “Henchman Training.“ If there are any Henchmen in the city, each player gains a Wound.",
     "abilities": [
-      "Henchmen get +1 [attack] for each \u201cHenchman Training\u201c stacked here.",
+      "Henchmen get +1 [attack] for each “Henchman Training“ stacked here.",
       "During your turn, Taskmaster gets + [attack] equal to the highest cost Hero you played this turn."
     ],
     "tactics": [],
@@ -1628,7 +1708,7 @@
     "vp": "7",
     "attack": "24*",
     "always_leads": "Infinity Gems",
-    "master_strike": "Each player reveals their hand and puts one of their non-grey Heroes next to Thanos in a \u201cBound Souls\u201c pile.",
+    "master_strike": "Each player reveals their hand and puts one of their non-grey Heroes next to Thanos in a “Bound Souls“ pile.",
     "abilities": [
       "Thanos gets -2 [attack] for each Infinity Gem Artifact card controlled by any player."
     ],
@@ -1683,10 +1763,14 @@
     "vp": "6",
     "attack": "9+",
     "always_leads": "Ultron's Legacy",
-    "master_strike": "Each player reveals a [tech] Hero or puts a non-grey Hero from their discard pile into a \u201cThreat Analysis pile\u201c next to Ultron. Ultron is Empowered by each color in his Threat Analysis pile.",
+    "master_strike": "Each player reveals a [tech] Hero or puts a non-grey Hero from their discard pile into a “Threat Analysis pile“ next to Ultron. Ultron is Empowered by each color in his Threat Analysis pile.",
     "abilities": [],
     "tactics": [],
-    "tags": {}
+    "tags": {
+      "Trigger": [
+        "Class_Tech"
+      ]
+    }
   },
   {
     "name": "Ultron Infinity",
@@ -1694,7 +1778,7 @@
     "vp": "6",
     "attack": "8+",
     "always_leads": "Ultron Sentries (even in solo mode)",
-    "master_strike": "Cross-Dimensional Ultron Rampage . Then each player stacks an Ultron Sentry from their Victory Pile next to Ultron. Put this Strike next to Ultron as an \u201cInfinity Stone.\u201c When Ultron has gained five Infinity Stones (plus this card as the Mind Stone) , he gets +\u221e [attack] (Solo mode: Also stack a random unused Ultron Sentry next to Ultron.)",
+    "master_strike": "Cross-Dimensional Ultron Rampage . Then each player stacks an Ultron Sentry from their Victory Pile next to Ultron. Put this Strike next to Ultron as an “Infinity Stone.“ When Ultron has gained five Infinity Stones (plus this card as the Mind Stone) , he gets +∞ [attack] (Solo mode: Also stack a random unused Ultron Sentry next to Ultron.)",
     "abilities": [
       "Ultron Infinity has all the Empowered abilities of all Ultron Sentries in the city, the Escape Pile, and stacked next to him."
     ],
@@ -1718,7 +1802,7 @@
     "vp": "6",
     "attack": "8+",
     "always_leads": "Vulture Tech",
-    "master_strike": "Put a Wound from the Wound Stack below each HQ space as a \u201cWinged Assault.\u201c Whenever a player gains or KOs a Hero from the HQ, the player on their right gains one of the Wounds below that HQ space.",
+    "master_strike": "Put a Wound from the Wound Stack below each HQ space as a “Winged Assault.“ Whenever a player gains or KOs a Hero from the HQ, the player on their right gains one of the Wounds below that HQ space.",
     "abilities": [
       "Striker"
     ],
