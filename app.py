@@ -1393,6 +1393,23 @@ class LegendaryRandomizer:
             if m in self.synergy_tags:
                 active_mechanics.append(m)
         
+        # NEW: Extract Enemy Counters (Triggers from Mastermind/Villains)
+        active_counters = []
+        setup_class_needs = set()
+        setup_team_needs = set()
+        
+        for tag in self.synergy_tags:
+            # Parse tags like "Class_Strength" or "Team_Avengers" from the enriched JSONs
+            if tag.startswith("Class_"):
+                cls = tag.split("_")[1].lower()
+                setup_class_needs.add(cls)
+                active_counters.append(f"Need {cls.title()}")
+            elif tag.startswith("Team_"):
+                # Tag format is "Team_XMen" -> need "xmen" for comparison
+                tm = tag.split("_")[1].lower()
+                setup_team_needs.add(tm)
+                active_counters.append(f"Need {tm}")
+
         # Check Bystander override for Rescue logic
         if (self.scheme_mods.get('bystanders_override') or 0) > 5 and "Mechanic_Rescue" not in active_mechanics:
              active_mechanics.append("High Bystander Count (Rescue)")
@@ -1402,14 +1419,13 @@ class LegendaryRandomizer:
             "Mastermind": self._get_tags(self.setup['mastermind']),
             "Villains": {v.get('group_name') or v.get('name'): self._get_tags(v) for v in self.setup['villains']},
             "Henchmen": {h['name']: self._get_tags(h) for h in self.setup['henchmen']},
-            "Active_Triggers": active_mechanics
+            "Active_Triggers": active_mechanics + active_counters
         }
         self.setup['synergy_overview'] = tag_report
         # -------------------------------------
 
         # Initialize log storage
         self.setup['synergy_logs'] = []
-        
 
         def score_hero(hero):
             score = 0
@@ -1484,6 +1500,28 @@ class LegendaryRandomizer:
                     score += 1
                     reasons.append("Curve Maintainer (+1)")
 
+            # --- NEW: ENEMY COUNTERS (Mastermind/Villain Triggers) ---
+            # 1. Class Counters
+            hero_classes = set()
+            for c in hero['cards']:
+                for cls in c.get('classes', []):
+                    hero_classes.add(cls.lower())
+            
+            matched_classes = hero_classes.intersection(setup_class_needs)
+            if matched_classes:
+                score += 3
+                reasons.append(f"Enemy Counter: {', '.join(matched_classes).title()} (+3)")
+
+            # 2. Team Counters
+            my_team = self._get_hero_team(hero)
+            if my_team != 'Unknown':
+                # Normalization to match the "Team_GuardiansOfTheGalaxy" -> "guardiansofthegalaxy" format
+                clean_my_team = my_team.replace('-', ' ').title().replace(' ', '').lower()
+                if clean_my_team in setup_team_needs:
+                    score += 3
+                    reasons.append(f"Enemy Counter: {my_team} (+3)")
+            # ---------------------------------------------------------
+
             # C. CONDITIONAL TEAM SYNERGY
             current_teams = [self._get_hero_team(h) for h in deck if not h.get('is_placeholder')]
             my_team = self._get_hero_team(hero).lower()
@@ -1556,6 +1594,21 @@ class LegendaryRandomizer:
             score += rng
             # Rounding for cleaner logs
             return score, reasons
+
+
+# --- SEEDING: Pick 1 Random Hero (User Request) ---
+        # We pick one hero completely at random first. 
+        # The Smart Matching Logic will then build around this hero (and any required ones).
+        if len(deck) < target_count and available_heroes:
+            seed = random.choice(available_heroes)
+            deck.append(seed)
+            available_heroes.remove(seed)
+            
+            self.setup['synergy_logs'].append({
+                "hero": seed['hero'],
+                "score": 0,
+                "reasons": ["Random Seed (Variety)"]
+            })
 
         # --- SELECTION LOOP ---
         while len(deck) < target_count and available_heroes:
