@@ -1959,6 +1959,8 @@ class LegendaryRandomizer:
 # ==========================================
 
 def get_team_badge(team_name):
+    if not team_name:
+        return ("👥", "No Team", "#bdc3c7")
     team_map = {
         "avengers": ("🅰️", "Avengers", "#e74c3c"),
         "x-men": ("❌", "X-Men", "#f1c40f"),
@@ -1973,12 +1975,14 @@ def get_team_badge(team_name):
         "illuminati": ("👁️", "Illuminati", "#f39c12"),
         "foes-of-asgard": ("⚡", "Foes of Asgard", "#d35400")
     }
-    t_lower = team_name.lower().strip()
+    t_lower = str(team_name).lower().strip()
     if t_lower in team_map:
         return team_map[t_lower]
-    return ("👥", team_name.title(), "#bdc3c7")
+    return ("👥", str(team_name).title(), "#bdc3c7")
 
 def get_class_badge(class_name):
+    if not class_name:
+        return ("▫️", "No Class", "#bdc3c7")
     class_map = {
         "strength": ("💪", "Strength", "#e67e22"),
         "instinct": ("🐾", "Instinct", "#2ecc71"),
@@ -1986,10 +1990,10 @@ def get_class_badge(class_name):
         "tech": ("🛠️", "Tech", "#3498db"),
         "ranged": ("🏹", "Ranged", "#9b59b6")
     }
-    c_lower = class_name.lower().strip()
+    c_lower = str(class_name).lower().strip()
     if c_lower in class_map:
         return class_map[c_lower]
-    return ("▫️", class_name.title(), "#bdc3c7")
+    return ("▫️", str(class_name).title(), "#bdc3c7")
 
 def inject_custom_styles():
     st.markdown("""
@@ -2142,11 +2146,19 @@ def main():
     st.set_page_config(page_title="Legendary Randomizer", page_icon="🦸", layout="wide")
     inject_custom_styles()
 
+    # --- PENDING COPY SETUP LOGIC ---
+    if 'pending_copy_setup' in st.session_state:
+        setup_data, p_val, s_val = st.session_state.pop('pending_copy_setup')
+        st.session_state['player_count'] = p_val
+        st.session_state['selected_expansions'] = s_val
+        st.session_state['apply_copy_setup'] = setup_data
+        st.rerun()
+
     # --- Sidebar: Configuration ---
     st.sidebar.header("⚙️ Setup")
     
     # 1. Player Count
-    players = st.sidebar.slider("Number of Players", min_value=1, max_value=5, value=3)
+    players = st.sidebar.slider("Number of Players", min_value=1, max_value=5, value=3, key="player_count")
     
     # --- LOAD RAW DATA & SETS ---
     raw_data = {}
@@ -2185,7 +2197,7 @@ def main():
         desired_defaults = ["Core Set", "Marvel Studios' What If...?"]
         defaults = [s for s in desired_defaults if s in sorted_sets]
         if not defaults and sorted_sets: defaults = [sorted_sets[0]]
-        selected_sets = st.sidebar.multiselect("Select Expansions", sorted_sets, default=defaults)
+        selected_sets = st.sidebar.multiselect("Select Expansions", sorted_sets, default=defaults, key="selected_expansions")
 
     if not selected_sets:
         st.warning("Please select at least one expansion.")
@@ -2230,6 +2242,51 @@ def main():
         
         filtered_options[key] = ["Random"] + sorted(list(set(final_names)))
 
+    # Apply copy setup logic if present in session state
+    if 'apply_copy_setup' in st.session_state:
+        setup_data = st.session_state.pop('apply_copy_setup')
+        
+        def find_sidebar_option(name, options):
+            if not name or not options:
+                return "Random"
+            if name in options:
+                return name
+            name_lower = name.lower()
+            for opt in options:
+                if opt.lower() == name_lower:
+                    return opt
+                if opt.lower().startswith(name_lower + " ("):
+                    return opt
+            clean_name = re.sub(r"\s*\(.*\)\s*$", "", name).strip().lower()
+            for opt in options:
+                opt_clean = re.sub(r"\s*\(.*\)\s*$", "", opt).strip().lower()
+                if opt_clean == clean_name:
+                    return opt
+            return "Random"
+
+        # 1. Scheme
+        sch = setup_data['raw_scheme']['name']
+        st.session_state['override_scheme'] = find_sidebar_option(sch, filtered_options.get('schemes', []))
+        
+        # 2. Mastermind
+        mm = setup_data['raw_mastermind']['name']
+        st.session_state['override_mastermind'] = find_sidebar_option(mm, filtered_options.get('masterminds', []))
+        
+        # 3. Villains
+        for i, v in enumerate(setup_data.get('Villains', [])):
+            matched = find_sidebar_option(v, filtered_options.get('villains', []))
+            st.session_state[f"v_{i}"] = matched
+            
+        # 4. Henchmen
+        for i, h in enumerate(setup_data.get('Henchmen', [])):
+            matched = find_sidebar_option(h, filtered_options.get('henchmen', []))
+            st.session_state[f"h_{i}"] = matched
+            
+        # 5. Heroes
+        for i, h_obj in enumerate(setup_data.get('raw_heroes', [])):
+            matched = find_sidebar_option(h_obj.get('hero', ''), filtered_options.get('heroes', []))
+            st.session_state[f"hero_{i}"] = matched
+
     st.sidebar.divider()
     st.sidebar.subheader("🔒 Manual Overrides")
 
@@ -2250,8 +2307,8 @@ def main():
         return None
 
     # UI: Scheme & Mastermind
-    user_selections['scheme'] = st.sidebar.selectbox("Scheme", filtered_options.get('schemes', ["Random"]))
-    user_selections['mastermind'] = st.sidebar.selectbox("Mastermind", filtered_options.get('masterminds', ["Random"]))
+    user_selections['scheme'] = st.sidebar.selectbox("Scheme", filtered_options.get('schemes', ["Random"]), key="override_scheme")
+    user_selections['mastermind'] = st.sidebar.selectbox("Mastermind", filtered_options.get('masterminds', ["Random"]), key="override_mastermind")
     
     # --- PRE-ANALYSIS: CALCULATE DYNAMIC COUNTS & REQUIREMENTS ---
     # We create a temporary Randomizer to parse the rules of the selected Scheme
@@ -2477,12 +2534,31 @@ def main():
     tab_gen, tab_hist = st.tabs(["🎲 Generator", "📜 History & Stats"])
     
     with tab_gen:
-        if st.button("🎲 Generate New Setup", type="primary", use_container_width=True):
-            setup = run_randomizer(selected_sets, players, user_selections)
-            if setup:
-                st.session_state['current_setup'] = setup
-                add_to_history(setup, players, selected_sets)
-                st.rerun()
+        if st.session_state.get('current_setup'):
+            col_gen1, col_gen2 = st.columns([2, 1])
+            with col_gen1:
+                if st.button("🎲 Generate New Setup", type="primary", use_container_width=True):
+                    setup = run_randomizer(selected_sets, players, user_selections)
+                    if setup:
+                        st.session_state['current_setup'] = setup
+                        add_to_history(setup, players, selected_sets)
+                        st.rerun()
+            with col_gen2:
+                if st.button("📋 Copy Setup to Sidebar", use_container_width=True):
+                    st.session_state['pending_copy_setup'] = (
+                        st.session_state['current_setup'],
+                        st.session_state.get('player_count', players),
+                        st.session_state.get('selected_expansions', selected_sets)
+                    )
+                    st.success("Config copied! Adjust choices in the sidebar.")
+                    st.rerun()
+        else:
+            if st.button("🎲 Generate New Setup", type="primary", use_container_width=True):
+                setup = run_randomizer(selected_sets, players, user_selections)
+                if setup:
+                    st.session_state['current_setup'] = setup
+                    add_to_history(setup, players, selected_sets)
+                    st.rerun()
                 
         if st.session_state.get('current_setup'):
             display_results(st.session_state['current_setup'])
@@ -2530,13 +2606,22 @@ def main():
                             st.markdown(f"- {h}")
                             
                     st.divider()
-                    col_btn1, col_btn2 = st.columns(2)
+                    col_btn1, col_btn2, col_btn3 = st.columns(3)
                     with col_btn1:
                         if st.button("🔄 Load into Generator", key=f"load_{entry['id']}_{idx}", use_container_width=True):
                             st.session_state['current_setup'] = setup_data
                             st.success("Setup loaded! Switch to the 🎲 Generator tab to view it.")
                             st.rerun()
                     with col_btn2:
+                        if st.button("📋 Copy to Sidebar", key=f"copy_sb_{entry['id']}_{idx}", use_container_width=True):
+                            st.session_state['pending_copy_setup'] = (
+                                setup_data,
+                                entry.get('players', 3),
+                                entry.get('selected_sets', selected_sets)
+                            )
+                            st.success("Config copied to sidebar!")
+                            st.rerun()
+                    with col_btn3:
                         if st.button("🗑️ Delete from History", key=f"del_{entry['id']}_{idx}", use_container_width=True):
                             delete_from_history(entry['id'])
                             if st.session_state.get('current_setup') == setup_data:
