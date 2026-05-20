@@ -1,0 +1,94 @@
+{
+  "weights": {
+    "enemy_counter_class": 3.0,
+    "enemy_counter_team": 3.0,
+    "team_requirement_match": 4.0,
+    "team_simple_match": 0.5,
+    "class_trigger_deck": 3.0,
+    "class_triggered_by_deck": 3.0,
+    "class_simple_match": 1.0,
+    "curve_balanced_starter": 2.0,
+    "curve_fixer_cheap": 4.0,
+    "curve_penalty_expensive": -2.0,
+    "curve_fixer_heavy": 3.0,
+    "curve_normal": 1.0
+  },
+  "setup_to_hero_rules": [
+    {
+      "trigger_tag": "Mechanic_Wound",
+      "matching_tags": [
+        "Mechanic_Wound",
+        "Solution_Heal_Wound",
+        "Problem_Give_Wound"
+      ],
+      "keywords": [
+        "wound",
+        "heal"
+      ],
+      "weight": 2.0,
+      "display_name": "Wound Management"
+    },
+    {
+      "trigger_tag": "Mechanic_Rescue",
+      "matching_tags": [
+        "Mechanic_Rescue_Bystander",
+        "Problem_Capture_Bystander"
+      ],
+      "keywords": [
+        "bystander",
+        "rescue"
+      ],
+      "weight": 4.0,
+      "display_name": "Bystander Rescue"
+    },
+    {
+      "trigger_tag": "Mechanic_Artifact",
+      "matching_tags": [
+        "Type_Artifact"
+      ],
+      "keywords": [
+        "artifact"
+      ],
+      "weight": 5.0,
+      "display_name": "Artifact Synergy"
+    },
+    {
+      "trigger_tag": "Gen_KO",
+      "matching_tags": [
+        "Gen_KO"
+      ],
+      "keywords": [
+        "ko "
+      ],
+      "weight": 2.0,
+      "display_name": "KO/Thinning"
+    },
+    {
+      "trigger_tag": "Mechanic_Rise_Dead",
+      "matching_tags": [
+        "Mechanic_Rise_Dead"
+      ],
+      "keywords": [
+        "ko pile",
+        "discard pile"
+      ],
+      "weight": 3.0,
+      "display_name": "Graveyard Interaction"
+    }
+  ],
+  "hero_to_hero_rules": [
+    {
+      "type": "tag_cross_count",
+      "synergy_tag": "Mechanic_Cost_2_Or_Less_Synergy",
+      "target_tags": [
+        "Cost_0",
+        "Cost_1",
+        "Cost_2",
+        "Cost_2*"
+      ],
+      "candidate_to_deck_weight": 2.0,
+      "deck_to_candidate_weight": 3.0,
+      "display_name": "2-Cost Synergy"
+    }
+  ]
+}

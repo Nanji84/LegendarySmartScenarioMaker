@@ -16,12 +16,87 @@ SETUP_RULES = {
     5: {"villains": 4, "henchmen": 2, "bystanders": 12, "heroes": 6}
 }
 
+DEFAULT_SYNERGY_CONFIG = {
+    "weights": {
+        "enemy_counter_class": 3.0,
+        "enemy_counter_team": 3.0,
+        "team_requirement_match": 4.0,
+        "team_simple_match": 0.5,
+        "class_trigger_deck": 3.0,
+        "class_triggered_by_deck": 3.0,
+        "class_simple_match": 1.0,
+        "curve_balanced_starter": 2.0,
+        "curve_fixer_cheap": 4.0,
+        "curve_penalty_expensive": -2.0,
+        "curve_fixer_heavy": 3.0,
+        "curve_normal": 1.0
+    },
+    "setup_to_hero_rules": [
+        {
+            "trigger_tag": "Mechanic_Wound",
+            "matching_tags": ["Mechanic_Wound", "Solution_Heal_Wound", "Problem_Give_Wound"],
+            "keywords": ["wound", "heal"],
+            "weight": 2.0,
+            "display_name": "Wound Management"
+        },
+        {
+            "trigger_tag": "Mechanic_Rescue",
+            "matching_tags": ["Mechanic_Rescue_Bystander", "Problem_Capture_Bystander"],
+            "keywords": ["bystander", "rescue"],
+            "weight": 4.0,
+            "display_name": "Bystander Rescue"
+        },
+        {
+            "trigger_tag": "Mechanic_Artifact",
+            "matching_tags": ["Type_Artifact"],
+            "keywords": ["artifact"],
+            "weight": 5.0,
+            "display_name": "Artifact Synergy"
+        },
+        {
+            "trigger_tag": "Gen_KO",
+            "matching_tags": ["Gen_KO"],
+            "keywords": ["ko "],
+            "weight": 2.0,
+            "display_name": "KO/Thinning"
+        },
+        {
+            "trigger_tag": "Mechanic_Rise_Dead",
+            "matching_tags": ["Mechanic_Rise_Dead"],
+            "keywords": ["ko pile", "discard pile"],
+            "weight": 3.0,
+            "display_name": "Graveyard Interaction"
+        }
+    ],
+    "hero_to_hero_rules": [
+        {
+            "type": "tag_cross_count",
+            "synergy_tag": "Mechanic_Cost_2_Or_Less_Synergy",
+            "target_tags": ["Cost_0", "Cost_1", "Cost_2", "Cost_2*"],
+            "candidate_to_deck_weight": 2.0,
+            "deck_to_candidate_weight": 3.0,
+            "display_name": "2-Cost Synergy"
+        }
+    ]
+}
+
 
 class LegendaryRandomizer:
     def __init__(self, user_sets, player_count, user_selections=None):
         self.user_sets = [s.lower().strip() for s in user_sets]
         self.player_count = player_count
         self.user_selections = user_selections or {}  # <--- NEW: Store selections
+        
+        # Load synergy configuration
+        self.synergy_config = DEFAULT_SYNERGY_CONFIG
+        config_path = "synergy_config.json"
+        if os.path.exists(config_path):
+            try:
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    self.synergy_config = json.load(f)
+                print(f"Loaded synergy configuration from {config_path}")
+            except Exception as e:
+                print(f"Warning: Failed to parse {config_path}. Using default configuration. Error: {e}")
         self.data = {}
         self.setup = {}
         self.synergy_tags = []
@@ -1441,32 +1516,23 @@ class LegendaryRandomizer:
                     val = int(re.search(r'\d+', str(c['cost'])).group(0)) if re.search(r'\d+', str(c['cost'])) else 0
                     hero_costs.append(val)
             
-            # A. MECHANIC SYNERGY
-            if "Mechanic_Wound" in self.synergy_tags:
-                if "wound" in hero_text_blob or "heal" in hero_text_blob:
-                    score += 2
-                    reasons.append("Wound Management (+2)")
-            
-            bystander_val = self.scheme_mods.get('bystanders_override') or 0
-            if bystander_val > 5 or "Mechanic_Rescue" in self.synergy_tags:
-                if "bystander" in hero_text_blob or "rescue" in hero_text_blob:
-                    score += 4
-                    reasons.append("Bystander Rescue (+4)")
-            
-            if "Mechanic_Artifact" in self.synergy_tags:
-                if "artifact" in hero_text_blob:
-                    score += 5
-                    reasons.append("Artifact Synergy (+5)")
+            # A. SETUP-TO-HERO CONFIGURABLE SYNERGIES
+            hero_tags = self._get_hero_tags(hero)
+            for rule in self.synergy_config.get('setup_to_hero_rules', []):
+                trigger_tag = rule.get('trigger_tag')
+                bystander_val = self.scheme_mods.get('bystanders_override') or 0
+                is_high_bystanders = (trigger_tag == "Mechanic_Rescue" and bystander_val > 5)
+                
+                if trigger_tag in self.synergy_tags or is_high_bystanders:
+                    # Check tags match
+                    tag_matched = any(t in hero_tags for t in rule.get('matching_tags', []))
+                    # Check text keywords match (case-insensitive)
+                    keyword_matched = any(kw.lower() in hero_text_blob for kw in rule.get('keywords', []))
                     
-            if "Gen_KO" in self.synergy_tags:
-                if "ko " in hero_text_blob: 
-                    score += 2
-                    reasons.append("KO/Thinning (+2)")
-                    
-            if "Mechanic_Rise_Dead" in self.synergy_tags:
-                if "ko pile" in hero_text_blob or "discard pile" in hero_text_blob:
-                    score += 3
-                    reasons.append("Graveyard Interaction (+3)")
+                    if tag_matched or keyword_matched:
+                        w = rule.get('weight', 0.0)
+                        score += w
+                        reasons.append(f"{rule.get('display_name')} (+{w})")
 
             # B. CURVE BALANCING
             current_deck_costs = []
@@ -1480,27 +1546,33 @@ class LegendaryRandomizer:
             deck_avg = sum(current_deck_costs) / len(current_deck_costs) if current_deck_costs else 0
             cand_avg = sum(hero_costs) / len(hero_costs) if hero_costs else 0
 
+            weights = self.synergy_config.get('weights', {})
             if not current_deck_costs:
                 if 3.5 <= cand_avg <= 4.5:
-                    score += 2
-                    reasons.append("Balanced Starter (+2)")
+                    w = weights.get('curve_balanced_starter', 2.0)
+                    score += w
+                    reasons.append(f"Balanced Starter (+{w})")
             else:
                 if deck_avg > 4.2:
                     if cand_avg < 3.5: 
-                        score += 4
-                        reasons.append("Curve Fixer (Cheap) (+4)")
+                        w = weights.get('curve_fixer_cheap', 4.0)
+                        score += w
+                        reasons.append(f"Curve Fixer (Cheap) (+{w})")
                     elif cand_avg > 4.5: 
-                        score -= 2
-                        reasons.append("Curve Penalty (Too Expensive) (-2)")
+                        w = weights.get('curve_penalty_expensive', -2.0)
+                        score += w
+                        reasons.append(f"Curve Penalty (Too Expensive) ({w})")
                 elif deck_avg < 3.0:
                     if cand_avg > 4.0: 
-                        score += 3
-                        reasons.append("Curve Fixer (Heavy) (+3)")
+                        w = weights.get('curve_fixer_heavy', 3.0)
+                        score += w
+                        reasons.append(f"Curve Fixer (Heavy) (+{w})")
                 elif 3.0 <= cand_avg <= 4.0:
-                    score += 1
-                    reasons.append("Curve Maintainer (+1)")
+                    w = weights.get('curve_normal', 1.0)
+                    score += w
+                    reasons.append(f"Curve Maintainer (+{w})")
 
-            # --- NEW: ENEMY COUNTERS (Mastermind/Villain Triggers) ---
+            # --- ENEMY COUNTERS (Mastermind/Villain Triggers) ---
             # 1. Class Counters
             hero_classes = set()
             for c in hero['cards']:
@@ -1509,8 +1581,9 @@ class LegendaryRandomizer:
             
             matched_classes = hero_classes.intersection(setup_class_needs)
             if matched_classes:
-                score += 3
-                reasons.append(f"Enemy Counter: {', '.join(matched_classes).title()} (+3)")
+                w = weights.get('enemy_counter_class', 3.0)
+                score += w
+                reasons.append(f"Enemy Counter: {', '.join(matched_classes).title()} (+{w})")
 
             # 2. Team Counters
             my_team = self._get_hero_team(hero)
@@ -1518,8 +1591,9 @@ class LegendaryRandomizer:
                 # Normalization to match the "Team_GuardiansOfTheGalaxy" -> "guardiansofthegalaxy" format
                 clean_my_team = my_team.replace('-', ' ').title().replace(' ', '').lower()
                 if clean_my_team in setup_team_needs:
-                    score += 3
-                    reasons.append(f"Enemy Counter: {my_team} (+3)")
+                    w = weights.get('enemy_counter_team', 3.0)
+                    score += w
+                    reasons.append(f"Enemy Counter: {my_team} (+{w})")
             # ---------------------------------------------------------
 
             # C. CONDITIONAL TEAM SYNERGY
@@ -1532,11 +1606,13 @@ class LegendaryRandomizer:
                 
                 if my_team in current_teams:
                     if requires_team_synergy:
-                        score += 4
-                        reasons.append(f"Team Requirement: {my_team.title()} (+4)")
+                        w = weights.get('team_requirement_match', 4.0)
+                        score += w
+                        reasons.append(f"Team Requirement: {my_team.title()} (+{w})")
                     else:
-                        score += 0.5
-                        reasons.append(f"Team Match: {my_team.title()} (+0.5)")
+                        w = weights.get('team_simple_match', 0.5)
+                        score += w
+                        reasons.append(f"Team Match: {my_team.title()} (+{w})")
 
             # D. CLASS SYNERGY (SMART BIDIRECTIONAL)
             # 1. Analyze Deck State
@@ -1573,22 +1649,77 @@ class LegendaryRandomizer:
             # Case A: Candidate triggers Deck (Deck needs X, Candidate has X)
             triggers_deck = cand_classes.intersection(deck_needs)
             if triggers_deck:
-                score += 3
-                reasons.append(f"Satisfies Deck Requirement: {', '.join(triggers_deck).title()} (+3)")
+                w = weights.get('class_trigger_deck', 3.0)
+                score += w
+                reasons.append(f"Satisfies Deck Requirement: {', '.join(triggers_deck).title()} (+{w})")
 
             # Case B: Deck triggers Candidate (Candidate needs Y, Deck has Y)
             triggered_by_deck = cand_needs.intersection(deck_classes)
             if triggered_by_deck:
-                score += 3
-                reasons.append(f"Triggered by Deck: {', '.join(triggered_by_deck).title()} (+3)")
+                w = weights.get('class_triggered_by_deck', 3.0)
+                score += w
+                reasons.append(f"Triggered by Deck: {', '.join(triggered_by_deck).title()} (+{w})")
 
             # Case C: Simple Class Match (Stacking)
             # Only applied if no specific triggers are active, to maintain consistency
             if not triggers_deck and not triggered_by_deck:
                 if not cand_classes.isdisjoint(deck_classes):
-                    score += 1
-                    reasons.append("Class Match (+1)")
+                    w = weights.get('class_simple_match', 1.0)
+                    score += w
+                    reasons.append(f"Class Match (+{w})")
+
+            # E. HERO-TO-HERO CONFIGURABLE SYNERGIES
+            for rule in self.synergy_config.get('hero_to_hero_rules', []):
+                rule_type = rule.get('type')
+                if rule_type == 'tag_cross_count':
+                    synergy_tag = rule.get('synergy_tag')
+                    target_tags = rule.get('target_tags', [])
                     
+                    def has_target_tag(card):
+                        # 1. Direct tag check
+                        card_tags = []
+                        if 'tags' in card:
+                            for cat, tags in card['tags'].items(): card_tags.extend(tags)
+                        if any(t in card_tags for t in target_tags):
+                            return True
+                        # 2. Fallback numeric cost check for Cost_X tags
+                        if card.get('cost'):
+                            try:
+                                cost_val = int(re.search(r'\d+', str(card['cost'])).group(0))
+                                cost_tag = f"Cost_{cost_val}"
+                                if cost_tag in target_tags:
+                                    return True
+                            except:
+                                pass
+                        return False
+
+                    # 1. Check if candidate has synergy tag
+                    cand_has_synergy = synergy_tag in hero_tags
+                    cand_target_count = sum(1 for c in hero['cards'] if has_target_tag(c))
+                            
+                    # 2. Check deck state
+                    deck_has_synergy = False
+                    deck_target_count = 0
+                    for h in deck:
+                        if h.get('is_placeholder'): continue
+                        h_tags = self._get_hero_tags(h)
+                        if synergy_tag in h_tags:
+                            deck_has_synergy = True
+                        deck_target_count += sum(1 for c in h.get('cards', []) if has_target_tag(c))
+                                
+                    # 3. Apply scores
+                    if cand_has_synergy and deck_target_count > 0:
+                        cand_to_deck_w = rule.get('candidate_to_deck_weight', 0.0)
+                        bonus = deck_target_count * cand_to_deck_w
+                        score += bonus
+                        reasons.append(f"{rule.get('display_name')}: Triggered by {deck_target_count} target cards in deck (+{bonus})")
+                        
+                    if deck_has_synergy and cand_target_count > 0:
+                        deck_to_cand_w = rule.get('deck_to_candidate_weight', 0.0)
+                        bonus = cand_target_count * deck_to_cand_w
+                        score += bonus
+                        reasons.append(f"{rule.get('display_name')}: Candidate has {cand_target_count} target cards (+{bonus})")
+
             # Random Noise
             rng = random.uniform(0, 1.5)
             score += rng

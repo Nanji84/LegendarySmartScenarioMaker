@@ -666,7 +666,7 @@
         ],
         "team": null,
         "abilities": [
-          "Ritual Artifact \u2014 If you fought a Villain or Mastermind, you may set aside the Orb of Agamotto to reveal the top four cards of your deck. KO up to one of them, put two of them in your hand, and put the rest back on top in any order. Then discard the Orb of Agamotto."
+          "Ritual Artifact — If you fought a Villain or Mastermind, you may set aside the Orb of Agamotto to reveal the top four cards of your deck. KO up to one of them, put two of them in your hand, and put the rest back on top in any order. Then discard the Orb of Agamotto."
         ],
         "tags": {
           "Static": [
@@ -1547,7 +1547,7 @@
         ],
         "team": "x-men",
         "abilities": [
-          "When any player defeats a Villain or Mastermind with a \u201cFight\u201c effect, you may discard this card to cancel that fight effect. If you do, draw three cards."
+          "When any player defeats a Villain or Mastermind with a “Fight“ effect, you may discard this card to cancel that fight effect. If you do, draw three cards."
         ],
         "tags": {
           "Static": [
@@ -2195,7 +2195,7 @@
         "team": "heroes-of-asgard",
         "abilities": [
           "You cannot throw Stormbreaker unless you are Worthy .",
-          "Thrown Artifact \u2014 To throw this, you must discard a card from your hand. Then you get +2 [attack] for each card you discarded from your hand this turn."
+          "Thrown Artifact — To throw this, you must discard a card from your hand. Then you get +2 [attack] for each card you discarded from your hand this turn."
         ],
         "tags": {
           "Static": [
@@ -2435,7 +2435,7 @@
         ],
         "team": "inhumans",
         "abilities": [
-          "Gain the Throne's Favor . If you already have it, you may spend it to choose \u201cSpeak\u201c or \u201cDon't Speak\u201c then reveal the top 3 cards of your deck:",
+          "Gain the Throne's Favor . If you already have it, you may spend it to choose “Speak“ or “Don't Speak“ then reveal the top 3 cards of your deck:",
           "Speak : Put all of them with rules text into your hand. Don't Speak : You may KO any number of them with no rules text.",
           "Put the rest back in any order."
         ],
@@ -3602,7 +3602,7 @@
         "title": "HYDRA Half-Wit",
         "rarity": "common",
         "cost": "2",
-        "attack": "1\u00bd",
+        "attack": "1½",
         "recruit": null,
         "classes": [
           "tech"
@@ -3627,7 +3627,7 @@
         "rarity": "common",
         "cost": "3",
         "attack": null,
-        "recruit": "2\u00bd",
+        "recruit": "2½",
         "classes": [
           "covert"
         ],
@@ -3776,7 +3776,7 @@
         }
       },
       {
-        "title": "Prot\u00e9g\u00e9 of Dr. Doom",
+        "title": "Protégé of Dr. Doom",
         "rarity": "rare",
         "cost": "8",
         "attack": "4+",
@@ -6143,7 +6143,7 @@
         ],
         "team": "marvel-knights",
         "abilities": [
-          "Ritual Artifact \u2014 If any cards were \u201crevealed\u201c, \u201clooked at\u201c, or \u201cdiscarded\u201c from any deck, you may discard the Purple Gem to get +6 [attack] . (Just drawing or playing a card from a deck doesn't count.)"
+          "Ritual Artifact — If any cards were “revealed“, “looked at“, or “discarded“ from any deck, you may discard the Purple Gem to get +6 [attack] . (Just drawing or playing a card from a deck doesn't count.)"
         ],
         "tags": {
           "Static": [
@@ -7545,7 +7545,7 @@
         "title": "It'll Grow Back",
         "rarity": "common",
         "cost": "4",
-        "attack": "2\u00bd+",
+        "attack": "2½+",
         "recruit": null,
         "classes": [
           "instinct"
@@ -7578,7 +7578,7 @@
         "title": "Running Commentary",
         "rarity": "uncommon",
         "cost": "5",
-        "attack": "3\u00bd+",
+        "attack": "3½+",
         "recruit": null,
         "classes": [
           "covert"
@@ -7609,7 +7609,7 @@
         ],
         "team": "mercs-for-money",
         "abilities": [
-          "Excessive Violence : Take another turn after this one. But don't use this ability more than once per game \u2014 trilogies are stupid."
+          "Excessive Violence : Take another turn after this one. But don't use this ability more than once per game — trilogies are stupid."
         ],
         "tags": {
           "Static": [
@@ -7839,7 +7839,7 @@
         ],
         "team": "avengers",
         "abilities": [
-          "Ritual Artifact \u2014 If you drew a card, you may discard Wand of Watoomb to get +3 [attack] ."
+          "Ritual Artifact — If you drew a card, you may discard Wand of Watoomb to get +3 [attack] ."
         ],
         "tags": {
           "Static": [
@@ -7893,7 +7893,7 @@
         ],
         "team": "avengers",
         "abilities": [
-          "Ritual Artifact \u2014 If you fought a Villain, you may discard Book of Cagliostro to get + [recruit] equal to that enemy's VP."
+          "Ritual Artifact — If you fought a Villain, you may discard Book of Cagliostro to get + [recruit] equal to that enemy's VP."
         ],
         "tags": {
           "Static": [
@@ -7920,7 +7920,7 @@
         ],
         "team": "avengers",
         "abilities": [
-          "Ritual Artifact \u2014 If you played another Artifact or three other cards of the same Hero Class, you may discard the Eye of Agamotto to get +7 [attack] ."
+          "Ritual Artifact — If you played another Artifact or three other cards of the same Hero Class, you may discard the Eye of Agamotto to get +7 [attack] ."
         ],
         "tags": {
           "Static": [
@@ -8298,7 +8298,7 @@
         ],
         "team": "avengers",
         "abilities": [
-          "Ritual Artifact \u2014 If you have at least three Hero Classes, you may discard Medallion of Many Loas to get +1 [attack] for each Hero Class you have, including this one."
+          "Ritual Artifact — If you have at least three Hero Classes, you may discard Medallion of Many Loas to get +1 [attack] for each Hero Class you have, including this one."
         ],
         "tags": {
           "Static": [
@@ -8325,7 +8325,7 @@
         ],
         "team": "avengers",
         "abilities": [
-          "Ritual Artifact \u2014 If you recruited a Hero, you may discard Staff of Legba to get + [attack] equal to that Hero's cost."
+          "Ritual Artifact — If you recruited a Hero, you may discard Staff of Legba to get + [attack] equal to that Hero's cost."
         ],
         "tags": {
           "Static": [
@@ -8923,7 +8923,7 @@
         ],
         "team": "guardians-of-the-galaxy",
         "abilities": [
-          "Triggered Artifact \u2014 Whenever you play another [strength] or [instinct] card, you get +1 [attack] ."
+          "Triggered Artifact — Whenever you play another [strength] or [instinct] card, you get +1 [attack] ."
         ],
         "tags": {
           "Static": [
@@ -10408,7 +10408,7 @@
         ],
         "team": null,
         "abilities": [
-          "Reveal the top card of your deck. If that card has any \u201choles\u201c printed inside any of its icons (0, 4, 6, 8, or 9) , draw it.",
+          "Reveal the top card of your deck. If that card has any “holes“ printed inside any of its icons (0, 4, 6, 8, or 9) , draw it.",
           "[instinct] : You may KO the card you drew this way."
         ],
         "tags": {
@@ -10745,7 +10745,7 @@
         ],
         "team": "guardians-of-the-galaxy",
         "abilities": [
-          "Triggered Artifact \u2014 Whenever you draw a card during your turn, you get +1 [attack] ."
+          "Triggered Artifact — Whenever you draw a card during your turn, you get +1 [attack] ."
         ],
         "tags": {
           "Static": [
@@ -10975,7 +10975,7 @@
         ],
         "team": "guardians-of-the-multiverse",
         "abilities": [
-          "[guardians-of-the-multiverse] Soulbind six Villains : You get +\u221e [attack] , usable only for a single fight."
+          "[guardians-of-the-multiverse] Soulbind six Villains : You get +∞ [attack] , usable only for a single fight."
         ],
         "tags": {
           "Static": [
@@ -12610,7 +12610,7 @@
         "team": null,
         "abilities": [
           "Focus 4 [recruit] Rooftops Conqueror 4",
-          "Focus 11 [recruit] Search the Hero Deck, HQ, or your deck or discard pile for \u201cGalactus Hungers\u201c and put it on top of your deck. Shuffle any deck you searched."
+          "Focus 11 [recruit] Search the Hero Deck, HQ, or your deck or discard pile for “Galactus Hungers“ and put it on top of your deck. Shuffle any deck you searched."
         ],
         "tags": {
           "Static": [
@@ -12812,6 +12812,9 @@
           ],
           "Utility": [
             "Mechanic_Scout"
+          ],
+          "Mechanic": [
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       },
@@ -14211,7 +14214,7 @@
         ],
         "team": "avengers",
         "abilities": [
-          "[tech] : You may use the \u201cFight\u201c ability of a Villain worth 1 [vp] in your Victory Pile."
+          "[tech] : You may use the “Fight“ ability of a Villain worth 1 [vp] in your Victory Pile."
         ],
         "tags": {
           "Static": [
@@ -15394,7 +15397,7 @@
         "team": "inhumans",
         "abilities": [
           "When Recruited : You get +4 [attack] .",
-          "Whenever you play a card this turn, including this one, you may first use that card's \u201cWhen Recruited\u201c ability."
+          "Whenever you play a card this turn, including this one, you may first use that card's “When Recruited“ ability."
         ],
         "tags": {
           "Static": [
@@ -16259,7 +16262,7 @@
         ],
         "team": "heroes-of-asgard",
         "abilities": [
-          "Thrown Artifact \u2014 When you throw this you get +1 [recruit] and +1 [attack] ."
+          "Thrown Artifact — When you throw this you get +1 [recruit] and +1 [attack] ."
         ],
         "tags": {
           "Static": [
@@ -16316,7 +16319,7 @@
         ],
         "team": "heroes-of-asgard",
         "abilities": [
-          "Thrown Artifact \u2014 You may throw this to get +1 [attack] .",
+          "Thrown Artifact — You may throw this to get +1 [attack] .",
           "During any player's turn, if a player would gain a Wound, you may throw this to prevent that Wound and draw two cards instead."
         ],
         "tags": {
@@ -16353,7 +16356,7 @@
         ],
         "team": "heroes-of-asgard",
         "abilities": [
-          "Thrown Artifact \u2014 When you throw this, you get +4 [attack] and you may KO a card from your hand or discard pile."
+          "Thrown Artifact — When you throw this, you get +4 [attack] and you may KO a card from your hand or discard pile."
         ],
         "tags": {
           "Static": [
@@ -16691,7 +16694,7 @@
         ],
         "team": "foes-of-asgard",
         "abilities": [
-          "Look at the top two cards of another player's deck. Without revealing those cards, call one of them \u201dGood\u201d and one \u201dBad.\u201d That player puts one of those cards into their discard pile and the other into your discard pile."
+          "Look at the top two cards of another player's deck. Without revealing those cards, call one of them ”Good” and one ”Bad.” That player puts one of those cards into their discard pile and the other into your discard pile."
         ],
         "tags": {
           "Static": [
@@ -17074,7 +17077,7 @@
         ],
         "team": "x-factor-investigations",
         "abilities": [
-          "When Recruited \u2014 [strength] : Clone",
+          "When Recruited — [strength] : Clone",
           "If you have a Wound in your hand or discard pile, KO it and you get +1 [attack] . Otherwise, gain a Wound."
         ],
         "tags": {
@@ -17111,7 +17114,7 @@
         ],
         "team": "x-factor-investigations",
         "abilities": [
-          "When Recruited \u2014 [strength] : Clone",
+          "When Recruited — [strength] : Clone",
           "Draw a card.",
           "Tactical Formation 333 : You get +2 [attack] ."
         ],
@@ -17141,7 +17144,7 @@
         ],
         "team": "x-factor-investigations",
         "abilities": [
-          "When Recruited \u2014 [covert] : Clone",
+          "When Recruited — [covert] : Clone",
           "Investigate for a card that costs 3."
         ],
         "tags": {
@@ -17166,7 +17169,7 @@
         ],
         "team": "x-factor-investigations",
         "abilities": [
-          "When Recruited \u2014 [x-factor-investigations] : Clone",
+          "When Recruited — [x-factor-investigations] : Clone",
           "Tactical Formation 3333 : You get +3 [attack] ."
         ],
         "tags": {
@@ -19571,7 +19574,7 @@
         ],
         "team": "guardians-of-the-galaxy",
         "abilities": [
-          "[tech] : Choose another player. Unless that player reveals a [covert] Hero, take one of their Shards or \u201crescue\u201c a Bystander from their Victory Pile."
+          "[tech] : Choose another player. Unless that player reveals a [covert] Hero, take one of their Shards or “rescue“ a Bystander from their Victory Pile."
         ],
         "tags": {
           "Static": [
@@ -20321,7 +20324,7 @@
         ],
         "team": "foes-of-asgard",
         "abilities": [
-          "Say \u201cNUL SMASH!\u201c Then each player slaps a palm on the table. The last other player to slap a palm on the table gains a Bindings."
+          "Say “NUL SMASH!“ Then each player slaps a palm on the table. The last other player to slap a palm on the table gains a Bindings."
         ],
         "tags": {
           "Static": [
@@ -20780,6 +20783,9 @@
           ],
           "Utility": [
             "Mechanic_Scout"
+          ],
+          "Mechanic": [
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       },
@@ -20933,6 +20939,9 @@
           ],
           "Utility": [
             "Mechanic_Scout"
+          ],
+          "Mechanic": [
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       },
@@ -21720,7 +21729,7 @@
         ],
         "team": "heroes-of-wakanda",
         "abilities": [
-          "[heroes-of-wakanda] : This turn, each card entering the HQ also has \u201c Ambush : If you have any cards that share a color with this, you get +2 [attack] .\u201c"
+          "[heroes-of-wakanda] : This turn, each card entering the HQ also has “ Ambush : If you have any cards that share a color with this, you get +2 [attack] .“"
         ],
         "tags": {
           "Static": [
@@ -23313,7 +23322,7 @@
         ],
         "team": "guardians-of-the-galaxy",
         "abilities": [
-          "Triggered Artifact \u2014 Whenever you use Excessive Violence , draw a card."
+          "Triggered Artifact — Whenever you use Excessive Violence , draw a card."
         ],
         "tags": {
           "Static": [
@@ -24573,7 +24582,7 @@
         ],
         "team": "x-force",
         "abilities": [
-          "When Recruited \u2014 [instinct] : Clone",
+          "When Recruited — [instinct] : Clone",
           "[instinct] : You get another +2 [recruit] usable only to recruit Heroes that cost 5 or more."
         ],
         "tags": {
@@ -24598,7 +24607,7 @@
         ],
         "team": "x-force",
         "abilities": [
-          "When Recruited \u2014 [ranged] : Clone",
+          "When Recruited — [ranged] : Clone",
           "Tactical Formation 55 : You get +1 [attack] ."
         ],
         "tags": {
@@ -24626,7 +24635,7 @@
         ],
         "team": "x-force",
         "abilities": [
-          "When Recruited \u2014 [instinct] : Clone",
+          "When Recruited — [instinct] : Clone",
           "[instinct] : Draw a card."
         ],
         "tags": {
@@ -24652,7 +24661,7 @@
         ],
         "team": "x-force",
         "abilities": [
-          "When Recruited \u2014 [x-force] : Clone",
+          "When Recruited — [x-force] : Clone",
           "[ranged] [instinct] : Shatter the Mastermind."
         ],
         "tags": {
@@ -24824,6 +24833,9 @@
           ],
           "Utility": [
             "Mechanic_Scout"
+          ],
+          "Mechanic": [
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       },
@@ -24878,6 +24890,9 @@
           ],
           "Utility": [
             "Mechanic_Scout"
+          ],
+          "Mechanic": [
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       },
@@ -24903,6 +24918,9 @@
           ],
           "Keyword": [
             "Keyword_WallCrawl"
+          ],
+          "Mechanic": [
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       }
@@ -25306,7 +25324,7 @@
         "abilities": [
           "Thrown Artifact",
           "When you throw this, you get +2 [attack] for each card you discarded this turn.",
-          "(Throwing an Artifact does not count as \u201cdiscarding\u201c it.)"
+          "(Throwing an Artifact does not count as “discarding“ it.)"
         ],
         "tags": {
           "Static": [
@@ -25471,7 +25489,7 @@
         "title": "Saturday Morning Harpoons",
         "rarity": "common",
         "cost": "3",
-        "attack": "2\u00bd",
+        "attack": "2½",
         "recruit": null,
         "classes": [
           "ranged"
@@ -25520,7 +25538,7 @@
         "title": "Surprise Chainsaw",
         "rarity": "uncommon",
         "cost": "6",
-        "attack": "4\u00bd",
+        "attack": "4½",
         "recruit": null,
         "classes": [
           "strength"
@@ -25574,8 +25592,8 @@
         "title": "Half-Cocked",
         "rarity": "common",
         "cost": "2",
-        "attack": "1\u00bd",
-        "recruit": "1\u00bd",
+        "attack": "1½",
+        "recruit": "1½",
         "classes": [
           "tech"
         ],
@@ -25593,7 +25611,7 @@
         "title": "Merc's Gotta Get Paid",
         "rarity": "common",
         "cost": "3",
-        "attack": "2\u00bd",
+        "attack": "2½",
         "recruit": "0+",
         "classes": [
           "instinct"
@@ -25617,7 +25635,7 @@
         "title": "Guns on My Guns",
         "rarity": "uncommon",
         "cost": "5",
-        "attack": "3\u00bd",
+        "attack": "3½",
         "recruit": null,
         "classes": [
           "tech"
@@ -25638,7 +25656,7 @@
         "title": "Cut in Half",
         "rarity": "rare",
         "cost": "7",
-        "attack": "2\u00bd",
+        "attack": "2½",
         "recruit": null,
         "classes": [
           "instinct"
@@ -25673,7 +25691,7 @@
         ],
         "team": "x-men",
         "abilities": [
-          "[covert] : Once this turn, you may fight the top card of the Bystander Stack as if it were a 3 [attack] Demon Villain with \u201c Fight : KO one of your heroes.\u201c"
+          "[covert] : Once this turn, you may fight the top card of the Bystander Stack as if it were a 3 [attack] Demon Villain with “ Fight : KO one of your heroes.“"
         ],
         "tags": {
           "Static": [
@@ -26018,6 +26036,9 @@
           ],
           "Utility": [
             "Mechanic_Scout"
+          ],
+          "Mechanic": [
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       },
@@ -26102,6 +26123,9 @@
           ],
           "Keyword": [
             "Keyword_WallCrawl"
+          ],
+          "Mechanic": [
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       }
@@ -26132,6 +26156,9 @@
           ],
           "Utility": [
             "Mechanic_Scout"
+          ],
+          "Mechanic": [
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       },
@@ -26156,6 +26183,9 @@
           ],
           "Utility": [
             "Mechanic_Scout"
+          ],
+          "Mechanic": [
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       },
@@ -26183,7 +26213,8 @@
             "Mechanic_Scout"
           ],
           "Mechanic": [
-            "Mechanic_Rescue_Bystander"
+            "Mechanic_Rescue_Bystander",
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       },
@@ -26205,6 +26236,9 @@
             "Team_SpiderFriends",
             "Class_Covert",
             "Cost_2"
+          ],
+          "Mechanic": [
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       }
@@ -26334,6 +26368,9 @@
             "Team_SpiderFriends",
             "Class_Tech",
             "Cost_2"
+          ],
+          "Mechanic": [
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       },
@@ -26400,6 +26437,9 @@
             "Team_SpiderFriends",
             "Class_Strength",
             "Cost_2"
+          ],
+          "Mechanic": [
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       }
@@ -26656,7 +26696,7 @@
         ],
         "team": "guardians-of-the-galaxy",
         "abilities": [
-          "Choose an Artifact any player controls with a \u201conce per turn\u201c ability. Play a copy of one of those abilities."
+          "Choose an Artifact any player controls with a “once per turn“ ability. Play a copy of one of those abilities."
         ],
         "tags": {
           "Static": [
@@ -26739,7 +26779,7 @@
         ],
         "team": "guardians-of-the-galaxy",
         "abilities": [
-          "Triggered Artifact \u2014 The first time you play an Artifact each turn (including this one) , you get +1 [recruit] ."
+          "Triggered Artifact — The first time you play an Artifact each turn (including this one) , you get +1 [recruit] ."
         ],
         "tags": {
           "Static": [
@@ -26766,7 +26806,7 @@
         ],
         "team": "guardians-of-the-galaxy",
         "abilities": [
-          "Triggered Artifact \u2014 The first time you play an Artifact each turn (including this one) , you get +1 [attack] ."
+          "Triggered Artifact — The first time you play an Artifact each turn (including this one) , you get +1 [attack] ."
         ],
         "tags": {
           "Static": [
@@ -26793,7 +26833,7 @@
         ],
         "team": "guardians-of-the-galaxy",
         "abilities": [
-          "Triggered Artifact \u2014 The first time you play an Artifact each turn (including this one) , draw a card."
+          "Triggered Artifact — The first time you play an Artifact each turn (including this one) , draw a card."
         ],
         "tags": {
           "Static": [
@@ -27420,7 +27460,7 @@
         "title": "Superpowered Swimsuit",
         "rarity": "common",
         "cost": "2",
-        "attack": "\u00bd+",
+        "attack": "½+",
         "recruit": null,
         "classes": [
           "tech"
@@ -27448,7 +27488,7 @@
         "title": "Deck Chairs on the Titanic",
         "rarity": "common",
         "cost": "4",
-        "attack": "1\u00bd",
+        "attack": "1½",
         "recruit": null,
         "classes": [
           "tech"
@@ -28233,6 +28273,9 @@
             "Team_SpiderFriends",
             "Class_Instinct",
             "Cost_2"
+          ],
+          "Mechanic": [
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       },
@@ -28356,7 +28399,7 @@
         ],
         "team": "cabal",
         "abilities": [
-          "[ranged] : Each other player reveals a [ranged] Hero or chooses a Bystander from their Victory Pile. You \u201crescue\u201c those bystanders."
+          "[ranged] : Each other player reveals a [ranged] Hero or chooses a Bystander from their Victory Pile. You “rescue“ those bystanders."
         ],
         "tags": {
           "Static": [
@@ -28673,7 +28716,7 @@
         "team": "heroes-of-asgard",
         "abilities": [
           "You cannot throw Mjolnir unless you are Worthy .",
-          "Thrown Artifact \u2014 When you throw this, you get +3 [attack] , then you get +1 [attack] for each [ranged] Hero you played this turn."
+          "Thrown Artifact — When you throw this, you get +3 [attack] , then you get +1 [attack] for each [ranged] Hero you played this turn."
         ],
         "tags": {
           "Static": [
@@ -29331,6 +29374,9 @@
           ],
           "Combat": [
             "Gen_Attack"
+          ],
+          "Mechanic": [
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       },
@@ -29358,6 +29404,9 @@
           ],
           "Utility": [
             "Mechanic_Scout"
+          ],
+          "Mechanic": [
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       },
@@ -29386,6 +29435,9 @@
           ],
           "Combat": [
             "Gen_Attack"
+          ],
+          "Mechanic": [
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       },
@@ -29410,6 +29462,9 @@
           ],
           "Combat": [
             "Gen_Attack"
+          ],
+          "Mechanic": [
+            "Mechanic_Cost_2_Or_Less_Synergy"
           ]
         }
       }
@@ -29531,7 +29586,7 @@
         ],
         "team": "heroes-of-asgard",
         "abilities": [
-          "Thrown Artifact \u2014 When you throw this, you get Sewers Conqueror 2 ."
+          "Thrown Artifact — When you throw this, you get Sewers Conqueror 2 ."
         ],
         "tags": {
           "Static": [
@@ -30067,7 +30122,7 @@
         "team": "venomverse",
         "abilities": [
           "Digest 2 : You get +2 [attack] .",
-          "Indigestion : \u201cRescue\u201c a Bystander.",
+          "Indigestion : “Rescue“ a Bystander.",
           "[strength] : Instead, you get both."
         ],
         "tags": {
@@ -30116,8 +30171,8 @@
         ],
         "team": "venomverse",
         "abilities": [
-          "Whenever you Rescue a Bystander this turn, do any \u201crescue\u201c ability on it an extra time.",
-          "Excessive Violence : \u201cRescue\u201c a Bystander."
+          "Whenever you Rescue a Bystander this turn, do any “rescue“ ability on it an extra time.",
+          "Excessive Violence : “Rescue“ a Bystander."
         ],
         "tags": {
           "Static": [
@@ -30142,7 +30197,7 @@
         "team": "venomverse",
         "abilities": [
           "Digest 7 : You get +1 [attack] for each two Bystanders in your Victory Pile.",
-          "Indigestion : \u201cRescue\u201c two Bystanders.",
+          "Indigestion : “Rescue“ two Bystanders.",
           "[venomverse] [venomverse] : Instead, do both (in order) ."
         ],
         "tags": {
@@ -30257,7 +30312,7 @@
         ],
         "team": null,
         "abilities": [
-          "Ritual Artifact \u2014 If any player gained a Wound, you may set aside the Book of the Vishanti to KO up to one Wound from any player's discard pile, then draw three cards. Then discard the Book of the Vishanti. You can use this during any player's turn."
+          "Ritual Artifact — If any player gained a Wound, you may set aside the Book of the Vishanti to KO up to one Wound from any player's discard pile, then draw three cards. Then discard the Book of the Vishanti. You can use this during any player's turn."
         ],
         "tags": {
           "Static": [
@@ -30983,7 +31038,7 @@
         ],
         "team": "x-force",
         "abilities": [
-          "Whenever you \u201creveal\u201c or \u201clook at\u201c any number of cards from your deck this turn, you get +1 [attack] . (Just drawing or discarding a card from your deck doesn't count.)",
+          "Whenever you “reveal“ or “look at“ any number of cards from your deck this turn, you get +1 [attack] . (Just drawing or discarding a card from your deck doesn't count.)",
           "Choose a number 1 or more. Investigate for a card of that cost."
         ],
         "tags": {
@@ -31254,7 +31309,7 @@
         "team": "avengers",
         "abilities": [
           "Size-Changing [tech]",
-          "You get +1 [recruit] for each other card you have with a \u201c+\u201c symbol in its [recruit] icon."
+          "You get +1 [recruit] for each other card you have with a “+“ symbol in its [recruit] icon."
         ],
         "tags": {
           "Static": [
@@ -31279,7 +31334,7 @@
         "team": "avengers",
         "abilities": [
           "Size-Changing [ranged]",
-          "You get +1 [attack] for each other card you have with a \u201c+\u201c symbol in its [attack] icon."
+          "You get +1 [attack] for each other card you have with a “+“ symbol in its [attack] icon."
         ],
         "tags": {
           "Static": [
@@ -31358,8 +31413,8 @@
         "team": "avengers",
         "abilities": [
           "Microscopic Size-Changing [ranged] [ranged] [ranged] [ranged] [ranged]",
-          "You get +1 [recruit] for each other card you have with a \u201c+\u201c symbol in its [recruit] icon.",
-          "You get +1 [attack] for each other card you have with a \u201c+\u201c symbol in its [attack] icon."
+          "You get +1 [recruit] for each other card you have with a “+“ symbol in its [recruit] icon.",
+          "You get +1 [attack] for each other card you have with a “+“ symbol in its [attack] icon."
         ],
         "tags": {
           "Static": [
@@ -31726,7 +31781,7 @@
         "abilities": [
           "Dodge",
           "Dark Memories",
-          "Once this turn, you might fight the top card of the Bystander Stack as if it were a 3 [attack] \u201cHand Ninjas\u201c Henchman Villain with \u201c Fight : You get +1 [recruit] . Rescue this as a Bystander.\u201c"
+          "Once this turn, you might fight the top card of the Bystander Stack as if it were a 3 [attack] “Hand Ninjas“ Henchman Villain with “ Fight : You get +1 [recruit] . Rescue this as a Bystander.“"
         ],
         "tags": {
           "Static": [
@@ -32681,7 +32736,7 @@
         ],
         "team": "marvel-knights",
         "abilities": [
-          "Once this turn, you may fight the top card of the Bystander Deck as if it were a 4 [attack] \u201cDarkhold Demon\u201d Villain with \u201c Fight : KO up to two of your Heroes. Rescue this card as a Bystander.\u201d",
+          "Once this turn, you may fight the top card of the Bystander Deck as if it were a 4 [attack] “Darkhold Demon” Villain with “ Fight : KO up to two of your Heroes. Rescue this card as a Bystander.”",
           "Sunlight : You get +2 [attack] ."
         ],
         "tags": {

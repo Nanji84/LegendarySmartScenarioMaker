@@ -184,6 +184,13 @@
       ],
       "Problem": [
         "Problem_Give_Wound"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Instinct",
+        "Class_Ranged",
+        "Class_Strength",
+        "Class_Tech"
       ]
     }
   },
@@ -286,6 +293,13 @@
       ],
       "Solution": [
         "Solution_Heal_Wound"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Instinct",
+        "Class_Ranged",
+        "Class_Strength",
+        "Class_Tech"
       ]
     }
   },
@@ -369,6 +383,9 @@
       ],
       "Utility": [
         "Mechanic_Scout"
+      ],
+      "Trigger": [
+        "Class_Strength"
       ]
     }
   },
@@ -414,7 +431,7 @@
         "vp": "3",
         "attack": "5",
         "abilities": [
-          "Ambush : You may say \u201cI'm sure we can trust Lord Krylar...\u201c If you do: Draw a card, reveal it, and if it has an odd numbered cost, Lord Krylar Double-Crosses each player.",
+          "Ambush : You may say “I'm sure we can trust Lord Krylar...“ If you do: Draw a card, reveal it, and if it has an odd numbered cost, Lord Krylar Double-Crosses each player.",
           "Fight : Same effect.",
           "Escape : Same effect."
         ],
@@ -466,6 +483,9 @@
       ],
       "Economy": [
         "Gen_Draw"
+      ],
+      "Trigger": [
+        "Class_Ranged"
       ]
     }
   },
@@ -543,7 +563,7 @@
         "vp": "4",
         "attack": "6*",
         "abilities": [
-          "While in the Bank or Streets, this card's name is \u201cDr. Calvin Zabo\u201c, and you muist spend [recruit] to fight him instead of [attack] .",
+          "While in the Bank or Streets, this card's name is “Dr. Calvin Zabo“, and you muist spend [recruit] to fight him instead of [attack] .",
           "Fight : KO pne of your Heroes."
         ],
         "tags": {
@@ -561,6 +581,13 @@
       "Mechanic": [
         "Mechanic_Ambush",
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Instinct",
+        "Class_Ranged",
+        "Class_Strength",
+        "Class_Tech"
       ]
     }
   },
@@ -751,6 +778,9 @@
       ],
       "Mechanic": [
         "Mechanic_Ambush"
+      ],
+      "Trigger": [
+        "Class_Tech"
       ]
     }
   },
@@ -788,7 +818,7 @@
         "attack": "3+",
         "abilities": [
           "Berserk",
-          "Ambush : Choose a card named \u201cFeral\u201c from any player's discard pile to enter the city as a Villain.",
+          "Ambush : Choose a card named “Feral“ from any player's discard pile to enter the city as a Villain.",
           "Fight : Draw the card you Berserked.",
           "Fail : When you draw a new hand at the end of this turn, discard a card."
         ],
@@ -831,6 +861,10 @@
       ],
       "Solution": [
         "Solution_Heal_Wound"
+      ],
+      "Trigger": [
+        "Class_Instinct",
+        "Class_Tech"
       ]
     }
   },
@@ -876,7 +910,7 @@
         "abilities": [
           "Empowered by cards that cost 5 or more.",
           "Ambush : Each player discards a card that costs 5 or more.",
-          "Escape : Ebony Maw ascends to become a new Mastermind . He gains the ability \u201c Master Strike : Repeat his Ambush effect.\u201c"
+          "Escape : Ebony Maw ascends to become a new Mastermind . He gains the ability “ Master Strike : Repeat his Ambush effect.“"
         ],
         "tags": {
           "Mechanic": [
@@ -1001,6 +1035,9 @@
       ],
       "Economy": [
         "Gen_KO"
+      ],
+      "Trigger": [
+        "Class_Instinct"
       ]
     }
   },
@@ -1063,6 +1100,9 @@
       "Mechanic": [
         "Mechanic_Ambush",
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Team_XMen"
       ]
     }
   },
@@ -1148,6 +1188,13 @@
       ],
       "Problem": [
         "Problem_Capture_Bystander"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Instinct",
+        "Class_Ranged",
+        "Class_Strength",
+        "Class_Tech"
       ]
     }
   },
@@ -1391,7 +1438,7 @@
         "abilities": [
           "Chivalrous Duel",
           "Ambush : Lord Shingen captures a Bystander.",
-          "Bystanders held by Lord Shingen are \u201cSamurai Bodyguards.\u201c You can't fight Lord Shingen while he has any Bodyguards. You can fight them as if they were 3 [attack] Villains with \u201c Chivalrous Duel . Fight : Rescue this as a Bystander.\u201c"
+          "Bystanders held by Lord Shingen are “Samurai Bodyguards.“ You can't fight Lord Shingen while he has any Bodyguards. You can fight them as if they were 3 [attack] Villains with “ Chivalrous Duel . Fight : Rescue this as a Bystander.“"
         ],
         "tags": {
           "Mechanic": [
@@ -1534,6 +1581,7 @@
         "Mechanic_Ambush"
       ],
       "Trigger": [
+        "Class_Covert",
         "Need_Class_Covert"
       ],
       "Utility": [
@@ -1554,7 +1602,7 @@
         "vp": "4",
         "attack": "5+",
         "abilities": [
-          "While the back side of a Mastermind card is face up, this Villain gets +2 [attack] and \u201c Escape : Each player discards a card.\u201c",
+          "While the back side of a Mastermind card is face up, this Villain gets +2 [attack] and “ Escape : Each player discards a card.“",
           "Fight : KO one of your Heroes."
         ],
         "tags": {
@@ -1619,6 +1667,10 @@
       "Mechanic": [
         "Mechanic_Wound",
         "Mechanic_Ambush"
+      ],
+      "Trigger": [
+        "Class_Instinct",
+        "Class_Tech"
       ]
     }
   },
@@ -1683,6 +1735,9 @@
       ],
       "Combat": [
         "Gen_Attack"
+      ],
+      "Trigger": [
+        "Class_Covert"
       ]
     }
   },
@@ -1775,6 +1830,9 @@
       "Mechanic": [
         "Mechanic_Wound",
         "Mechanic_Ambush"
+      ],
+      "Trigger": [
+        "Class_Instinct"
       ]
     }
   },
@@ -1807,7 +1865,7 @@
         "attack": "6",
         "abilities": [
           "Ambush : Laufey captures The Casket of Ancient Winters from any Villain, Mastermind, player's control, or discard pile.",
-          "Escape : If Laufey holds The Casket of Ancient Winters, say \u201cFimbulwinter has come,\u201c and each player discards down to 3 cards."
+          "Escape : If Laufey holds The Casket of Ancient Winters, say “Fimbulwinter has come,“ and each player discards down to 3 cards."
         ],
         "tags": {
           "Mechanic": [
@@ -2000,7 +2058,7 @@
         "attack": "8",
         "abilities": [
           "Ambush : Rise of The Living Dead",
-          "Escape : Loki ascends to become a new Mastermind . He gains the ability, \u201c Master Strike : Each player reveals a [strength] Hero or gains a Wound.\u201c"
+          "Escape : Loki ascends to become a new Mastermind . He gains the ability, “ Master Strike : Each player reveals a [strength] Hero or gains a Wound.“"
         ],
         "tags": {
           "Mechanic": [
@@ -2052,7 +2110,7 @@
         "attack": "7",
         "abilities": [
           "Ambush : Rise of The Living Dead",
-          "Escape : Sinister ascends to become a new Mastermind . He gains the ability, \u201c Master Strike : Sinister captures a Bystander. Then, each player with exactly 6 cards reveals a [covert] Hero or discards cards equal to the number of Bystanders Sinister has.\u201c"
+          "Escape : Sinister ascends to become a new Mastermind . He gains the ability, “ Master Strike : Sinister captures a Bystander. Then, each player with exactly 6 cards reveals a [covert] Hero or discards cards equal to the number of Bystanders Sinister has.“"
         ],
         "tags": {
           "Mechanic": [
@@ -2068,7 +2126,7 @@
         "attack": "6",
         "abilities": [
           "Ambush : Rise of The Living Dead",
-          "Escape : Shuffle this card into the Mastermind's face-down Mastermind Tactics. It becomes a Mastermind Tactic that says \u201c Fight : Draw two cards.\u201c"
+          "Escape : Shuffle this card into the Mastermind's face-down Mastermind Tactics. It becomes a Mastermind Tactic that says “ Fight : Draw two cards.“"
         ],
         "tags": {
           "Economy": [
@@ -2091,11 +2149,18 @@
       "Economy": [
         "Gen_Recruit",
         "Gen_Draw"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Strength",
+        "Team_Avengers",
+        "Team_Hydra",
+        "Team_Shield"
       ]
     }
   },
   {
-    "group_name": "Deadpool's \u201cFriends\u201c",
+    "group_name": "Deadpool's “Friends“",
     "set": "Deadpool",
     "cards": [
       {
@@ -2104,8 +2169,8 @@
         "vp": "3",
         "attack": "2+",
         "abilities": [
-          "Revenge for Deadpool's \u201cFriends\u201c",
-          "To fight Blind Al, you also gotta drop a Deuce (discard a card with a \u201c2\u201c printed anywhere on it) . Deuce is her dog, obviously.",
+          "Revenge for Deadpool's “Friends“",
+          "To fight Blind Al, you also gotta drop a Deuce (discard a card with a “2“ printed anywhere on it) . Deuce is her dog, obviously.",
           "Escape : Everybody drop a Deuce."
         ],
         "tags": {
@@ -2120,7 +2185,7 @@
         "vp": "4",
         "attack": "5+",
         "abilities": [
-          "Revenge for Deadpool's \u201cFriends\u201c",
+          "Revenge for Deadpool's “Friends“",
           "Fight : Excessive Violence : Gain the Hero from the HQ with the lowest cost (or tied for lowest).",
           "Escape : Each player gains a Wound."
         ],
@@ -2154,7 +2219,7 @@
         "vp": "3",
         "attack": "4+",
         "abilities": [
-          "Revenge for Deadpool's \u201cFriends\u201c",
+          "Revenge for Deadpool's “Friends“",
           "Ambush : Each player simultaneously passes a card from their hand to the player on their left.",
           "Fight : Same effect."
         ],
@@ -2188,7 +2253,7 @@
         "abilities": [
           "5th Circle of Kung-Fu",
           "Fight : Fateful Resurrection",
-          "Escape : Deadpool ascends to become a new Mastermind . He gains the ability, \u201c Master Strike : Each player reveals a Hero with an odd-numbered cost or gains a Wound.\u201c (0 is even.)"
+          "Escape : Deadpool ascends to become a new Mastermind . He gains the ability, “ Master Strike : Each player reveals a Hero with an odd-numbered cost or gains a Wound.“ (0 is even.)"
         ],
         "tags": {
           "Mechanic": [
@@ -2407,6 +2472,9 @@
       ],
       "Economy": [
         "Gen_Recruit"
+      ],
+      "Trigger": [
+        "Class_Strength"
       ]
     }
   },
@@ -2438,7 +2506,7 @@
         "attack": "8",
         "abilities": [
           "Fight : Gain an [x-men] Hero from the HQ for free.",
-          "Escape : Magneto ascends to become a new Mastermind . He gains the ability, \u201c Master Strike : Each player reveals an [x-men] Hero or discards down to 4 cards.\u201c"
+          "Escape : Magneto ascends to become a new Mastermind . He gains the ability, “ Master Strike : Each player reveals an [x-men] Hero or discards down to 4 cards.“"
         ],
         "tags": {}
       },
@@ -2475,6 +2543,9 @@
       ],
       "Keyword": [
         "Keyword_Teleport"
+      ],
+      "Trigger": [
+        "Team_XMen"
       ]
     }
   },
@@ -2554,6 +2625,13 @@
       ],
       "Problem": [
         "Problem_Give_Wound"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Instinct",
+        "Class_Ranged",
+        "Class_Strength",
+        "Class_Tech"
       ]
     }
   },
@@ -2635,6 +2713,9 @@
       "Mechanic": [
         "Mechanic_Ambush",
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Class_Ranged"
       ]
     }
   },
@@ -2791,6 +2872,10 @@
       "Mechanic": [
         "Mechanic_Wound",
         "Mechanic_Ambush"
+      ],
+      "Trigger": [
+        "Class_Ranged",
+        "Team_Shield"
       ]
     }
   },
@@ -2862,6 +2947,10 @@
       "Mechanic": [
         "Mechanic_Wound",
         "Mechanic_Ambush"
+      ],
+      "Trigger": [
+        "Class_Ranged",
+        "Team_Shield"
       ]
     }
   },
@@ -2944,6 +3033,10 @@
       ],
       "Mechanic": [
         "Mechanic_Ambush"
+      ],
+      "Trigger": [
+        "Class_Instinct",
+        "Class_Tech"
       ]
     }
   },
@@ -2984,7 +3077,7 @@
         "attack": "5+",
         "abilities": [
           "Revenge for Evil Deadpool Corpse",
-          "Fight : Excessive Violence : Draw a card for each \u201cUltimate\u201c in the HQ. You know, those totally kickass cards that cost 7 or more.",
+          "Fight : Excessive Violence : Draw a card for each “Ultimate“ in the HQ. You know, those totally kickass cards that cost 7 or more.",
           "Escape : KO all Ultimates from the HQ."
         ],
         "tags": {
@@ -3078,14 +3171,14 @@
         }
       },
       {
-        "name": "Salom\u00e9, Sorceress Supreme",
+        "name": "Salomé, Sorceress Supreme",
         "quantity": "1",
         "vp": "5",
         "attack": "6+",
         "abilities": [
           "Blood Frenzy",
           "Fight : KO up to two cards from your discard pile.",
-          "Escape : Salom\u00e9 ascends to become an additional Mastermind . She gains the ability \u201c Master Strike : Each player discards a [marvel-knights] Hero or gains a Wound.\u201c"
+          "Escape : Salomé ascends to become an additional Mastermind . She gains the ability “ Master Strike : Each player discards a [marvel-knights] Hero or gains a Wound.“"
         ],
         "tags": {
           "Economy": [
@@ -3114,6 +3207,9 @@
       ],
       "Solution": [
         "Solution_Heal_Wound"
+      ],
+      "Trigger": [
+        "Team_MarvelKnights"
       ]
     }
   },
@@ -3277,14 +3373,14 @@
     "set": "Marvel Studios' Guardians of the Galaxy",
     "cards": [
       {
-        "name": "\u201cThe Dark Aster\u201c Flagship",
+        "name": "“The Dark Aster“ Flagship",
         "quantity": "1",
         "vp": "0",
         "attack": "+4",
         "abilities": [
           "Villainous Weapon",
           "Ambush : If a Follower of Ronan captures this, each player gains a Wound.",
-          "Triggered Artifact \u2014 Whenever you defeat a Villain, you get +1 [recruit] ."
+          "Triggered Artifact — Whenever you defeat a Villain, you get +1 [recruit] ."
         ],
         "tags": {
           "Economy": [
@@ -3368,7 +3464,7 @@
         "abilities": [
           "Villainous Weapon",
           "Ambush : If Korath is in the city, he captures this.",
-          "Triggered Artifact \u2014 Whenever you play a card that costs 6 or more, you get +1 [attack] ."
+          "Triggered Artifact — Whenever you play a card that costs 6 or more, you get +1 [attack] ."
         ],
         "tags": {
           "Combat": [
@@ -3481,6 +3577,9 @@
     "tags": {
       "Mechanic": [
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Class_Instinct"
       ]
     }
   },
@@ -3540,9 +3639,9 @@
         "attack": "10*",
         "abilities": [
           "Cosmic Threat [ranged]",
-          "Ambush : Create a \u201cNew Reality\u201c space that stays above the Shaper of Worlds. It always contains a Hero, like an HQ space. Players can recruit from it.",
+          "Ambush : Create a “New Reality“ space that stays above the Shaper of Worlds. It always contains a Hero, like an HQ space. Players can recruit from it.",
           "Fight : Choose a player to gain that Hero.",
-          "Escape : After the normal Escape KO, destroy the New Reality space and destroy an HQ space. KO those Heroes. (It doesn't refill. Any \u201cPocket Dimension\u201c stays in play.)"
+          "Escape : After the normal Escape KO, destroy the New Reality space and destroy an HQ space. KO those Heroes. (It doesn't refill. Any “Pocket Dimension“ stays in play.)"
         ],
         "tags": {
           "Economy": [
@@ -3567,6 +3666,12 @@
       ],
       "Economy": [
         "Gen_Recruit"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Instinct",
+        "Class_Ranged",
+        "Class_Tech"
       ]
     }
   },
@@ -3601,7 +3706,7 @@
         "tags": {}
       },
       {
-        "name": "Lt. Gen \u201cThunderbolt\u201c Ross",
+        "name": "Lt. Gen “Thunderbolt“ Ross",
         "quantity": "2",
         "vp": "3",
         "attack": "5",
@@ -3642,6 +3747,9 @@
       ],
       "Problem": [
         "Problem_Give_Wound"
+      ],
+      "Trigger": [
+        "Class_Strength"
       ]
     }
   },
@@ -3731,6 +3839,11 @@
       ],
       "Combat": [
         "Gen_Defeat"
+      ],
+      "Trigger": [
+        "Class_Ranged",
+        "Class_Strength",
+        "Class_Tech"
       ]
     }
   },
@@ -3838,6 +3951,9 @@
       ],
       "Utility": [
         "Mechanic_Scout"
+      ],
+      "Trigger": [
+        "Class_Strength"
       ]
     }
   },
@@ -3916,6 +4032,10 @@
       ],
       "Utility": [
         "Mechanic_Scout"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Strength"
       ]
     }
   },
@@ -3930,7 +4050,7 @@
         "attack": "7",
         "abilities": [
           "Fight : Fateful Resurrection",
-          "Escape : Angela ascends to become a new Mastermind . She gains the ability, \u201c Master Strike : Each player KOs a Hero from their discard pile that costs 1 or more.\u201c"
+          "Escape : Angela ascends to become a new Mastermind . She gains the ability, “ Master Strike : Each player KOs a Hero from their discard pile that costs 1 or more.“"
         ],
         "tags": {}
       },
@@ -4014,7 +4134,7 @@
         "attack": "0",
         "abilities": [
           "By End of Turn : Have no Hellfire Villains in the city.",
-          "Or Suffer : This Trap becomes a 6 [attack] \u201cPhoenix Force\u201c [token] Villain that enters the city and Dominates all the Heroes in the HQ that cost 6 or less."
+          "Or Suffer : This Trap becomes a 6 [attack] “Phoenix Force“ [token] Villain that enters the city and Dominates all the Heroes in the HQ that cost 6 or less."
         ],
         "tags": {}
       },
@@ -4056,7 +4176,7 @@
         "vp": "6",
         "attack": "8+",
         "abilities": [
-          "Ambush : This Villain ascends to become a new Mastermind . He gains the ability \u201c Master Strike : Each player simultaneously reveals a non-grey Hero.\u201c Mastermind Dominates the revealed Hero with the highest cost (and tied for highest) ."
+          "Ambush : This Villain ascends to become a new Mastermind . He gains the ability “ Master Strike : Each player simultaneously reveals a non-grey Hero.“ Mastermind Dominates the revealed Hero with the highest cost (and tied for highest) ."
         ],
         "tags": {
           "Mechanic": [
@@ -4093,6 +4213,9 @@
       ],
       "Combat": [
         "Gen_Attack"
+      ],
+      "Trigger": [
+        "Team_XMen"
       ]
     }
   },
@@ -4224,6 +4347,11 @@
       ],
       "Utility": [
         "Mechanic_Scout"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Tech",
+        "Team_XMen"
       ]
     }
   },
@@ -4300,6 +4428,12 @@
       ],
       "Economy": [
         "Gen_Draw"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Instinct",
+        "Class_Ranged",
+        "Class_Strength"
       ]
     }
   },
@@ -4637,6 +4771,9 @@
       "Mechanic": [
         "Mechanic_Wound",
         "Mechanic_Ambush"
+      ],
+      "Trigger": [
+        "Team_Shield"
       ]
     }
   },
@@ -4735,6 +4872,13 @@
       ],
       "Economy": [
         "Gen_Recruit"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Instinct",
+        "Class_Ranged",
+        "Class_Strength",
+        "Class_Tech"
       ]
     }
   },
@@ -4903,7 +5047,7 @@
         "abilities": [
           "Ambush : Nebula captures a Hero from the Officer Deck or HQ that costs 4 or less.",
           "Fight : Either KO that Hero or choose a player to gain it.",
-          "(This card counts as \u201dan Infinity Stone.\u201d)"
+          "(This card counts as ”an Infinity Stone.”)"
         ],
         "tags": {
           "Economy": [
@@ -4922,7 +5066,7 @@
         "abilities": [
           "Ambush : If the Soul Stone is in the city or Escape Pile, each player discards a card. If it's in a player's Victory Pile, that player draws two cards.",
           "Fight : Each player KOs one of their Heroes.",
-          "(This card counts as \u201dan Infinity Stone.\u201d)"
+          "(This card counts as ”an Infinity Stone.”)"
         ],
         "tags": {
           "Mechanic": [
@@ -5067,7 +5211,7 @@
         "attack": "4+",
         "abilities": [
           "Abomination",
-          "Fight : Choose \u201cAlpha\u201c or \u201cOmega.\u201c Then reveal the top card of your deck:",
+          "Fight : Choose “Alpha“ or “Omega.“ Then reveal the top card of your deck:",
           "Alpha : If that card costs 0, KO it. Omega : If that card costs 1 or more, draw it."
         ],
         "tags": {
@@ -5202,7 +5346,7 @@
         "abilities": [
           "Captain Marvel gets +1 [attack] for each other Intergalactic Party Animal in the city and/or Escape Pile.",
           "Ambush : Each player reveals a [strength] Hero or gains a Wound.",
-          "Escape : Captain Marvel ascends to become a new Mastermind . She gains the ability \u201c Master Strike : Repeat her Ambush effect.\u201c"
+          "Escape : Captain Marvel ascends to become a new Mastermind . She gains the ability “ Master Strike : Repeat her Ambush effect.“"
         ],
         "tags": {
           "Combat": [
@@ -5220,8 +5364,8 @@
         "vp": "6",
         "attack": "12",
         "abilities": [
-          "During your turn, you may discard a card that costs 5 or more to \u201chide the party\u201c and shuffle Frigga into the Villain Deck. If you do, you may KO one of your Heroes, then you must play a card from the Villain Deck.",
-          "Ambush : Frigga ascends to become a new Mastermind . She gains the ability \u201c Master Strike : If there are any Intergalactic Party Animals in the city, each player discards a card.\u201c"
+          "During your turn, you may discard a card that costs 5 or more to “hide the party“ and shuffle Frigga into the Villain Deck. If you do, you may KO one of your Heroes, then you must play a card from the Villain Deck.",
+          "Ambush : Frigga ascends to become a new Mastermind . She gains the ability “ Master Strike : If there are any Intergalactic Party Animals in the city, each player discards a card.“"
         ],
         "tags": {
           "Economy": [
@@ -5305,6 +5449,9 @@
         "Gen_KO",
         "Gen_Draw",
         "Gen_Recruit"
+      ],
+      "Trigger": [
+        "Class_Strength"
       ]
     }
   },
@@ -5381,6 +5528,9 @@
       "Mechanic": [
         "Mechanic_Ambush",
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Class_Tech"
       ]
     }
   },
@@ -5549,6 +5699,9 @@
       ],
       "Problem": [
         "Problem_Give_Wound"
+      ],
+      "Trigger": [
+        "Class_Instinct"
       ]
     }
   },
@@ -5661,9 +5814,7 @@
       ]
     }
   },
-  
-  
-    {
+  {
     "group_name": "Poisons",
     "set": "Venom",
     "cards": [
@@ -5675,21 +5826,16 @@
         "abilities": [
           "Fight: This Symbiote Bonds with another Villain in the city. If already bonded or unable to bond, gain this as a Hero instead."
         ],
-        "tags": {
-          
-        }
-		
+        "tags": {}
       }
-	]
+    ]
   },
-  
-  
   {
     "group_name": "Lethal Legion",
     "set": "Revelations",
     "cards": [
       {
-        "name": "\u201cThe Raft\u201c Prison",
+        "name": "“The Raft“ Prison",
         "quantity": "1",
         "vp": "4",
         "attack": "6",
@@ -5732,7 +5878,7 @@
         "vp": "5",
         "attack": "6+",
         "abilities": [
-          "Living Laser gers +3 [attack] while there's a \u201cMaze\u201c Location in the city.",
+          "Living Laser gers +3 [attack] while there's a “Maze“ Location in the city.",
           "Fight : Each player reveals a [ranged] Hero or gains a Wound.",
           "Escape : Same effect."
         ],
@@ -5751,7 +5897,7 @@
         "vp": "4",
         "attack": "5+",
         "abilities": [
-          "M'Baku gets +3 [attack] while there's a \u201cCult\u201c Location in the city.",
+          "M'Baku gets +3 [attack] while there's a “Cult“ Location in the city.",
           "Fight : Each player reveals their hand and discards a [tech] card.",
           "Escape : Same effect."
         ],
@@ -5767,7 +5913,7 @@
         "vp": "4",
         "attack": "5+",
         "abilities": [
-          "Power Man gets +3 [attack] while there's a \u201cPrison\u201c Location in the city.",
+          "Power Man gets +3 [attack] while there's a “Prison“ Location in the city.",
           "Escape : Each player puts a Villain from their Victory Pile into the Escape Pile or gains a Wound."
         ],
         "tags": {
@@ -5786,6 +5932,10 @@
       ],
       "Combat": [
         "Gen_Attack"
+      ],
+      "Trigger": [
+        "Class_Ranged",
+        "Class_Tech"
       ]
     }
   },
@@ -5890,6 +6040,11 @@
       ],
       "Utility": [
         "Mechanic_Scout"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Instinct",
+        "Class_Tech"
       ]
     }
   },
@@ -6414,6 +6569,10 @@
       "Mechanic": [
         "Mechanic_Rescue_Bystander",
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Class_Tech",
+        "Team_Avengers"
       ]
     }
   },
@@ -6649,6 +6808,9 @@
       ],
       "Mechanic": [
         "Mechanic_Ambush"
+      ],
+      "Trigger": [
+        "Class_Ranged"
       ]
     }
   },
@@ -6745,6 +6907,9 @@
       ],
       "Economy": [
         "Gen_Draw"
+      ],
+      "Trigger": [
+        "Class_Covert"
       ]
     }
   },
@@ -6800,7 +6965,7 @@
         "attack": "3+",
         "abilities": [
           "Ambush : Charge two spaces.",
-          "When in the Sewers, Rooftops or Bridge, he is in \u201cwolf form\u201c and gets +3 [attack] ."
+          "When in the Sewers, Rooftops or Bridge, he is in “wolf form“ and gets +3 [attack] ."
         ],
         "tags": {
           "Combat": [
@@ -6850,7 +7015,7 @@
         "attack": "6*",
         "abilities": [
           "Size-Changing : [strength] , [covert]",
-          "Fight : Two Bystanders from the Bystander Stack enter the city as 3 [attack] \u201cSplintered Half-Groot\u201c Villains. When you fight one, rescue it as a Bystander."
+          "Fight : Two Bystanders from the Bystander Stack enter the city as 3 [attack] “Splintered Half-Groot“ Villains. When you fight one, rescue it as a Bystander."
         ],
         "tags": {
           "Mechanic": [
@@ -6913,6 +7078,13 @@
       ],
       "Economy": [
         "Gen_Draw"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Instinct",
+        "Class_Ranged",
+        "Class_Strength",
+        "Class_Tech"
       ]
     }
   },
@@ -6927,7 +7099,7 @@
         "attack": "0",
         "abilities": [
           "By End of Turn : Recruit two Heroes.",
-          "Or Suffer : This Trap enters the city as a 3 [attack] \u201cAnimatronic Killer Clown\u201c [token] Villain that captures a Human Shield ."
+          "Or Suffer : This Trap enters the city as a 3 [attack] “Animatronic Killer Clown“ [token] Villain that captures a Human Shield ."
         ],
         "tags": {
           "Economy": [
@@ -7110,8 +7282,8 @@
         "vp": "0",
         "attack": "6",
         "abilities": [
-          "Fight : Put this into your discard pile as a \u201cSurtur's Crown\u201c Artifact.",
-          "Escape : If Surtur was holding The Eternal Flame, say \u201cRagnarok has come\u201c, KO each [heroes-of-asgard] Hero from the HQ, and each player gains two Wounds.",
+          "Fight : Put this into your discard pile as a “Surtur's Crown“ Artifact.",
+          "Escape : If Surtur was holding The Eternal Flame, say “Ragnarok has come“, KO each [heroes-of-asgard] Hero from the HQ, and each player gains two Wounds.",
           "Artifact - Once per turn, you get Sewers Conqueror 1 ."
         ],
         "tags": {
@@ -7133,7 +7305,7 @@
         "attack": "+4",
         "abilities": [
           "Villainous Weapon",
-          "Ambush : If Surtur is in the city, he captures The Eternal Flame. If a player controls \u201cSurtur's Crown\u201c, that card enters the city as the Villain Surtur and captures The Eternal Flame.",
+          "Ambush : If Surtur is in the city, he captures The Eternal Flame. If a player controls “Surtur's Crown“, that card enters the city as the Villain Surtur and captures The Eternal Flame.",
           "Artifact - Once per turn, return a 0-cost card from your discard pile to your hand."
         ],
         "tags": {
@@ -7186,6 +7358,9 @@
       ],
       "Type": [
         "Type_Artifact"
+      ],
+      "Trigger": [
+        "Team_HeroesOfAsgard"
       ]
     }
   },
@@ -7291,6 +7466,15 @@
       "Mechanic": [
         "Mechanic_Ambush",
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Instinct",
+        "Class_Ranged",
+        "Class_Strength",
+        "Team_Brotherhood",
+        "Team_XForce",
+        "Team_XMen"
       ]
     }
   },
@@ -7318,7 +7502,7 @@
         "vp": "2",
         "attack": "4",
         "abilities": [
-          "Ambush : Any number of times this turn, you may pay 2 [recruit] to \u201cbuy a refreshment\u201c and KO a Wound from your hand or from any player's discard pile.",
+          "Ambush : Any number of times this turn, you may pay 2 [recruit] to “buy a refreshment“ and KO a Wound from your hand or from any player's discard pile.",
           "Fight : Same effect."
         ],
         "tags": {
@@ -7352,7 +7536,7 @@
         "attack": "6*",
         "abilities": [
           "Microscopic Size-Changing [covert] [covert] [covert] [covert]",
-          "Fight : Choose a player to \u201ceat the appetizer\u201c and KO a card of their choice from their discard pile."
+          "Fight : Choose a player to “eat the appetizer“ and KO a card of their choice from their discard pile."
         ],
         "tags": {
           "Economy": [
@@ -7386,6 +7570,10 @@
       ],
       "Solution": [
         "Solution_Heal_Wound"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Tech"
       ]
     }
   },
@@ -7474,6 +7662,12 @@
       ],
       "Mechanic": [
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Ranged",
+        "Class_Strength",
+        "Class_Tech"
       ]
     }
   },
@@ -7540,6 +7734,9 @@
         "Mechanic_Rescue_Bystander",
         "Mechanic_Ambush",
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Class_Strength"
       ]
     }
   },
@@ -7592,14 +7789,14 @@
         }
       },
       {
-        "name": "Ravager Starship \u201cEclector\u201c",
+        "name": "Ravager Starship “Eclector“",
         "quantity": "1",
         "vp": "0",
         "attack": "+3",
         "abilities": [
           "Villainous Weapon",
           "Ambush : If a Ravager captures this, that Ravager swaps spaces with the leftmost Ravager in the city.",
-          "Triggered Artifact \u2014 Whenever you play a [tech] card, you get +1 [attack] ."
+          "Triggered Artifact — Whenever you play a [tech] card, you get +1 [attack] ."
         ],
         "tags": {
           "Combat": [
@@ -7621,7 +7818,7 @@
         "abilities": [
           "Villainous Weapon",
           "Ambush : Play another card from the Villain Deck.",
-          "Triggered Artifact \u2014 When you play a [strength] or [instinct] card, you may get +2 [attack] . If you do, shuffle this into the Villain Deck."
+          "Triggered Artifact — When you play a [strength] or [instinct] card, you may get +2 [attack] . If you do, shuffle this into the Villain Deck."
         ],
         "tags": {
           "Combat": [
@@ -7690,6 +7887,11 @@
       ],
       "Type": [
         "Type_Artifact"
+      ],
+      "Trigger": [
+        "Class_Instinct",
+        "Class_Strength",
+        "Class_Tech"
       ]
     }
   },
@@ -7784,6 +7986,12 @@
       "Economy": [
         "Gen_Recruit",
         "Gen_KO"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Ranged",
+        "Class_Strength",
+        "Class_Tech"
       ]
     }
   },
@@ -7850,6 +8058,9 @@
       ],
       "Mechanic": [
         "Mechanic_Ambush"
+      ],
+      "Trigger": [
+        "Class_Instinct"
       ]
     }
   },
@@ -7875,7 +8086,7 @@
         "attack": "11*",
         "abilities": [
           "Dormammu gets -2 [attack] for each other Rival Overlord that's in the city or a Mastermind.",
-          "Escape : Dormammu ascends to become a new Mastermind . He gains the ability \u201c Master Strike : Each player reveals the top of their deck. If it costs 1 or more, that player gains a Wound.\u201c"
+          "Escape : Dormammu ascends to become a new Mastermind . He gains the ability “ Master Strike : Each player reveals the top of their deck. If it costs 1 or more, that player gains a Wound.“"
         ],
         "tags": {
           "Mechanic": [
@@ -7890,7 +8101,7 @@
         "attack": "10*",
         "abilities": [
           "Ego gets -2 [attack] for each other Rival Overlord that's in the city or a Mastermind.",
-          "Escape : Ego ascends to become a new Mastermind . He gains the ability \u201c Master Strike : Reveal the top card of the Villain Deck. If it's a Master Strike, play it.\u201c"
+          "Escape : Ego ascends to become a new Mastermind . He gains the ability “ Master Strike : Reveal the top card of the Villain Deck. If it's a Master Strike, play it.“"
         ],
         "tags": {
           "Utility": [
@@ -7905,7 +8116,7 @@
         "attack": "9*",
         "abilities": [
           "Loki gets -2 [attack] for each other Rival Overlord that's in the city or a Mastermind.",
-          "Escape : Loki ascends to become a new Mastermind . He gains the ability \u201c Master Strike : Each player discards a [ranged] Hero or KOs one of their non-grey Heroes.\u201c"
+          "Escape : Loki ascends to become a new Mastermind . He gains the ability “ Master Strike : Each player discards a [ranged] Hero or KOs one of their non-grey Heroes.“"
         ],
         "tags": {}
       },
@@ -7916,7 +8127,7 @@
         "attack": "8*",
         "abilities": [
           "Red Skull gets -2 [attack] for each other Rival Overlord that's in the city or a Mastermind.",
-          "Escape : Red Skull ascends to become a new Mastermind . He gains the ability \u201c Master Strike : Each player discards a [covert] Hero or discards down to 4 cards.\u201c"
+          "Escape : Red Skull ascends to become a new Mastermind . He gains the ability “ Master Strike : Each player discards a [covert] Hero or discards down to 4 cards.“"
         ],
         "tags": {}
       },
@@ -7927,7 +8138,7 @@
         "attack": "12*",
         "abilities": [
           "Thanos gets -2 [attack] for each other Rival Overlord that's in the city or a Mastermind.",
-          "Escape : Thanos ascends to become a new Mastermind . He gains the ability \u201c Master Strike : Each player discards half of their cards (round down the discards) .\u201c"
+          "Escape : Thanos ascends to become a new Mastermind . He gains the ability “ Master Strike : Each player discards half of their cards (round down the discards) .“"
         ],
         "tags": {}
       }
@@ -7938,6 +8149,10 @@
       ],
       "Utility": [
         "Mechanic_Scout"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Ranged"
       ]
     }
   },
@@ -8092,6 +8307,11 @@
       ],
       "Mechanic": [
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Team_Avengers",
+        "Team_Shield",
+        "Team_XMen"
       ]
     }
   },
@@ -8163,6 +8383,11 @@
       ],
       "Economy": [
         "Gen_Recruit"
+      ],
+      "Trigger": [
+        "Class_Instinct",
+        "Class_Ranged",
+        "Class_Tech"
       ]
     }
   },
@@ -8454,6 +8679,10 @@
       ],
       "Economy": [
         "Gen_KO"
+      ],
+      "Trigger": [
+        "Class_Strength",
+        "Team_XMen"
       ]
     }
   },
@@ -8553,6 +8782,9 @@
       "Mechanic": [
         "Mechanic_Ambush",
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Class_Instinct"
       ]
     }
   },
@@ -8584,7 +8816,7 @@
         "vp": "5",
         "attack": "7+",
         "abilities": [
-          "Ambush : This Villain ascends to become a new Mastermind . She gains the ability \u201c Master Strike : Each player simultaneously reveals a non-grey Hero.\u201c Lady Mastermind Dominates the revealed Hero with the lowest cost (and tied for lowest) ."
+          "Ambush : This Villain ascends to become a new Mastermind . She gains the ability “ Master Strike : Each player simultaneously reveals a non-grey Hero.“ Lady Mastermind Dominates the revealed Hero with the lowest cost (and tied for lowest) ."
         ],
         "tags": {
           "Mechanic": [
@@ -8648,6 +8880,9 @@
       ],
       "Economy": [
         "Gen_Recruit"
+      ],
+      "Trigger": [
+        "Class_Instinct"
       ]
     }
   },
@@ -8851,6 +9086,9 @@
       "Mechanic": [
         "Mechanic_Ambush",
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Class_Covert"
       ]
     }
   },
@@ -8865,7 +9103,7 @@
         "attack": "8",
         "abilities": [
           "Ambush : Cross-Dimensional Demon Rampage Then each player must Soulbind a Strange's Demon Villain .",
-          "Escape : Demon Champion of Hydra ascends to become a new Mastermind . It gains the ability \u201c Master Strike : Repeat its Ambush effect.\u201c"
+          "Escape : Demon Champion of Hydra ascends to become a new Mastermind . It gains the ability “ Master Strike : Repeat its Ambush effect.“"
         ],
         "tags": {
           "Mechanic": [
@@ -8895,7 +9133,7 @@
         "attack": "7",
         "abilities": [
           "Ambush : Each player must Soulbind a Strange's Demon Villain or discard a card.",
-          "Escape : Demonbound Doctor Strange ascends to become a new Mastermind . He gains the ability \u201c Master Strike : Repeat his Ambush effect.\u201c"
+          "Escape : Demonbound Doctor Strange ascends to become a new Mastermind . He gains the ability “ Master Strike : Repeat his Ambush effect.“"
         ],
         "tags": {
           "Mechanic": [
@@ -9030,6 +9268,9 @@
       "Mechanic": [
         "Mechanic_Ambush",
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Class_Strength"
       ]
     }
   },
@@ -9169,6 +9410,10 @@
       "Mechanic": [
         "Mechanic_Ambush",
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Class_Strength",
+        "Class_Tech"
       ]
     }
   },
@@ -9318,6 +9563,9 @@
     "tags": {
       "Mechanic": [
         "Mechanic_Wound"
+      ],
+      "Trigger": [
+        "Class_Tech"
       ]
     }
   },
@@ -9395,6 +9643,10 @@
         "Mechanic_Ambush"
       ],
       "Trigger": [
+        "Class_Covert",
+        "Class_Instinct",
+        "Class_Ranged",
+        "Class_Strength",
         "Need_Class_Covert"
       ]
     }
@@ -9476,6 +9728,13 @@
       ],
       "Economy": [
         "Gen_KO"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Instinct",
+        "Class_Ranged",
+        "Class_Strength",
+        "Class_Tech"
       ]
     }
   },
@@ -9579,6 +9838,10 @@
       "Mechanic": [
         "Mechanic_Wound",
         "Mechanic_Ambush"
+      ],
+      "Trigger": [
+        "Class_Strength",
+        "Class_Tech"
       ]
     }
   },
@@ -9645,6 +9908,10 @@
       ],
       "Combat": [
         "Gen_Attack"
+      ],
+      "Trigger": [
+        "Class_Instinct",
+        "Class_Ranged"
       ]
     }
   },
@@ -9787,6 +10054,9 @@
       "Mechanic": [
         "Mechanic_Wound",
         "Mechanic_Ambush"
+      ],
+      "Trigger": [
+        "Team_MarvelKnights"
       ]
     }
   },
@@ -9836,7 +10106,7 @@
         "attack": "8",
         "abilities": [
           "Ambush : Charge one space.",
-          "Escape : Warrior Woman ascends to become a new Mastermind . She gains the ability, \u201c Master Strike : Patrol the Bank : If there's a Villain there, each player discards a card with a [recruit] icon.\u201c"
+          "Escape : Warrior Woman ascends to become a new Mastermind . She gains the ability, “ Master Strike : Patrol the Bank : If there's a Villain there, each player discards a card with a [recruit] icon.“"
         ],
         "tags": {
           "Economy": [
@@ -10099,7 +10369,7 @@
         "attack": "11*",
         "abilities": [
           "Bribe",
-          "Escape : Kingpin ascends to become a new Mastermind . He gains the ability, \u201c Master Strike : Each player reveals an [instinct] Hero or discards their hand and draws 5 cards.\u201c"
+          "Escape : Kingpin ascends to become a new Mastermind . He gains the ability, “ Master Strike : Each player reveals an [instinct] Hero or discards their hand and draws 5 cards.“"
         ],
         "tags": {}
       },
@@ -10124,6 +10394,9 @@
       ],
       "Utility": [
         "Mechanic_Scout"
+      ],
+      "Trigger": [
+        "Class_Instinct"
       ]
     }
   },
@@ -10177,10 +10450,10 @@
         "attack": "2+",
         "abilities": [
           "Weapon X Sequence",
-          "Fight : Reveal the top card of the Hero Deck as \u201cNuke's Adrenaline Pill\u201c:",
-          "[covert] : \u201cRage\u201c \u2014 Each other player gains a Wound.",
-          "[instinct] : \u201cBalance\u201c \u2014 Draw a card.",
-          "[ranged] : \u201cRelax\u201c \u2014 You get +2 [recruit] .",
+          "Fight : Reveal the top card of the Hero Deck as “Nuke's Adrenaline Pill“:",
+          "[covert] : “Rage“ — Each other player gains a Wound.",
+          "[instinct] : “Balance“ — Draw a card.",
+          "[ranged] : “Relax“ — You get +2 [recruit] .",
           "Escape : Each player gains a Wound."
         ],
         "tags": {
@@ -10222,12 +10495,12 @@
         "attack": "3+",
         "abilities": [
           "Weapon X Sequence",
-          "Fight : Reveal the top card of the Hero Deck as her \u201cPersonality\u201c:",
-          "[strength] : \u201cTyphoid\u201c \u2014 Put a card from your discard pile on top of the deck of the player to your left.",
-          "[instinct] : \u201cMary\u201c \u2014 Rescue a Bystander.",
-          "[covert] : \u201cBloody Mary\u201c \u2014 Each other player gains a Wound.",
-          "[tech] : \u201cMutant Zero\u201c \u2014 KO one of your cards that costs 0.",
-          "[ranged] : \u201cWalker\u201c \u2014 Put a card you played",
+          "Fight : Reveal the top card of the Hero Deck as her “Personality“:",
+          "[strength] : “Typhoid“ — Put a card from your discard pile on top of the deck of the player to your left.",
+          "[instinct] : “Mary“ — Rescue a Bystander.",
+          "[covert] : “Bloody Mary“ — Each other player gains a Wound.",
+          "[tech] : “Mutant Zero“ — KO one of your cards that costs 0.",
+          "[ranged] : “Walker“ — Put a card you played",
           "this turn on top of your deck."
         ],
         "tags": {
@@ -10282,6 +10555,13 @@
       ],
       "Utility": [
         "Mechanic_Scout"
+      ],
+      "Trigger": [
+        "Class_Covert",
+        "Class_Instinct",
+        "Class_Ranged",
+        "Class_Strength",
+        "Class_Tech"
       ]
     }
   },
@@ -10355,7 +10635,7 @@
         "vp": "6",
         "attack": "8+",
         "abilities": [
-          "Escape : '92 Professor X ascends to become a new Mastermind . He gains the ability, \u201c Master Strike : Stack the two Heroes from the HQ with the highest cost next to '92 Professor X. He gets +1 [attack] for each Hero stacked there. Players can recruit the top card of the stack.\u201c"
+          "Escape : '92 Professor X ascends to become a new Mastermind . He gains the ability, “ Master Strike : Stack the two Heroes from the HQ with the highest cost next to '92 Professor X. He gets +1 [attack] for each Hero stacked there. Players can recruit the top card of the stack.“"
         ],
         "tags": {
           "Economy": [
@@ -10465,6 +10745,10 @@
       "Economy": [
         "Gen_Draw",
         "Gen_Recruit"
+      ],
+      "Trigger": [
+        "Class_Ranged",
+        "Team_Brotherhood"
       ]
     }
   },
@@ -10473,7 +10757,7 @@
     "set": "Noir",
     "cards": [
       {
-        "name": "Bobby \u201cIceman\u201c Drake",
+        "name": "Bobby “Iceman“ Drake",
         "quantity": "1",
         "vp": "2",
         "attack": "4",
@@ -10497,7 +10781,7 @@
         "tags": {}
       },
       {
-        "name": "Henry \u201cBeast\u201c McCoy",
+        "name": "Henry “Beast“ McCoy",
         "quantity": "1",
         "vp": "3",
         "attack": "5",
@@ -10535,7 +10819,7 @@
         }
       },
       {
-        "name": "Scott \u201cCyclops\u201c Summers",
+        "name": "Scott “Cyclops“ Summers",
         "quantity": "1",
         "vp": "4",
         "attack": "6",
@@ -10550,6 +10834,10 @@
         "Gen_Recruit",
         "Gen_Draw",
         "Gen_KO"
+      ],
+      "Trigger": [
+        "Class_Strength",
+        "Class_Tech"
       ]
     }
   },
@@ -10687,7 +10975,7 @@
         "attack": "7",
         "abilities": [
           "Ambush : Each player reveals a [tech] card or gains a Wound. Then Rise of The Living Dead",
-          "Escape : Zombie Iron Man ascends to become a new Mastermind . He gains the ability \u201c Master Strike : Repeat his Ambush effect.\u201c"
+          "Escape : Zombie Iron Man ascends to become a new Mastermind . He gains the ability “ Master Strike : Repeat his Ambush effect.“"
         ],
         "tags": {
           "Mechanic": [
@@ -10704,7 +10992,7 @@
         "attack": "4+",
         "abilities": [
           "Ambush : Rise of The Living Dead",
-          "While in the Sewers, Rooftops, or Bridge, Zombie Wasp is \u201cgiant-size\u201c and gets +2 [attack] .",
+          "While in the Sewers, Rooftops, or Bridge, Zombie Wasp is “giant-size“ and gets +2 [attack] .",
           "Fight : KO one of your Heroes."
         ],
         "tags": {
@@ -10742,6 +11030,9 @@
       ],
       "Combat": [
         "Gen_Attack"
+      ],
+      "Trigger": [
+        "Class_Tech"
       ]
     }
   }
