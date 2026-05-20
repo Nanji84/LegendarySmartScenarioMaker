@@ -4612,8 +4612,8 @@
           "Mechanic": [
             "Mechanic_Wound"
           ],
-          "Problem": [
-            "Problem_Give_Wound"
+          "Solution": [
+            "Solution_Heal_Wound"
           ]
         }
       },
@@ -4718,8 +4718,8 @@
             "Mechanic_Rescue_Bystander",
             "Mechanic_Wound"
           ],
-          "Problem": [
-            "Problem_Give_Wound"
+          "Solution": [
+            "Solution_Heal_Wound"
           ]
         }
       },
@@ -5280,6 +5280,9 @@
           ],
           "Mechanic": [
             "Mechanic_Wound"
+          ],
+		  "Solution": [
+            "Solution_Heal_Wound"
           ]
         }
       },
@@ -6368,8 +6371,8 @@
             "Mechanic_Wound",
             "Mechanic_Discard"
           ],
-          "Problem": [
-            "Problem_Give_Wound"
+          "Solution": [
+            "Solution_Heal_Wound"
           ]
         }
       },
@@ -11057,9 +11060,6 @@
           "Mechanic": [
             "Mechanic_Wound"
           ],
-          "Problem": [
-            "Problem_Give_Wound"
-          ],
           "Solution": [
             "Solution_Heal_Wound"
           ]
@@ -11089,6 +11089,9 @@
           ],
           "Mechanic": [
             "Mechanic_Wound"
+          ],
+		  "Solution": [
+            "Solution_Heal_Wound"
           ]
         }
       },
@@ -13831,8 +13834,8 @@
             "Mechanic_Wound",
             "Mechanic_Discard"
           ],
-          "Problem": [
-            "Problem_Give_Wound"
+          "Solution": [
+            "Solution_Heal_Wound"
           ]
         }
       }
@@ -15936,6 +15939,9 @@
           ],
           "Mechanic": [
             "Mechanic_Wound"
+          ],
+		  "Solution": [
+            "Solution_Heal_Wound"
           ]
         }
       },
@@ -16337,8 +16343,8 @@
           "Mechanic": [
             "Mechanic_Wound"
           ],
-          "Problem": [
-            "Problem_Give_Wound"
+          "Solution": [
+            "Solution_Heal_Wound"
           ],
           "Type": [
             "Type_Artifact"
@@ -16908,8 +16914,8 @@
             "Mechanic_Wound",
             "Mechanic_Discard"
           ],
-          "Problem": [
-            "Problem_Give_Wound"
+          "Solution": [
+            "Solution_Heal_Wound"
           ]
         }
       },
@@ -17031,8 +17037,8 @@
           "Mechanic": [
             "Mechanic_Wound"
           ],
-          "Problem": [
-            "Problem_Give_Wound"
+          "Solution": [
+            "Solution_Heal_Wound"
           ]
         }
       },
@@ -21493,8 +21499,8 @@
             "Mechanic_Wound",
             "Mechanic_Discard"
           ],
-          "Problem": [
-            "Problem_Give_Wound"
+          "Solution": [
+            "Solution_Heal_Wound"
           ]
         }
       },
@@ -22602,9 +22608,6 @@
           ],
           "Mechanic": [
             "Mechanic_Wound"
-          ],
-          "Problem": [
-            "Problem_Give_Wound"
           ]
         }
       },
@@ -24260,8 +24263,8 @@
             "Mechanic_Rescue_Bystander",
             "Mechanic_Wound"
           ],
-          "Problem": [
-            "Problem_Give_Wound"
+          "Solution": [
+            "Solution_Heal_Wound"
           ]
         }
       },
@@ -25729,8 +25732,8 @@
             "Mechanic_Wound",
             "Mechanic_Discard"
           ],
-          "Problem": [
-            "Problem_Give_Wound"
+          "Solution": [
+            "Solution_Heal_Wound"
           ]
         }
       },
@@ -27856,8 +27859,8 @@
             "Mechanic_Wound",
             "Mechanic_Discard"
           ],
-          "Problem": [
-            "Problem_Give_Wound"
+          "Solution": [
+            "Solution_Heal_Wound"
           ]
         }
       },
@@ -31984,9 +31987,6 @@
           "Mechanic": [
             "Mechanic_Wound",
             "Mechanic_Ambush"
-          ],
-          "Solution": [
-            "Solution_Heal_Wound"
           ]
         }
       }

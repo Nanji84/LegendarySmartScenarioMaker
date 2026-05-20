@@ -72,8 +72,8 @@ DEFAULT_SYNERGY_CONFIG = {
     "setup_to_hero_rules": [
         {
             "trigger_tag": "Mechanic_Wound",
-            "matching_tags": ["Mechanic_Wound", "Solution_Heal_Wound", "Problem_Give_Wound"],
-            "keywords": ["wound", "heal"],
+            "matching_tags": ["Solution_Heal_Wound"],
+            "keywords": ["heal", "remove a wound", "remove wounds"],
             "weight": 2.0,
             "display_name": "Wound Management"
         },
@@ -114,6 +114,13 @@ DEFAULT_SYNERGY_CONFIG = {
             "candidate_to_deck_weight": 2.0,
             "deck_to_candidate_weight": 3.0,
             "display_name": "2-Cost Synergy"
+        },
+        {
+            "type": "tag_cross_match",
+            "tag_a": "Problem_Give_Wound",
+            "tag_b": "Solution_Heal_Wound",
+            "weight": 3.0,
+            "display_name": "Wound Synergy"
         }
     ]
 }
@@ -1757,6 +1764,27 @@ class LegendaryRandomizer:
                         bonus = cand_target_count * deck_to_cand_w
                         score += bonus
                         reasons.append(f"{rule.get('display_name')}: Candidate has {cand_target_count} target cards (+{bonus})")
+
+                elif rule_type == 'tag_cross_match':
+                    tag_a = rule.get('tag_a')
+                    tag_b = rule.get('tag_b')
+                    weight = rule.get('weight', 0.0)
+                    
+                    cand_tags = hero_tags
+                    
+                    deck_tags = set()
+                    for h in deck:
+                        if h.get('is_placeholder'): continue
+                        deck_tags.update(self._get_hero_tags(h))
+                        
+                    has_match = (
+                        (tag_a in cand_tags and tag_b in deck_tags) or
+                        (tag_b in cand_tags and tag_a in deck_tags)
+                    )
+                    
+                    if has_match:
+                        score += weight
+                        reasons.append(f"{rule.get('display_name')} (+{weight})")
 
             # Random Noise
             rng = random.uniform(0, 1.5)

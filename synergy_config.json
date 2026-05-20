@@ -3,10 +3,10 @@
     "enemy_counter_class": 3.0,
     "enemy_counter_team": 3.0,
     "team_requirement_match": 4.0,
-    "team_simple_match": 0.5,
+    "team_simple_match": 0.0,
     "class_trigger_deck": 3.0,
     "class_triggered_by_deck": 3.0,
-    "class_simple_match": 1.0,
+    "class_simple_match": 0.0,
     "curve_balanced_starter": 2.0,
     "curve_fixer_cheap": 4.0,
     "curve_penalty_expensive": -2.0,
@@ -17,13 +17,12 @@
     {
       "trigger_tag": "Mechanic_Wound",
       "matching_tags": [
-        "Mechanic_Wound",
-        "Solution_Heal_Wound",
-        "Problem_Give_Wound"
+        "Solution_Heal_Wound"
       ],
       "keywords": [
-        "wound",
-        "heal"
+        "heal",
+        "remove a wound",
+        "remove wounds"
       ],
       "weight": 2.0,
       "display_name": "Wound Management"
@@ -38,7 +37,7 @@
         "bystander",
         "rescue"
       ],
-      "weight": 4.0,
+      "weight": 1.0,
       "display_name": "Bystander Rescue"
     },
     {
@@ -49,7 +48,7 @@
       "keywords": [
         "artifact"
       ],
-      "weight": 5.0,
+      "weight": 2.0,
       "display_name": "Artifact Synergy"
     },
     {
@@ -60,7 +59,7 @@
       "keywords": [
         "ko "
       ],
-      "weight": 2.0,
+      "weight": 1.0,
       "display_name": "KO/Thinning"
     },
     {
@@ -72,7 +71,7 @@
         "ko pile",
         "discard pile"
       ],
-      "weight": 3.0,
+      "weight": 1.0,
       "display_name": "Graveyard Interaction"
     }
   ],
@@ -89,6 +88,13 @@
       "candidate_to_deck_weight": 2.0,
       "deck_to_candidate_weight": 3.0,
       "display_name": "2-Cost Synergy"
+    },
+    {
+      "type": "tag_cross_match",
+      "tag_a": "Problem_Give_Wound",
+      "tag_b": "Solution_Heal_Wound",
+      "weight": 3.0,
+      "display_name": "Wound Synergy"
     }
   ]
 }
