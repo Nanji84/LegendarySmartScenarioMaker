@@ -4,9 +4,47 @@ import random
 import re
 import os
 import traceback
+import uuid
+import datetime
 
 # TOGGLE THIS TO TRUE/FALSE TO SHOW/HIDE SYNERGY LOGS
 SHOW_SYNERGY_DEBUG = True
+
+HISTORY_FILE = "scenario_history.json"
+
+def load_history():
+    if os.path.exists(HISTORY_FILE):
+        try:
+            with open(HISTORY_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            pass
+    return []
+
+def save_history(history):
+    try:
+        with open(HISTORY_FILE, 'w', encoding='utf-8') as f:
+            json.dump(history, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        pass
+
+def add_to_history(setup, players, selected_sets):
+    history = load_history()
+    entry = {
+        "id": uuid.uuid4().hex,
+        "timestamp": datetime.datetime.now().isoformat(),
+        "players": players,
+        "selected_sets": list(selected_sets),
+        "setup": setup
+    }
+    history.insert(0, entry)
+    history = history[:50]
+    save_history(history)
+
+def delete_from_history(entry_id):
+    history = load_history()
+    history = [e for e in history if e.get('id') != entry_id]
+    save_history(history)
 
 SETUP_RULES = {
     1: {"villains": 1, "henchmen": 1, "bystanders": 1, "heroes": 5},
@@ -1876,6 +1914,11 @@ class LegendaryRandomizer:
         vd_heroes_formatted = []
 
         result = {
+            "raw_mastermind": self.setup['mastermind'],
+            "raw_scheme": self.setup['scheme'],
+            "raw_heroes": self.setup['heroes'],
+            "raw_villains": self.setup['villains'],
+            "raw_henchmen": self.setup['henchmen'],
             "Mastermind": f"{self.setup['mastermind']['name']} ({self.setup['mastermind']['set']})",
             # We now pass the raw list for better UI handling
             "Lurking_Masterminds": [f"{m['name']} ({m['set']})" for m in self.setup.get('lurking_masterminds', [])],
@@ -1915,8 +1958,189 @@ class LegendaryRandomizer:
 # STREAMLIT UI CODE
 # ==========================================
 
+def get_team_badge(team_name):
+    team_map = {
+        "avengers": ("🅰️", "Avengers", "#e74c3c"),
+        "x-men": ("❌", "X-Men", "#f1c40f"),
+        "spider-friends": ("🕷️", "Spider-Friends", "#3498db"),
+        "shield": ("🛡️", "S.H.I.E.L.D.", "#7f8c8d"),
+        "guardians-of-the-galaxy": ("🌌", "Guardians", "#9b59b6"),
+        "fantastic-four": ("4️⃣", "Fantastic Four", "#2980b9"),
+        "marvel-knights": ("🌙", "Marvel Knights", "#1abc9c"),
+        "x-force": ("❌", "X-Force", "#2c3e50"),
+        "cabal": ("💀", "Cabal", "#95a5a6"),
+        "sinister-six": ("🐙", "Sinister Six", "#27ae60"),
+        "illuminati": ("👁️", "Illuminati", "#f39c12"),
+        "foes-of-asgard": ("⚡", "Foes of Asgard", "#d35400")
+    }
+    t_lower = team_name.lower().strip()
+    if t_lower in team_map:
+        return team_map[t_lower]
+    return ("👥", team_name.title(), "#bdc3c7")
+
+def get_class_badge(class_name):
+    class_map = {
+        "strength": ("💪", "Strength", "#e67e22"),
+        "instinct": ("🐾", "Instinct", "#2ecc71"),
+        "covert": ("🕵️", "Covert", "#e74c3c"),
+        "tech": ("🛠️", "Tech", "#3498db"),
+        "ranged": ("🏹", "Ranged", "#9b59b6")
+    }
+    c_lower = class_name.lower().strip()
+    if c_lower in class_map:
+        return class_map[c_lower]
+    return ("▫️", class_name.title(), "#bdc3c7")
+
+def inject_custom_styles():
+    st.markdown("""
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+            
+            /* Global fonts override - keep safe from icon fonts */
+            html, body, p, h1, h2, h3, h4, h5, h6, label, select, button, input {
+                font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            }
+            
+            /* Header custom styling */
+            h1, h2, h3 {
+                font-family: 'Outfit', sans-serif !important;
+                font-weight: 800 !important;
+                letter-spacing: -0.5px;
+            }
+            
+            /* Glassmorphic cards */
+            .premium-card {
+                background: rgba(31, 40, 51, 0.45);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 16px;
+                padding: 20px;
+                margin-bottom: 20px;
+                box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+                transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            }
+            
+            .premium-card:hover {
+                transform: translateY(-4px);
+                border-color: rgba(122, 34, 255, 0.4);
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 15px rgba(122, 34, 255, 0.15);
+            }
+            
+            /* Grid and sub-element alignment */
+            .card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+                padding-bottom: 8px;
+            }
+            
+            .card-title {
+                font-size: 1.15rem;
+                font-weight: 800;
+                color: #FFFFFF;
+                margin: 0;
+            }
+            
+            .card-subtitle {
+                font-size: 0.8rem;
+                color: rgba(255, 255, 255, 0.45);
+                margin: 4px 0 12px 0;
+            }
+            
+            /* Styled badges */
+            .badge-pill {
+                display: inline-flex;
+                align-items: center;
+                padding: 4px 10px;
+                border-radius: 50px;
+                font-size: 0.72rem;
+                font-weight: 600;
+                margin: 2px 4px 2px 0;
+                line-height: 1;
+                border: 1px solid transparent;
+            }
+            
+            /* Scrollbar adjustments */
+            ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+            ::-webkit-scrollbar-track {
+                background: rgba(11, 12, 16, 0.5);
+            }
+            ::-webkit-scrollbar-thumb {
+                background: rgba(122, 34, 255, 0.3);
+                border-radius: 4px;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+                background: rgba(122, 34, 255, 0.6);
+            }
+            
+            /* Dials & Stats */
+            .metric-widget {
+                background: rgba(31, 40, 51, 0.3);
+                border-radius: 12px;
+                border: 1px solid rgba(255, 255, 255, 0.05);
+                padding: 15px;
+                text-align: center;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            }
+            
+            .metric-label {
+                font-size: 0.75rem;
+                color: rgba(255, 255, 255, 0.5);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin-bottom: 5px;
+            }
+            
+            .metric-val {
+                font-size: 1.8rem;
+                font-weight: 800;
+                color: #7A22FF;
+                text-shadow: 0 0 10px rgba(122, 34, 255, 0.4);
+            }
+            
+            /* Custom styled lists */
+            .styled-list {
+                list-style-type: none;
+                padding-left: 0;
+                margin: 0;
+            }
+            .styled-list li {
+                padding: 6px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                color: rgba(255, 255, 255, 0.85);
+                font-size: 0.92rem;
+            }
+            .styled-list li:last-child {
+                border-bottom: none;
+            }
+            
+            /* Custom Primary Button Glow */
+            div.stButton > button:first-child {
+                background: linear-gradient(135deg, #7A22FF 0%, #5400D1 100%) !important;
+                border: none !important;
+                color: white !important;
+                font-weight: 800 !important;
+                padding: 10px 24px !important;
+                border-radius: 12px !important;
+                box-shadow: 0 4px 20px rgba(122, 34, 255, 0.3) !important;
+                transition: all 0.3s ease !important;
+            }
+            div.stButton > button:first-child:hover {
+                box-shadow: 0 6px 25px rgba(122, 34, 255, 0.6) !important;
+                transform: translateY(-2px) !important;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
 def main():
     st.set_page_config(page_title="Legendary Randomizer", page_icon="🦸", layout="wide")
+    inject_custom_styles()
 
     # --- Sidebar: Configuration ---
     st.sidebar.header("⚙️ Setup")
@@ -2250,8 +2474,75 @@ def main():
     # --- Main Area ---
     st.title("🦸 Legendary Setup Randomizer")
     
-    if st.button("🎲 Generate New Setup", type="primary", use_container_width=True):
-        run_randomizer(selected_sets, players, user_selections)
+    tab_gen, tab_hist = st.tabs(["🎲 Generator", "📜 History & Stats"])
+    
+    with tab_gen:
+        if st.button("🎲 Generate New Setup", type="primary", use_container_width=True):
+            setup = run_randomizer(selected_sets, players, user_selections)
+            if setup:
+                st.session_state['current_setup'] = setup
+                add_to_history(setup, players, selected_sets)
+                st.rerun()
+                
+        if st.session_state.get('current_setup'):
+            display_results(st.session_state['current_setup'])
+        else:
+            st.info("No active setup. Click the button above to generate a new scenario!")
+            
+    with tab_hist:
+        st.subheader("📜 Generated Setups History")
+        history = load_history()
+        if not history:
+            st.info("No setups in history yet. Generate some scenarios to track them here!")
+        else:
+            col_clear1, col_clear2 = st.columns([3, 1])
+            with col_clear2:
+                if st.button("🚨 Clear All History", type="secondary", use_container_width=True):
+                    save_history([])
+                    if 'current_setup' in st.session_state:
+                        del st.session_state['current_setup']
+                    st.success("History cleared!")
+                    st.rerun()
+            
+            for idx, entry in enumerate(history):
+                timestamp = entry.get('timestamp', '')
+                try:
+                    dt = datetime.datetime.fromisoformat(timestamp)
+                    formatted_time = dt.strftime("%Y-%m-%d %H:%M:%S")
+                except:
+                    formatted_time = timestamp
+                    
+                setup_data = entry['setup']
+                mm_name = setup_data['raw_mastermind']['name']
+                sch_name = setup_data['raw_scheme']['name']
+                hist_players = entry.get('players', 3)
+                
+                with st.expander(f"📅 {formatted_time} | 👥 {hist_players}P | 🦹 {mm_name} vs. 📜 {sch_name}"):
+                    c1, c2 = st.columns(2)
+                    with c1:
+                        st.markdown(f"**🦹 Mastermind:** {mm_name} *({setup_data['raw_mastermind']['set']})*")
+                        st.markdown(f"**📜 Scheme:** {sch_name} *({setup_data['raw_scheme']['set']})*")
+                        st.markdown(f"**😈 Villains:** {', '.join(setup_data['Villains'])}")
+                        st.markdown(f"**🤖 Henchmen:** {', '.join(setup_data['Henchmen'])}")
+                    with c2:
+                        st.markdown("**🦸 Heroes:**")
+                        for h in setup_data['Heroes']:
+                            st.markdown(f"- {h}")
+                            
+                    st.divider()
+                    col_btn1, col_btn2 = st.columns(2)
+                    with col_btn1:
+                        if st.button("🔄 Load into Generator", key=f"load_{entry['id']}_{idx}", use_container_width=True):
+                            st.session_state['current_setup'] = setup_data
+                            st.success("Setup loaded! Switch to the 🎲 Generator tab to view it.")
+                            st.rerun()
+                    with col_btn2:
+                        if st.button("🗑️ Delete from History", key=f"del_{entry['id']}_{idx}", use_container_width=True):
+                            delete_from_history(entry['id'])
+                            if st.session_state.get('current_setup') == setup_data:
+                                del st.session_state['current_setup']
+                            st.success("Deleted!")
+                            st.rerun()
 
 def run_randomizer(selected_sets, players, user_selections):
     with st.spinner('Consulting the Multiverse...'):
@@ -2261,55 +2552,128 @@ def run_randomizer(selected_sets, players, user_selections):
             setup = randomizer.generate_setup()
             
             if setup:
-                display_results(setup)
+                return setup
             else:
                 st.error("Failed to generate setup. Check your data files.")
         except Exception as e:
             st.error(f"An error occurred: {e}")
             st.code(traceback.format_exc())
+    return None
 
 def display_results(setup):
+    def clean_html(html_str):
+        return "".join(line.strip() for line in html_str.split("\n"))
+
+    # Helper to build hero card HTML
+    def get_hero_card_html(h):
+        hero_name = h.get('hero')
+        hero_set = h.get('set', 'Unknown')
+        is_placeholder = h.get('is_placeholder', False)
+        
+        if is_placeholder:
+            return clean_html(f"""
+            <div class='premium-card' style='height: 100%; display: flex; flex-direction: column; justify-content: space-between;'>
+                <div>
+                    <div class='card-header'>
+                        <span class='badge-pill' style='background: rgba(255, 255, 255, 0.03); border: 1px solid #bdc3c7; color: #bdc3c7;'>👥 Player Choice</span>
+                    </div>
+                    <div class='card-title'>{hero_name}</div>
+                </div>
+            </div>
+            """)
+        
+        team_name = 'Unknown'
+        if h.get('cards') and len(h['cards']) > 0:
+            team_name = h['cards'][0].get('team', 'Unknown')
+            
+        team_icon, team_title, team_color = get_team_badge(team_name)
+        
+        classes = set()
+        for card in h.get('cards', []):
+            for cls in card.get('classes', []):
+                classes.add(cls)
+                
+        class_badges_html = ""
+        for cls in sorted(list(classes)):
+            cls_icon, cls_title, cls_color = get_class_badge(cls)
+            class_badges_html += f"""
+            <span class='badge-pill' style='background: rgba(255, 255, 255, 0.03); border: 1px solid {cls_color}; color: {cls_color};'>{cls_icon} {cls_title}</span>
+            """
+            
+        return clean_html(f"""
+        <div class='premium-card' style='height: 100%; display: flex; flex-direction: column; justify-content: space-between;'>
+            <div>
+                <div class='card-header'>
+                    <span class='badge-pill' style='background: rgba(255, 255, 255, 0.03); border: 1px solid {team_color}; color: {team_color};'>{team_icon} {team_title}</span>
+                    <span style='font-size: 0.75rem; color: rgba(255, 255, 255, 0.45);'>📚 {hero_set}</span>
+                </div>
+                <div class='card-title'>{hero_name}</div>
+            </div>
+            <div style='margin-top: 15px;'>
+                <div style='font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(255,255,255,0.4); margin-bottom: 5px;'>Classes</div>
+                {class_badges_html}
+            </div>
+        </div>
+        """)
+
     # --- 1. Mastermind & Scheme ---
     col1, col2 = st.columns(2)
     with col1:
-        st.subheader("🦹 Mastermind")
-        st.info(f"**{setup['Mastermind']}**")
+        mm_name = setup['raw_mastermind']['name']
+        mm_set = setup['raw_mastermind']['set']
+        leads = setup['raw_mastermind'].get('always_leads')
+        leads_html = f"<div class='card-subtitle'>Always Leads: {leads}</div>" if leads else ""
         
-        # Lurking Masterminds (Now separate!)
+        mm_html = clean_html(f"""
+        <div class='premium-card'>
+            <div class='card-header'>
+                <span class='badge-pill' style='background: rgba(255, 255, 255, 0.03); border: 1px solid #7A22FF; color: #7A22FF;'>🦹 Mastermind</span>
+                <span style='font-size: 0.8rem; color: rgba(255, 255, 255, 0.5);'>📚 {mm_set}</span>
+            </div>
+            <div class='card-title'>{mm_name}</div>
+            {leads_html}
+        """)
         if setup.get('Lurking_Masterminds'):
-            st.markdown("**👥 Lurking Masterminds:**")
+            mm_html += "<div style='margin-top: 12px; font-weight: 600; font-size: 0.85rem; color: rgba(255,255,255,0.7);'>👥 Lurking Masterminds:</div>"
             for lm in setup['Lurking_Masterminds']:
-                st.caption(f"- {lm}")
-
-        # Drained Mastermind
+                mm_html += f"<div style='font-size: 0.8rem; color: rgba(255,255,255,0.6);'>- {lm}</div>"
+        if setup.get('Tyrant_Masterminds'):
+            mm_html += "<div style='margin-top: 12px; font-weight: 600; font-size: 0.85rem; color: rgba(255,255,255,0.7);'>👑 Tyrant Masterminds:</div>"
+            for tm in setup['Tyrant_Masterminds']:
+                mm_html += f"<div style='font-size: 0.8rem; color: rgba(255,255,255,0.6);'>- {tm}</div>"
         if setup.get('Drained_Mastermind'):
             dm = setup['Drained_Mastermind']
-            st.markdown(f"**🔻 Drained Mastermind:**")
-            st.caption(f"{dm['name']} ({dm['set']}) *(Set aside, out of play)*")
-        
-        # Tyrant Masterminds
-        if setup.get('Tyrant_Masterminds'):
-            st.markdown("**👑 Tyrant Masterminds:**")
-            for tm in setup['Tyrant_Masterminds']:
-                st.caption(f"- {tm}")
+            mm_html += clean_html(f"""
+            <div style='margin-top: 12px; font-weight: 600; font-size: 0.85rem; color: rgba(255,255,255,0.7);'>🔻 Drained Mastermind:</div>
+            <div style='font-size: 0.8rem; color: rgba(255,255,255,0.6);'>{dm['name']} ({dm['set']}) <i>(Set aside)</i></div>
+            """)
+        mm_html += "</div>"
+        st.markdown(mm_html, unsafe_allow_html=True)
 
     with col2:
-        st.subheader("📜 Scheme")
-        st.warning(f"**{setup['Scheme']}**")
+        sch_name = setup['raw_scheme']['name']
+        sch_set = setup['raw_scheme']['set']
         
-        # Custom Decks (Moved here for visibility)
+        sch_html = clean_html(f"""
+        <div class='premium-card'>
+            <div class='card-header'>
+                <span class='badge-pill' style='background: rgba(255, 255, 255, 0.03); border: 1px solid #f39c12; color: #f39c12;'>📜 Scheme</span>
+                <span style='font-size: 0.8rem; color: rgba(255, 255, 255, 0.5);'>📚 {sch_set}</span>
+            </div>
+            <div class='card-title'>{sch_name}</div>
+        """)
         if setup.get('Custom_Deck'):
             cd = setup['Custom_Deck']
-            st.markdown(f"**📦 {cd['name']} Content:**")
+            sch_html += "<div style='margin-top: 12px; font-weight: 600; font-size: 0.85rem; color: #e74c3c;'>📦 " + cd['name'] + " Content:</div>"
             for line in cd['lines']:
-                st.error(f"- {line}")
+                sch_html += f"<div style='font-size: 0.8rem; color: #e74c3c;'>- {line}</div>"
+        sch_html += "</div>"
+        st.markdown(sch_html, unsafe_allow_html=True)
 
-# --- NEW DEBUG SECTION ---
+    # --- NEW DEBUG SECTION ---
     if SHOW_SYNERGY_DEBUG and setup.get('synergy_logs'):
         st.divider()
         with st.expander("🔍 Synergy Debug Report", expanded=False):
-        
-        # --- NEW TAG OVERVIEW RENDERING ---
             ov = setup.get('synergy_overview', {})
             if ov:
                 st.markdown("### 🏷️ Active Tags & Triggers")
@@ -2342,62 +2706,128 @@ def display_results(setup):
     # --- 2. Villains & Henchmen ---
     col3, col4 = st.columns(2)
     with col3:
-        st.write("### 😈 Villains")
+        villains_html = clean_html("""
+        <div class='premium-card'>
+            <div class='card-header'>
+                <span class='badge-pill' style='background: rgba(255, 255, 255, 0.03); border: 1px solid #e74c3c; color: #e74c3c;'>😈 Villains</span>
+            </div>
+            <ul class='styled-list'>
+        """)
         for v in setup['Villains']:
-            st.write(f"- {v}")
+            villains_html += f"<li>{v}</li>"
+        villains_html += "</ul></div>"
+        st.markdown(villains_html, unsafe_allow_html=True)
             
     with col4:
-        st.write("### 🤖 Henchmen")
+        henchmen_html = clean_html("""
+        <div class='premium-card'>
+            <div class='card-header'>
+                <span class='badge-pill' style='background: rgba(255, 255, 255, 0.03); border: 1px solid #2ecc71; color: #2ecc71;'>🤖 Henchmen</span>
+            </div>
+            <ul class='styled-list'>
+        """)
         for h in setup['Henchmen']:
-            st.write(f"- {h}")
+            henchmen_html += f"<li>{h}</li>"
+        henchmen_html += "</ul></div>"
+        st.markdown(henchmen_html, unsafe_allow_html=True)
 
     st.divider()
 
     # --- 3. Heroes ---
     st.write("### 🦸 Heroes")
     hero_cols = st.columns(3)
-    for i, h in enumerate(setup['Heroes']):
-        with hero_cols[i % 3]:
-            st.success(h)
+    col_idx = 0
+    for h in setup['raw_heroes']:
+        hero_html = get_hero_card_html(h)
+        with hero_cols[col_idx % 3]:
+            st.markdown(hero_html, unsafe_allow_html=True)
+        col_idx += 1
+        
+    # Render any extras in setup['Heroes'] that aren't in raw_heroes
+    raw_names = {h['hero'] for h in setup['raw_heroes']}
+    for h_str in setup['Heroes']:
+        if not any(h_str.startswith(name) for name in raw_names):
+            extra_html = clean_html(f"""
+            <div class='premium-card' style='height: 100%; border-style: dashed; border-color: rgba(255,255,255,0.2);'>
+                <div class='card-header'>
+                    <span class='badge-pill' style='background: rgba(255, 255, 255, 0.03); border: 1px solid #7f8c8d; color: #7f8c8d;'>📦 Hero Deck Extra</span>
+                </div>
+                <div class='card-title'>{h_str}</div>
+            </div>
+            """)
+            with hero_cols[col_idx % 3]:
+                st.markdown(extra_html, unsafe_allow_html=True)
+            col_idx += 1
             
     # Wedding Heroes
     if setup.get('Wedding_Heroes'):
         st.write("#### 💍 Wedding Heroes (Set Aside)")
+        wedding_html = clean_html("<div class='premium-card'><ul class='styled-list'>")
         for wh in setup['Wedding_Heroes']:
-             st.info(f"- {wh}")
+             wedding_html += f"<li>{wh}</li>"
+        wedding_html += "</ul></div>"
+        st.markdown(wedding_html, unsafe_allow_html=True)
 
     st.divider()
 
     # --- 4. Villain Deck Composition ---
     st.write("### 🃏 Villain Deck Composition")
-    
     vd = setup['Villain_Deck_Setup']
     
     # Standard Counts
     m1, m2, m3 = st.columns(3)
-    m1.metric("Scheme Twists", vd['Scheme_Twists'])
-    m2.metric("Master Strikes", vd['Master_Strikes'])
-    m3.metric("Bystanders", vd['Bystanders'])
+    with m1:
+        st.markdown(clean_html(f"""
+        <div class='metric-widget'>
+            <div class='metric-label'>Scheme Twists</div>
+            <div class='metric-val'>{vd['Scheme_Twists']}</div>
+        </div>
+        """), unsafe_allow_html=True)
+    with m2:
+        st.markdown(clean_html(f"""
+        <div class='metric-widget'>
+            <div class='metric-label'>Master Strikes</div>
+            <div class='metric-val'>{vd['Master_Strikes']}</div>
+        </div>
+        """), unsafe_allow_html=True)
+    with m3:
+        st.markdown(clean_html(f"""
+        <div class='metric-widget'>
+            <div class='metric-label'>Bystanders</div>
+            <div class='metric-val'>{vd['Bystanders']}</div>
+        </div>
+        """), unsafe_allow_html=True)
 
     st.markdown("#### ➕ Required Extras")
     
     # 1. Extra Cards (Sidekicks, Officers, etc.)
     extras_cols = st.columns(2)
     with extras_cols[0]:
-        if vd.get('Sidekicks'): st.write(f"**Sidekicks:** {vd['Sidekicks']}")
-        if vd.get('Ambitions'): st.write(f"**Ambitions:** {vd['Ambitions']}")
-        if vd.get('Officers'): st.write(f"**S.H.I.E.L.D. Officers:** {vd['Officers']}")
-        if vd.get('Heroes_from_Hero_Deck'): st.write(f"**Cards from Hero Deck:** {vd['Heroes_from_Hero_Deck']} (Random)")
+        extras_left = []
+        if vd.get('Sidekicks'): extras_left.append("<b>Sidekicks:</b> " + str(vd['Sidekicks']))
+        if vd.get('Ambitions'): extras_left.append("<b>Ambitions:</b> " + str(vd['Ambitions']))
+        if vd.get('Officers'): extras_left.append("<b>S.H.I.E.L.D. Officers:</b> " + str(vd['Officers']))
+        if vd.get('Heroes_from_Hero_Deck'): extras_left.append("<b>Cards from Hero Deck:</b> " + str(vd['Heroes_from_Hero_Deck']) + " (Random)")
+        
+        if extras_left:
+            st.markdown(clean_html("<div class='premium-card'><ul class='styled-list'>" + "".join("<li>" + item + "</li>" for item in extras_left) + "</ul></div>"), unsafe_allow_html=True)
         
     with extras_cols[1]:
-        if vd.get('Tactics'): st.write(f"**Mastermind Tactics:** {vd['Tactics']}")
-        if vd.get('Quantum_Ambush'): st.write("**Ambush Scheme:** Yes")
+        extras_right = []
+        if vd.get('Tactics'): extras_right.append("<b>Mastermind Tactics:</b> " + str(vd['Tactics']))
+        if vd.get('Quantum_Ambush'): extras_right.append("<b>Ambush Scheme:</b> Yes")
+        
+        if extras_right:
+            st.markdown(clean_html("<div class='premium-card'><ul class='styled-list'>" + "".join("<li>" + item + "</li>" for item in extras_right) + "</ul></div>"), unsafe_allow_html=True)
 
     # 2. Specific Extra Heroes
     if setup['Villain_Deck_Heroes']:
         st.markdown("**🦸 Extra Heroes in Villain Deck:**")
+        vd_heroes_html = clean_html("<div class='premium-card'><ul class='styled-list'>")
         for h in setup['Villain_Deck_Heroes']:
-            st.markdown(f"- {h}")
+            vd_heroes_html += f"<li>{h}</li>"
+        vd_heroes_html += "</ul></div>"
+        st.markdown(vd_heroes_html, unsafe_allow_html=True)
 
     st.divider()
 
@@ -2406,6 +2836,44 @@ def display_results(setup):
         for line in setup['Scheme_Description']:
             if "Setup" in line or "Special Rules" in line:
                 st.markdown(f"* {line}")
+
+    st.divider()
+
+    # --- 6. Export Setup ---
+    with st.expander("📥 Export & Share Setup", expanded=False):
+        md_lines = []
+        md_lines.append("### 🦸 Legendary Smart Scenario Setup")
+        md_lines.append(f"*   **Mastermind:** {setup['raw_mastermind']['name']} ({setup['raw_mastermind']['set']})")
+        md_lines.append(f"*   **Scheme:** {setup['raw_scheme']['name']} ({setup['raw_scheme']['set']})")
+        md_lines.append(f"*   **Villains:** {', '.join(setup['Villains'])}")
+        md_lines.append(f"*   **Henchmen:** {', '.join(setup['Henchmen'])}")
+        
+        md_lines.append("*   **Heroes:**")
+        for h in setup['Heroes']:
+            md_lines.append(f"    * {h}")
+            
+        md_lines.append("*   **Villain Deck Composition:**")
+        md_lines.append(f"    * Scheme Twists: {vd['Scheme_Twists']}")
+        md_lines.append(f"    * Master Strikes: {vd['Master_Strikes']}")
+        md_lines.append(f"    * Bystanders: {vd['Bystanders']}")
+        
+        if vd.get('Sidekicks'): md_lines.append(f"    * Sidekicks: {vd['Sidekicks']}")
+        if vd.get('Officers'): md_lines.append(f"    * S.H.I.E.L.D. Officers: {vd['Officers']}")
+        if setup['Villain_Deck_Heroes']: md_lines.append(f"    * Extra Heroes in Villain Deck: {', '.join(setup['Villain_Deck_Heroes'])}")
+        
+        md_text = "\n".join(md_lines)
+        
+        st.write("📋 **Markdown Checklist** (Copy to paste in BGG, Discord, or notes):")
+        st.code(md_text, language="markdown")
+        
+        setup_json = json.dumps(setup, indent=2, ensure_ascii=False)
+        st.download_button(
+            label="📥 Download Setup JSON",
+            data=setup_json,
+            file_name=f"legendary_setup_{setup['raw_mastermind']['name'].lower().replace(' ', '_')}.json",
+            mime="application/json",
+            use_container_width=True
+        )
 
 if __name__ == "__main__":
     main()
