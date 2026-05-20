@@ -2290,6 +2290,14 @@ def main():
     st.sidebar.divider()
     st.sidebar.subheader("🔒 Manual Overrides")
 
+    if st.sidebar.button("🔄 Reset Overrides to Random", use_container_width=True):
+        st.session_state['override_scheme'] = "Random"
+        st.session_state['override_mastermind'] = "Random"
+        for key in list(st.session_state.keys()):
+            if key.startswith("v_") or key.startswith("h_") or key.startswith("hero_"):
+                st.session_state[key] = "Random"
+        st.rerun()
+
     # 3. Manual Selections
     user_selections = {}
     
